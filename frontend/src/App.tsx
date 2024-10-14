@@ -5,7 +5,7 @@ import axios from "axios";
 function App() {
   const [data, setData] = useState<string>("")
   const fetchData = () => {
-    axios.get('https://localhost:8080/api/usv-monitor')
+    axios.get('/api/usv-monitor')
         .then(response => {
           setData(response.data);
         })
