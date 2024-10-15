@@ -5,7 +5,7 @@ type UsvCardProps = {
     monitoring: boolean
 }
 
-export default function UsvCard(props:UsvCardProps){
+export default function UsvCard(props: Readonly<UsvCardProps>){
     return(
         <>
             <h3>{props.usv.name}</h3>
