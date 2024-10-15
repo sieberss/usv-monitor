@@ -13,8 +13,10 @@ import java.util.List;
 public class UsvService {
     private final UsvRepo repo;
 
-    public UsvListResponse getAllUsvs() {
+    public List<Usv> getUsvList() {
         List<Usv> usvs = repo.findAll();
-        return new UsvListResponse(false, usvs);
+        UsvListResponse response = new UsvListResponse(false, usvs);
+        System.out.println(response);
+        return usvs;
     }
 }
