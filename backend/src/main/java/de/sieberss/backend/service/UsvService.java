@@ -13,6 +13,7 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class UsvService {
     private final UsvRepo repo;
+    private final IdService idService;
 
     public List<Usv> getUsvList() {
         List<Usv> usvs = repo.findAll();
@@ -23,5 +24,9 @@ public class UsvService {
 
     public Usv getUsvById(String id) {
         return repo.findById(id).orElseThrow(()->new NoSuchElementException(id));
+    }
+
+    public Usv createUsv(Usv usv) {
+        return repo.save(new Usv(idService.generateId(), usv.name(), usv.address(), usv.community()));
     }
 }

@@ -26,6 +26,11 @@ public class UsvController {
         return service.getUsvById(id);
     }
 
+    @PostMapping()
+    public Usv createUsv(@RequestBody Usv usv) {
+        return service.createUsv(usv);
+    }
+
     @ExceptionHandler(NoSuchElementException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorMessage handleNoSuchElementException(NoSuchElementException e) {
