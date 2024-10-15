@@ -1,8 +1,9 @@
 # usv-monitor
 
-* Datenstruktur
-- Status: OK, STROM_WEG, VERBINDUNG_WEG, ALARM, SHUTDOWN
-- Usv: id, name, address, status, since, community
+## Datenstruktur
+- Status: POWER_ON, POWER_OFF, NO_CONNECTION, ALARM, SHUTDOWN
+- Usv: id, name, address, community
+- UsvResponse: usv, status, seit wann
 - Server: id, name, address, username, password, lastShutdown
 - Event: id, status, restlaufzeit, entity
 
