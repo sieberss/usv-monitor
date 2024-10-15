@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -18,5 +19,9 @@ public class UsvService {
         UsvListResponse response = new UsvListResponse(false, usvs);
         System.out.println(response);
         return usvs;
+    }
+
+    public Usv getUsvById(String id) {
+        return repo.findById(id).orElseThrow(()->new NoSuchElementException(id));
     }
 }

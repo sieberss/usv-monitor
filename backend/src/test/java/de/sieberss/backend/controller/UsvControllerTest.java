@@ -11,8 +11,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @DirtiesContext
 @AutoConfigureMockMvc
@@ -24,7 +22,7 @@ class UsvControllerTest {
     private UsvRepo repo;
 
     @Test
-    void getAllUss_shouldReturnListWithOneObject_whenOneObjectWasSavedInRepository() throws Exception {
+    void getAllUsvs_shouldReturnListWithOneObject_whenOneObjectWasSavedInRepository() throws Exception {
         Usv usv = new Usv("1", "Test-USV", "192.168.1.1", "");
         repo.save(usv);
         mvc.perform(MockMvcRequestBuilders.get("/api/usv"))
@@ -44,7 +42,7 @@ class UsvControllerTest {
     }
 
     @Test
-    void getAllUss_shouldReturnEmptyList_initially() throws Exception {
+    void getAllUsvs_shouldReturnEmptyList_initially() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/api/usv"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(
@@ -56,4 +54,34 @@ class UsvControllerTest {
                 ));
     }
 
+    @Test
+    void getUsvById_shouldReturnUsv_whenOneObjectWasSavedInRepository() throws Exception {
+        Usv usv = new Usv("1", "Test-USV", "192.168.1.1", "");
+        repo.save(usv);
+        mvc.perform(MockMvcRequestBuilders.get("/api/usv/1"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json("""
+                                 {
+                                     "name": "Test-USV",
+                                     "id": "1",
+                                     "address": "192.168.1.1",
+                                     "community": ""
+                                 }
+                                """
+                ));
+    }
+
+    @Test
+    void getUsvById_shouldTriggerErrorMessage_whenTwoObjectWasSavedInRepository() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/api/usv/1"))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.content().json("""
+                                     {
+                                     "message": "Not found",
+                                     "id": "1"
+                                     }
+                                     """
+                ));
+
+    }
 }
