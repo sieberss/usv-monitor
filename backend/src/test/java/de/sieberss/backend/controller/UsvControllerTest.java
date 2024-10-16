@@ -56,7 +56,7 @@ class UsvControllerTest {
     }
 
     @Test
-    void getUsvById_shouldReturnUsv_whenOneObjectWasSavedInRepository() throws Exception {
+    void getUsvById_shouldReturnUsv_whenIdExists() throws Exception {
         Usv usv = new Usv("1", "Test-USV", "192.168.1.1", "");
         repo.save(usv);
         mvc.perform(MockMvcRequestBuilders.get("/api/usv/1"))
@@ -73,7 +73,7 @@ class UsvControllerTest {
     }
 
     @Test
-    void getUsvById_shouldTriggerErrorMessage_whenTwoObjectWasSavedInRepository() throws Exception {
+    void getUsvById_shouldTriggerErrorMessage_whenIdDoesNotExist() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/api/usv/1"))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.content().json("""
@@ -106,5 +106,30 @@ class UsvControllerTest {
                                      "community": "com"
                              }
                              """));
+    }
+
+    @Test
+    void updateUsv_shouldUpdateUsv_whenIdExists() throws Exception {
+        repo.save(new Usv("1", "Test-USV", "192.168.1.1", ""));
+        mvc.perform(MockMvcRequestBuilders.put("/api/usv/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                 {
+                                     "name": "Test",
+                                     "address": "192.168.1.2",
+                                     "community": "com"
+                                 }
+                          """))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.content().json("""
+                             {
+                                     "name": "Test",
+                                     "address": "192.168.1.2",
+                                     "community": "com",
+                                     "id": "1"
+                             }
+                             """));
+
     }
 }

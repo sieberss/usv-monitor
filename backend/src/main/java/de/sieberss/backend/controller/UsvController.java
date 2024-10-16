@@ -1,13 +1,13 @@
 package de.sieberss.backend.controller;
 
 import de.sieberss.backend.model.Usv;
+import de.sieberss.backend.model.UsvListResponse;
 import de.sieberss.backend.service.UsvService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -17,8 +17,8 @@ public class UsvController {
     private final UsvService service;
 
     @GetMapping()
-    public List<Usv> getUsvList() {
-        return service.getUsvList();
+    public UsvListResponse getUsvListResponse() {
+        return service.getUsvListResponse();
     }
 
     @GetMapping("/{id}")
@@ -29,6 +29,16 @@ public class UsvController {
     @PostMapping()
     public Usv createUsv(@RequestBody Usv usv) {
         return service.createUsv(usv);
+    }
+
+    @PutMapping("/{id}")
+    public Usv updateUsv(@PathVariable String id, @RequestBody Usv usv) {
+        return service.updateUsv(id, usv);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUsv(@PathVariable String id) {
+        service.deleteUsv(id);
     }
 
     @ExceptionHandler(NoSuchElementException.class)
