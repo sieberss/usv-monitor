@@ -31,6 +31,15 @@ public class UsvController {
         return service.createUsv(usv);
     }
 
+    @PutMapping("/{id}")
+    public Usv updateUsv(@PathVariable String id, @RequestBody Usv usv) {
+        return service.updateUsv(id, usv);
+    }
+    @DeleteMapping("/{id}")
+    public void deleteUsv(@PathVariable String id) {
+        service.deleteUsv(id);
+    }
+
     @ExceptionHandler(NoSuchElementException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorMessage handleNoSuchElementException(NoSuchElementException e) {

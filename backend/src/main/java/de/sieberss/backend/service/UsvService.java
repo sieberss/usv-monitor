@@ -29,4 +29,16 @@ public class UsvService {
     public Usv createUsv(Usv usv) {
         return repo.save(new Usv(idService.generateId(), usv.name(), usv.address(), usv.community()));
     }
+
+    public Usv updateUsv(String id, Usv usv) {
+        if (!repo.existsById(id))
+            throw new NoSuchElementException(id);
+        return repo.save(new Usv(id, usv.name(), usv.address(), usv.community()));
+    }
+
+    public void deleteUsv(String id) {
+        if (!repo.existsById(id))
+            throw new NoSuchElementException(id);
+        repo.deleteById(id);
+    }
 }
