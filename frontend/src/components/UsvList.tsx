@@ -10,6 +10,10 @@ export default function UsvList(props:Readonly<UsvListProps>){
     return(
         <>
             {props.usvs.map((usv) => <UsvCard usv={usv} monitoring={props.monitoring} key={usv.id}/>)}
+
+            {props.monitoring  // add a card for adding a new UPS only when not monitoring
+                || <UsvCard usv={{id:"", name:"", community:"", address:""}} monitoring={false}/>}
+
         </>
     )
 }

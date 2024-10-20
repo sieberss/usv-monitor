@@ -1,51 +1,68 @@
 import {Usv} from "../types/usv.ts";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 
 type EditProps = {
     usv: Usv
+    isNew: boolean
 }
 
 export default function UsvDetails(props: Readonly<EditProps>) {
-    const [editing, setEditing] = useState<boolean>(!props.usv) // start in edit mode only for new entry
+    const [usv, setUsv] = useState<Usv>()          // are we adding a new UPS or displaying an existing one?
+    alert("hello") //usv.id + " " + props.usv.id")
+    const [editing, setEditing] = useState<boolean>(false)      // start in edit mode only for new entry
     const [changedData, setChangedData] = useState<boolean>(false)
     // editing starts with empty input fields for new entry, otherwise filled with old values
-    const nameStartValue = props.usv ? props.usv.name : ""
-    const addressStartValue = props.usv ? props.usv.address : ""
-    const communityStartValue = props.usv ? props.usv.community : ""
-    const [nameInput, setNameInput] = useState<string>(nameStartValue)
-    const [addressInput, setAddressInput] = useState<string>(addressStartValue)
-    const [communityInput, setCommunityInput] = useState<string>(communityStartValue)
-    const [message, setMessage] = useState<string>("") // in case of errors and for warning before deletion
+    const [nameInput, setNameInput] = useState<string>()
+    const [addressInput, setAddressInput] = useState<string>()
+    const [communityInput, setCommunityInput] = useState<string>()
+    const [message, setMessage] = useState<string>("")          // in case of errors and for warning before deletion
     const confirmationMessage: string = "Soll diese Anlage wirklich gelöscht werden? Bestätigen durch erneuten Klick auf den Button"
     const navigate = useNavigate()
+
+    const switchEditMode = (state:boolean) => {
+        setEditing(state)
+        setMessage("")
+    }
+
+    useEffect(() => {
+        resetForm()
+        setUsv(props.usv)
+    }, [props.usv])
+
+    function resetForm() {
+        setNameInput(props.usv.name)
+        setAddressInput(props.usv.address)
+        setCommunityInput(props.usv.community)
+        setChangedData(false)
+    }
 
     function testConnection() {
         alert("Test angestoßen")
     }
 
     function submitEditForm(): void {
-        if (!addressInput) {  // input error
+        if (!addressInput) {    // input error
             setMessage("Fehler: Adresse muss angegeben werden")
             return
         }
-        if (!props.usv) { // adding a new UPS
+        if (!usv.id) {          // adding a new UPS
             axios.post('/api/usv/', {name: nameInput, address: addressInput, community: communityInput})
                 .then(response => {
                     if (response.status == 200) {
-                        setEditing(false)
-                        setMessage("")
+                        switchEditMode(false)
+                        setUsv(response.data)
                     } else setMessage(response.data);
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
                 });
-        } else { // updating an existing UPS
-            axios.put('/api/usv/' + props.usv.id, {name: nameInput, address: addressInput, community: communityInput})
+        } else {                // updating an existing UPS
+            axios.put('/api/usv/' + usv.id, {name: nameInput, address: addressInput, community: communityInput})
                 .then(response => {
                     if (response.status == 200)
-                        setEditing(false)
+                        switchEditMode(false)
                     else setMessage(response.data)
                 })
                 .catch(error => {
@@ -55,7 +72,7 @@ export default function UsvDetails(props: Readonly<EditProps>) {
     }
 
     function deleteUsv(): void {
-        axios.delete('/api/usv/' + props.usv.id)
+        axios.delete('/api/usv/' + usv.id)
             .then(response => {
                 if (response.status == 200)
                     navigate("/")
@@ -73,7 +90,7 @@ export default function UsvDetails(props: Readonly<EditProps>) {
             setMessage(confirmationMessage)
     }
 
-    const cancelButton = <button onClick={() => navigate("/usvdetails/" + props.usv.id)}>
+    const cancelEditButton = <button onClick={() => switchEditMode(false)}>
         Abbrechen
     </button>;
     const backButton = <button onClick={() => navigate("/")}>
@@ -123,12 +140,7 @@ export default function UsvDetails(props: Readonly<EditProps>) {
             && <>
                 <li></li>
                 <li>
-                    <button id={"reset"} type={"button"} onClick={() => {
-                        setNameInput(nameStartValue)
-                        setAddressInput(addressStartValue)
-                        setCommunityInput(communityStartValue)
-                        setChangedData(false)
-                    }}>
+                    <button id={"reset"} type={"button"} onClick={() => {resetForm()}}>
                         Reset
                     </button>
                     <button id={"submit"} type={"button"} onClick={() => submitEditForm()}>
@@ -140,10 +152,10 @@ export default function UsvDetails(props: Readonly<EditProps>) {
     </>;
 
     const editAndDeleteButtons = <>
-        <button onClick={deleteClicked}>
+        <button type={"button"} onClick={deleteClicked}>
             Löschen
         </button>
-        <button onClick={() => {
+        <button type={"button"} onClick={() => {
             setEditing(true);
             setMessage("")
         }}>
@@ -155,26 +167,26 @@ export default function UsvDetails(props: Readonly<EditProps>) {
     return (
         <>
             <h3>Daten der Anlage</h3>
-            {editing ? cancelButton : backButton}
+            {editing ? cancelEditButton : backButton}
             <form name={"edit"}>
                 <ul>
                     <li>
                         <label htmlFor={'name'}>Name:</label>
                         {editing
                             ? nameInputField
-                            : <p>{props.usv.name}</p>}
+                            : <p>{usv.name}</p>}
                     </li>
                     <li>
                         <label htmlFor={'address'}>Adresse (IP oder FQDN):</label>
                         {editing
                             ? addressInputField
-                            : <p>{props.usv.address}</p>}
+                            : <p>{usv.address}</p>}
                     </li>
                     <li>
                         <label htmlFor={'community'}>Community-String:</label>
                         {editing
                             ? communityInputField
-                            : <p>{props.usv.community}</p>}
+                            : <p>{usv.community}</p>}
                     </li>
                     {editing ? testResetAndSubmitButtons : editAndDeleteButtons}
                     <p>{message}</p>
