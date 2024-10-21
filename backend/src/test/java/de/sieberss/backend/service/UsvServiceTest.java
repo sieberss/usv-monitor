@@ -87,6 +87,7 @@ class UsvServiceTest {
     void deleteUsv_shouldDeleteUsvUsv_ifIdExists() {
         when(repo.existsById("1")).thenReturn(true);
         service.deleteUsv("1");
+        verify(repo).existsById("1");
         verify(repo).deleteById("1");
     }
 
