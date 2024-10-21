@@ -5,6 +5,7 @@ import {Usv} from "./types/usv.ts";
 import {Route, Routes} from "react-router-dom";
 import AllUsvsPage from "./pages/AllUsvsPage.tsx";
 import UsvPage from "./pages/UsvPage.tsx";
+import AddUsvPage from "./pages/AddUsvPage.tsx";
 
 function App() {
 
@@ -35,6 +36,7 @@ function App() {
             <Routes>
                 <Route path={"/"} element={<AllUsvsPage usvs={usvs} monitoring={monitoring}/>}/>
                 <Route path={"/usvdetails/:id"} element={<UsvPage usvUpdate={usvUpdateOccured}/>} />
+                <Route path={"/newusv"} element={<AddUsvPage usvUpdate={usvUpdateOccured}/>}/>
             </Routes>
         </>
     )
