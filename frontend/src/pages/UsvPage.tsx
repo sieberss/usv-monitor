@@ -11,9 +11,8 @@ export default function UsvPage(props:Readonly<Props>) {
     const params = useParams()
     const id: string | undefined = params.id
     const [usv, setUsv] = useState<Usv>({id: "new", name: "", address: "", community: ""})
-console.log(id)
+
     useEffect(() => {
-        console.log(id!=="new")
         if (id!=="new") {
             axios.get('/api/usv/' + id)
                 .then(response => {
@@ -25,12 +24,8 @@ console.log(id)
         }
     }, [id])
 
-console.log(usv)
 return (
-    <>
-        <UsvContentDisplayAndEditing usv={usv} usvUpdate={props.usvUpdate}/>
-
-    </>
+    <UsvContentDisplayAndEditing usv={usv} usvUpdate={props.usvUpdate}/>
 )
 
 }
