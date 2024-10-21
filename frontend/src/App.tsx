@@ -3,8 +3,8 @@ import './App.css'
 import axios from "axios";
 import {Usv} from "./types/usv.ts";
 import {Route, Routes} from "react-router-dom";
-import UsvOverview from "./pages/UsvOverview.tsx";
-import UsvDetailPage from "./pages/UsvDetailPage.tsx";
+import AllUsvsPage from "./pages/AllUsvsPage.tsx";
+import SingleUsvPage from "./pages/SingleUsvPage.tsx";
 
 function App() {
   const [usvs, setUsvs] = useState<Usv[]>([])
@@ -29,8 +29,8 @@ function App() {
 
      <>
          <Routes>
-             <Route path={"/"} element={<UsvOverview usvs={usvs} monitoring={monitoring}/>} />
-             <Route path={"/usvdetails/:id"} element={<UsvDetailPage/>} />
+             <Route path={"/"} element={<AllUsvsPage usvs={usvs} monitoring={monitoring}/>} />
+             <Route path={"/usvdetails/:id"} element={<SingleUsvPage/>} />
          </Routes>
      </>
   )

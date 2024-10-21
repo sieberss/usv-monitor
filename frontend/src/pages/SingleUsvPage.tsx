@@ -4,18 +4,16 @@ import {Usv} from "../types/usv.ts";
 import UsvDetails from "../components/UsvDetails.tsx";
 import {useParams} from "react-router-dom";
 
-export default function UsvDetailPage() {
+export default function SingleUsvPage() {
     const params = useParams()
     const id: string | undefined = params.id
     const [usv, setUsv] = useState<Usv>({id: "", name: "", address: "", community: ""})
 
     useEffect(() => {
-        if (id) {
+        if (id!=="new") {
             axios.get('/api/usv/' + id)
                 .then(response => {
                     setUsv(response.data)
-                    console.log(response.data)
-                    console.log(usv);
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
@@ -26,7 +24,7 @@ export default function UsvDetailPage() {
 
 return (
     <>
-        <UsvDetails usv={usv} isNew={!!id}/>
+        <UsvDetails usv={usv}/>
     </>
 )
 

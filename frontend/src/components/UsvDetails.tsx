@@ -5,12 +5,11 @@ import {useNavigate} from "react-router-dom";
 
 type EditProps = {
     usv: Usv
-    isNew: boolean
 }
 
 export default function UsvDetails(props: Readonly<EditProps>) {
-    const [usv, setUsv] = useState<Usv>()          // are we adding a new UPS or displaying an existing one?
-    alert("hello") //usv.id + " " + props.usv.id")
+    const [usv, setUsv] = useState<Usv>({id:"new", name:"", address:"", community:""})          // are we adding a new UPS or displaying an existing one?
+    //alert("hello") //usv.id + " " + props.usv.id")
     const [editing, setEditing] = useState<boolean>(false)      // start in edit mode only for new entry
     const [changedData, setChangedData] = useState<boolean>(false)
     // editing starts with empty input fields for new entry, otherwise filled with old values
@@ -27,14 +26,19 @@ export default function UsvDetails(props: Readonly<EditProps>) {
     }
 
     useEffect(() => {
-        resetForm()
+        setInputStartValues()
         setUsv(props.usv)
-    }, [props.usv])
+        setEditing(true)
+        // alert(!props.usv.id)
+    }, [])
 
-    function resetForm() {
+    function setInputStartValues(){
         setNameInput(props.usv.name)
         setAddressInput(props.usv.address)
         setCommunityInput(props.usv.community)
+    }
+    function resetForm() {
+        setInputStartValues()
         setChangedData(false)
     }
 
@@ -47,7 +51,7 @@ export default function UsvDetails(props: Readonly<EditProps>) {
             setMessage("Fehler: Adresse muss angegeben werden")
             return
         }
-        if (!usv.id) {          // adding a new UPS
+        if (usv.id==="new") {          // adding a new UPS
             axios.post('/api/usv/', {name: nameInput, address: addressInput, community: communityInput})
                 .then(response => {
                     if (response.status == 200) {

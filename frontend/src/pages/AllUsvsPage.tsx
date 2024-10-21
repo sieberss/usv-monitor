@@ -6,7 +6,7 @@ type OverviewProps = {
     monitoring: boolean
 }
 
-export default function UsvOverview(props:Readonly<OverviewProps>){
+export default function AllUsvsPage(props:Readonly<OverviewProps>){
     return(
         <>
             {props.monitoring ? <h3> Monitoring aktiv </h3> : <h3> kein Monitoring</h3>}
