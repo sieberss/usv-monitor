@@ -7,39 +7,46 @@ type EditProps = {
     usv: Usv
 }
 
-export default function UsvDetails(props: Readonly<EditProps>) {
-    const [usv, setUsv] = useState<Usv>({id:"new", name:"", address:"", community:""})          // are we adding a new UPS or displaying an existing one?
-    //alert("hello") //usv.id + " " + props.usv.id")
-    const [editing, setEditing] = useState<boolean>(false)      // start in edit mode only for new entry
+export default function UsvContentDisplayAndEditing(props: Readonly<EditProps>) {
+
+    const [usv, setUsv] = useState<Usv>(props.usv)
+    const [editing, setEditing] = useState<boolean>(props.usv.id==="new")      // start in edit mode only for new entry
     const [changedData, setChangedData] = useState<boolean>(false)
     // editing starts with empty input fields for new entry, otherwise filled with old values
-    const [nameInput, setNameInput] = useState<string>()
-    const [addressInput, setAddressInput] = useState<string>()
-    const [communityInput, setCommunityInput] = useState<string>()
+    const [nameInput, setNameInput] = useState<string>(props.usv.name)
+    const [addressInput, setAddressInput] = useState<string>(props.usv.address)
+    const [communityInput, setCommunityInput] = useState<string>(props.usv.community)
     const [message, setMessage] = useState<string>("")          // in case of errors and for warning before deletion
     const confirmationMessage: string = "Soll diese Anlage wirklich gelöscht werden? Bestätigen durch erneuten Klick auf den Button"
     const navigate = useNavigate()
 
     const switchEditMode = (state:boolean) => {
         setEditing(state)
+        setChangedData(false)
         setMessage("")
     }
 
     useEffect(() => {
-        setInputStartValues()
         setUsv(props.usv)
-        setEditing(true)
-        // alert(!props.usv.id)
-    }, [])
-
-    function setInputStartValues(){
+        setEditing(props.usv.id === "new")
         setNameInput(props.usv.name)
         setAddressInput(props.usv.address)
         setCommunityInput(props.usv.community)
+    }, [props.usv])
+
+    function setInputStartValues(){
+        setNameInput(usv.name)
+        setAddressInput(usv.address)
+        setCommunityInput(usv.community)
     }
     function resetForm() {
         setInputStartValues()
         setChangedData(false)
+    }
+
+    function cancelEditing(){
+        if (usv.id==="new") navigate("/")
+        else switchEditMode(false)
     }
 
     function testConnection() {
@@ -51,8 +58,9 @@ export default function UsvDetails(props: Readonly<EditProps>) {
             setMessage("Fehler: Adresse muss angegeben werden")
             return
         }
-        if (usv.id==="new") {          // adding a new UPS
-            axios.post('/api/usv/', {name: nameInput, address: addressInput, community: communityInput})
+        if (usv.id==="new") {
+            alert("posting new object")// adding a new UPS
+            axios.post('/api/usv', {name: nameInput, address: addressInput, community: communityInput})
                 .then(response => {
                     if (response.status == 200) {
                         switchEditMode(false)
@@ -94,13 +102,6 @@ export default function UsvDetails(props: Readonly<EditProps>) {
             setMessage(confirmationMessage)
     }
 
-    const cancelEditButton = <button onClick={() => switchEditMode(false)}>
-        Abbrechen
-    </button>;
-    const backButton = <button onClick={() => navigate("/")}>
-        Zurück
-    </button>;
-
     const nameInputField = <input
         id={'name'}
         type={'text'}
@@ -134,44 +135,17 @@ export default function UsvDetails(props: Readonly<EditProps>) {
         }}
     />;
 
-    const testResetAndSubmitButtons = <>
-        <li>
-            <button id={"testbutton"} type={"button"}
-                    onClick={() => testConnection()}>Verbindungstest
-            </button>
-        </li>
-        {changedData // reset and submit button only visible after change
-            && <>
-                <li></li>
-                <li>
-                    <button id={"reset"} type={"button"} onClick={() => {resetForm()}}>
-                        Reset
-                    </button>
-                    <button id={"submit"} type={"button"} onClick={() => submitEditForm()}>
-                        Speichern
-                    </button>
-                </li>
-            </>
-        }
-    </>;
-
-    const editAndDeleteButtons = <>
-        <button type={"button"} onClick={deleteClicked}>
-            Löschen
-        </button>
-        <button type={"button"} onClick={() => {
-            setEditing(true);
-            setMessage("")
-        }}>
-            Bearbeiten
-        </button>
-    </>;
-
 
     return (
         <>
             <h3>Daten der Anlage</h3>
-            {editing ? cancelEditButton : backButton}
+            <button onClick={() => cancelEditing()} hidden={!editing}>
+                Abbrechen
+            </button>
+            <button onClick={() => navigate("/")} hidden={editing}>
+                Zurück
+            </button>
+
             <form name={"edit"}>
                 <ul>
                     <li>
@@ -188,11 +162,35 @@ export default function UsvDetails(props: Readonly<EditProps>) {
                     </li>
                     <li>
                         <label htmlFor={'community'}>Community-String:</label>
+                        Test{usv.community}
                         {editing
                             ? communityInputField
                             : <p>{usv.community}</p>}
                     </li>
-                    {editing ? testResetAndSubmitButtons : editAndDeleteButtons}
+                    <li>
+                        <button id={"testbutton"} type={"button"} hidden={!editing} onClick={() => testConnection()}>
+                            Verbindungstest
+                        </button>
+                    </li>
+                    <li></li>
+                    <li>
+                        <button id={"reset"} type={"button"} onClick={() => {
+                            resetForm()
+                        }} hidden={!changedData}>
+                            Reset
+                        </button>
+                        <button id={"submit"} type={"button"} onClick={() => submitEditForm()} hidden={!changedData}>
+                            Speichern
+                        </button>
+                    </li>
+                    <li>
+                        <button type={"button"} onClick={deleteClicked} hidden={editing}>
+                            Löschen
+                        </button>
+                        <button type={"button"} hidden={editing} onClick={() => switchEditMode(true)}>
+                            Bearbeiten
+                        </button>
+                    </li>
                     <p>{message}</p>
                 </ul>
             </form>
