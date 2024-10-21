@@ -4,7 +4,10 @@ import {Usv} from "../types/usv.ts";
 import UsvContentDisplayAndEditing from "../components/UsvContentDisplayAndEditing.tsx";
 import {useParams} from "react-router-dom";
 
-export default function UsvPage() {
+type Props = {
+    usvUpdate : () => void
+}
+export default function UsvPage(props:Readonly<Props>) {
     const params = useParams()
     const id: string | undefined = params.id
     const [usv, setUsv] = useState<Usv>({id: "new", name: "", address: "", community: ""})
@@ -25,7 +28,7 @@ console.log(id)
 console.log(usv)
 return (
     <>
-        <UsvContentDisplayAndEditing usv={usv}/>
+        <UsvContentDisplayAndEditing usv={usv} usvUpdate={props.usvUpdate}/>
 
     </>
 )

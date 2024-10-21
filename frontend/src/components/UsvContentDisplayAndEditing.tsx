@@ -5,7 +5,9 @@ import {useNavigate} from "react-router-dom";
 
 type EditProps = {
     usv: Usv
+    usvUpdate: () => void
 }
+
 
 export default function UsvContentDisplayAndEditing(props: Readonly<EditProps>) {
 
@@ -26,6 +28,12 @@ export default function UsvContentDisplayAndEditing(props: Readonly<EditProps>) 
         setMessage("")
     }
 
+    function backToList(updated:boolean) {
+        switchEditMode(false)
+        if (updated) props.usvUpdate()
+        navigate("/")
+    }
+
     useEffect(() => {
         setUsv(props.usv)
         setEditing(props.usv.id === "new")
@@ -44,11 +52,6 @@ export default function UsvContentDisplayAndEditing(props: Readonly<EditProps>) 
         setChangedData(false)
     }
 
-    function cancelEditing(){
-        if (usv.id==="new") navigate("/")
-        else switchEditMode(false)
-    }
-
     function testConnection() {
         alert("Test angestoßen")
     }
@@ -59,13 +62,10 @@ export default function UsvContentDisplayAndEditing(props: Readonly<EditProps>) 
             return
         }
         if (usv.id==="new") {
-            alert("posting new object")// adding a new UPS
             axios.post('/api/usv', {name: nameInput, address: addressInput, community: communityInput})
                 .then(response => {
-                    if (response.status == 200) {
-                        switchEditMode(false)
-                        setUsv(response.data)
-                    } else setMessage(response.data);
+                    if (response.status == 200) backToList(true);
+                    else setMessage(response.data);
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
@@ -73,8 +73,9 @@ export default function UsvContentDisplayAndEditing(props: Readonly<EditProps>) 
         } else {                // updating an existing UPS
             axios.put('/api/usv/' + usv.id, {name: nameInput, address: addressInput, community: communityInput})
                 .then(response => {
-                    if (response.status == 200)
-                        switchEditMode(false)
+                    if (response.status == 200){
+                        backToList(true)
+                    }
                     else setMessage(response.data)
                 })
                 .catch(error => {
@@ -86,8 +87,9 @@ export default function UsvContentDisplayAndEditing(props: Readonly<EditProps>) 
     function deleteUsv(): void {
         axios.delete('/api/usv/' + usv.id)
             .then(response => {
-                if (response.status == 200)
-                    navigate("/")
+                if (response.status == 200) {
+                    backToList(true)
+                }
                 else setMessage(response.data)
             })
             .catch(error => {
@@ -139,10 +141,7 @@ export default function UsvContentDisplayAndEditing(props: Readonly<EditProps>) 
     return (
         <>
             <h3>Daten der Anlage</h3>
-            <button onClick={() => cancelEditing()} hidden={!editing}>
-                Abbrechen
-            </button>
-            <button onClick={() => navigate("/")} hidden={editing}>
+            <button onClick={() => backToList(false)} >
                 Zurück
             </button>
 
@@ -162,7 +161,6 @@ export default function UsvContentDisplayAndEditing(props: Readonly<EditProps>) 
                     </li>
                     <li>
                         <label htmlFor={'community'}>Community-String:</label>
-                        Test{usv.community}
                         {editing
                             ? communityInputField
                             : <p>{usv.community}</p>}
