@@ -21,7 +21,7 @@ public class CredentialsService {
     private final EncryptionService encryptionService;
     private final String key = System.getenv("ENCRYPT_KEY");
 
-    private String encrypt(String value) {
+    private String encryptPassword(String value) {
         try {
             return encryptionService.encrypt(value, key);
         } catch (Exception e) {
@@ -29,10 +29,11 @@ public class CredentialsService {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        System.out.println(new EncryptionService().generateKey());
+    private Credentials encryptCredentials(CredentialsWithoutEncryption unencrypted) {
+        return new Credentials(unencrypted.id(), unencrypted.user(), encryptPassword(unencrypted.password()));
     }
-    private String decrypt(String value) {
+
+     private String decryptPassword(String value) {
         try {
             return encryptionService.decrypt(value, key);
         }
@@ -41,36 +42,38 @@ public class CredentialsService {
         }
     }
 
+    private CredentialsWithoutEncryption decryptCredentials(Credentials encrypted) {
+        return new CredentialsWithoutEncryption(encrypted.id(), encrypted.user(), decryptPassword(encrypted.password()));
+    }
+
 
     public List<CredentialsWithoutEncryption> getCredentialsList() {
         return repo.findAll()
                 .stream()
-                .map(c -> {
-                    try {
-                        return new CredentialsWithoutEncryption(c.id(), c.user(), decrypt(c.password()));
-                    } catch (Exception e) {
-                        throw new EncryptionException(e.getMessage());
-                    }
-                })
+                .map(this::decryptCredentials)
                 .toList();
     }
 
     public CredentialsWithoutEncryption getCredentialsById(String id) {
         Credentials dbObject = repo.findById(id).orElseThrow(()->new NoSuchElementException(id));
-        return new CredentialsWithoutEncryption(dbObject.id(), dbObject.user(), decrypt(dbObject.password()));
+        return decryptCredentials(dbObject);
     }
 
     public CredentialsWithoutEncryption createCredentials(CredentialsWithoutEncryption submitted) {
-        Credentials dbObject= repo.save(new Credentials(
-                idService.generateId(), submitted.user(), encrypt(submitted.password())));
-        return new CredentialsWithoutEncryption(dbObject.id(), submitted.user(), submitted.password());
+        // add id to submitted data
+        CredentialsWithoutEncryption unencrypted =
+                new CredentialsWithoutEncryption(idService.generateId(), submitted.user(), submitted.password());
+        // store encrypted version in database, return unencrypted version
+        repo.save(encryptCredentials(unencrypted));
+        return unencrypted;
     }
 
     public CredentialsWithoutEncryption updateCredentials(String id, CredentialsWithoutEncryption submitted) {
         if (!repo.existsById(id))
             throw new NoSuchElementException(id);
-        repo.save(new Credentials(id, submitted.user(), encrypt(submitted.password())));
-        return new CredentialsWithoutEncryption(id, submitted.user(), submitted.password());
+        // store encrypted version in database, return unencrypted version
+        repo.save(encryptCredentials(submitted));
+        return submitted;
     }
 
     public void deleteCredentials(String id) {
