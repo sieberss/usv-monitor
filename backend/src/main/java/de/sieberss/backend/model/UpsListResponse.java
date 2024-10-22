@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class UsvListResponse {
+public class UpsListResponse {
     private final boolean monitoring;
-    private final List<Usv> uvs;
+    private final List<Ups> uvs;
 }

@@ -1,23 +1,23 @@
 import {useEffect, useState} from 'react'
 import './App.css'
 import axios from "axios";
-import {Usv} from "./types/usv.ts";
+import {Ups} from "./types/ups.ts";
 import {Route, Routes} from "react-router-dom";
-import AllUsvsPage from "./pages/AllUsvsPage.tsx";
-import UsvPage from "./pages/UsvPage.tsx";
+import AllUpsesPage from "./pages/AllUpsesPage.tsx";
+import UpsPage from "./pages/UpsPage.tsx";
 
 function App() {
 
     const [monitoring, setMonitoring] = useState<boolean>(false)
 
-    const [usvs, setUsvs] = useState<Usv[]>([])
-    const [usvUpdates, setUsvUpdates] = useState<number>(0)         // keeps track of crud operations in other components
-    const usvUpdateOccured = () => setUsvUpdates(usvUpdates + 1)    // passed to components that do crud operations
+    const [upses, setUpses] = useState<Ups[]>([])
+    const [upsUpdates, setUpsUpdates] = useState<number>(0)         // keeps track of crud operations in other components
+    const upsUpdateOccured = () => setUpsUpdates(upsUpdates + 1)    // passed to components that do crud operations
 
-    const getAllUsvs = () => {
-        axios.get('/api/usv')
+    const getAllUpses = () => {
+        axios.get('/api/ups')
             .then(response => {
-                setUsvs(response.data);
+                setUpses(response.data);
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
@@ -25,16 +25,16 @@ function App() {
     };
 
     useEffect(() => {
-        getAllUsvs();
-    }, [usvUpdates])
+        getAllUpses();
+    }, [upsUpdates])
 
 
     return (
 
         <>
             <Routes>
-                <Route path={"/"} element={<AllUsvsPage usvs={usvs} monitoring={monitoring}/>}/>
-                <Route path={"/usvdetails/:id"} element={<UsvPage usvUpdate={usvUpdateOccured}/>} />
+                <Route path={"/"} element={<AllUpsesPage upses={upses} monitoring={monitoring}/>}/>
+                <Route path={"/upsdetails/:id"} element={<UpsPage upsUpdate={upsUpdateOccured}/>} />
             </Routes>
         </>
     )

@@ -1,9 +1,9 @@
-# usv-monitor
+# ups-monitor
 
 ## Datenstruktur
 - Status: POWER_ON, POWER_OFF, NO_CONNECTION, ALARM, SHUTDOWN
-- Usv: id, name, address, community
-- UsvResponse: usv, status, seit wann
+- Ups: id, name, address, community
+- UsvResponse: ups, status, seit wann
 - Server: id, name, address, username, password, lastShutdown
 - Event: id, status, restlaufzeit, entity
 

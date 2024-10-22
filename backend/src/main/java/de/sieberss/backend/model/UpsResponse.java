@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UsvResponse {
-    private Usv usv;
+public class UpsResponse {
+    private Ups ups;
     private Event latestEvent;
 }

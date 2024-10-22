@@ -1,7 +1,7 @@
 package de.sieberss.backend.controller;
 
-import de.sieberss.backend.model.Usv;
-import de.sieberss.backend.model.UsvRepo;
+import de.sieberss.backend.model.Ups;
+import de.sieberss.backend.model.UpsRepo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -15,24 +15,24 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
-class UsvControllerTest {
+class UpsControllerTest {
 
     @Autowired
     private MockMvc mvc;
     @Autowired
-    private UsvRepo repo;
+    private UpsRepo repo;
 
     @Test
-    void getAllUsvs_shouldReturnListWithOneObject_whenOneObjectWasSavedInRepository() throws Exception {
-        Usv usv = new Usv("1", "Test-USV", "192.168.1.1", "");
-        repo.save(usv);
-        mvc.perform(MockMvcRequestBuilders.get("/api/usv"))
+    void getAllUpss_shouldReturnListWithOneObject_whenOneObjectWasSavedInRepository() throws Exception {
+        Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
+        repo.save(ups);
+        mvc.perform(MockMvcRequestBuilders.get("/api/ups"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(
                         """
                                 [
                                  {
-                                     "name": "Test-USV",
+                                     "name": "Test-UPS",
                                      "id": "1",
                                      "address": "192.168.1.1",
                                      "community": ""
@@ -43,8 +43,8 @@ class UsvControllerTest {
     }
 
     @Test
-    void getAllUsvs_shouldReturnEmptyList_initially() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/api/usv"))
+    void getAllUpss_shouldReturnEmptyList_initially() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/api/ups"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(
                         """
@@ -56,14 +56,14 @@ class UsvControllerTest {
     }
 
     @Test
-    void getUsvById_shouldReturnUsv_whenIdExists() throws Exception {
-        Usv usv = new Usv("1", "Test-USV", "192.168.1.1", "");
-        repo.save(usv);
-        mvc.perform(MockMvcRequestBuilders.get("/api/usv/1"))
+    void getUpsById_shouldReturnUps_whenIdExists() throws Exception {
+        Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
+        repo.save(ups);
+        mvc.perform(MockMvcRequestBuilders.get("/api/ups/1"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json("""
                                  {
-                                     "name": "Test-USV",
+                                     "name": "Test-UPS",
                                      "id": "1",
                                      "address": "192.168.1.1",
                                      "community": ""
@@ -73,8 +73,8 @@ class UsvControllerTest {
     }
 
     @Test
-    void getUsvById_shouldTriggerErrorMessage_whenIdDoesNotExist() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/api/usv/1"))
+    void getUpsById_shouldTriggerErrorMessage_whenIdDoesNotExist() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/api/ups/1"))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.content().json("""
                                      {
@@ -87,12 +87,12 @@ class UsvControllerTest {
     }
 
     @Test
-    void createUsv_shouldReturnSubmittedObjectWithNewId() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/api/usv")
+    void createUps_shouldReturnSubmittedObjectWithNewId() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/api/ups")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                                  {
-                                     "name": "Test-USV",
+                                     "name": "Test-UPS",
                                      "address": "192.168.1.1",
                                      "community": "com"
                                  }
@@ -101,7 +101,7 @@ class UsvControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
                 .andExpect(MockMvcResultMatchers.content().json("""
                              {
-                                     "name": "Test-USV",
+                                     "name": "Test-UPS",
                                      "address": "192.168.1.1",
                                      "community": "com"
                              }
@@ -109,9 +109,9 @@ class UsvControllerTest {
     }
 
     @Test
-    void updateUsv_shouldUpdateUsv_whenIdExists() throws Exception {
-        repo.save(new Usv("1", "Test-USV", "192.168.1.1", ""));
-        mvc.perform(MockMvcRequestBuilders.put("/api/usv/1")
+    void updateUps_shouldUpdateUps_whenIdExists() throws Exception {
+        repo.save(new Ups("1", "Test-UPS", "192.168.1.1", ""));
+        mvc.perform(MockMvcRequestBuilders.put("/api/ups/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                  {
@@ -133,8 +133,8 @@ class UsvControllerTest {
     }
 
     @Test
-    void updateUsv_shouldTriggerErrorMessage_whenIdDoesNotExist() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.put("/api/usv/1")
+    void updateUps_shouldTriggerErrorMessage_whenIdDoesNotExist() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.put("/api/ups/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                                  {
@@ -155,12 +155,12 @@ class UsvControllerTest {
     }
 
     @Test
-    void deleteUsv_shouldDeleteUsv_whenIdExists() throws Exception {
-        repo.save(new Usv("1", "Test-USV", "192.168.1.1", ""));
-        repo.save(new Usv("2", "Test 2", "192.168.1.2", "com"));
-        mvc.perform(MockMvcRequestBuilders.delete("/api/usv/1"))
+    void deleteUps_shouldDeleteUps_whenIdExists() throws Exception {
+        repo.save(new Ups("1", "Test-UPS", "192.168.1.1", ""));
+        repo.save(new Ups("2", "Test 2", "192.168.1.2", "com"));
+        mvc.perform(MockMvcRequestBuilders.delete("/api/ups/1"))
             .andExpect(MockMvcResultMatchers.status().isOk());
-        mvc.perform(MockMvcRequestBuilders.get("/api/usv"))
+        mvc.perform(MockMvcRequestBuilders.get("/api/ups"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json("""
                                   [{
@@ -174,8 +174,8 @@ class UsvControllerTest {
     }
 
     @Test
-    void deleteUsv_shouldTriggerErrorMessage_whenIdDoesNotExist() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.delete("/api/usv/1"))
+    void deleteUps_shouldTriggerErrorMessage_whenIdDoesNotExist() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.delete("/api/ups/1"))
             .andExpect(MockMvcResultMatchers.status().isNotFound())
             .andExpect(MockMvcResultMatchers.content().json("""
                                      {
