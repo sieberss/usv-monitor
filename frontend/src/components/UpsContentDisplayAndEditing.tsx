@@ -153,7 +153,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                             : <p>{ups.name}</p>}
                     </li>
                     <li>
-                        <label htmlFor={'address'}>Adress (IP or FQDN):</label>
+                        <label htmlFor={'address'}>Address (IP or FQDN):</label>
                         {editing
                             ? addressInputField
                             : <p>{ups.address}</p>}
