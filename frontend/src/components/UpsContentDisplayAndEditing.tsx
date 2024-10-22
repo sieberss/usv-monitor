@@ -18,7 +18,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
     const [addressInput, setAddressInput] = useState<string>("")
     const [communityInput, setCommunityInput] = useState<string>("")
     const [message, setMessage] = useState<string>("")          // in case of errors and for warning before deletion
-    const confirmationMessage: string = "Soll diese Anlage wirklich gelöscht werden? Bestätigen durch erneuten Klick auf den Button"
+    const confirmationMessage: string = "Really delete? Reclick button to confirm."
     const navigate = useNavigate()
 
     const switchEditMode = (state:boolean) => {
@@ -184,7 +184,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                         <button type={"button"} onClick={deleteClicked} hidden={editing}>
                             Delete
                         </button>
-                        <button type={"button"} hidden={editing} onClick={() => switchEditMode(true)}>
+                        <button type={"button"} onClick={() => switchEditMode(true)} hidden={editing || message===confirmationMessage}>
                             Edit
                         </button>
                     </li>
