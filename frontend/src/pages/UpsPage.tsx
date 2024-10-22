@@ -1,22 +1,22 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {Usv} from "../types/usv.ts";
-import UsvContentDisplayAndEditing from "../components/UsvContentDisplayAndEditing.tsx";
+import {Ups} from "../types/ups.ts";
+import UpsContentDisplayAndEditing from "../components/UpsContentDisplayAndEditing.tsx";
 import {useParams} from "react-router-dom";
 
 type Props = {
-    usvUpdate : () => void
+    upsUpdate : () => void
 }
-export default function UsvPage(props:Readonly<Props>) {
+export default function UpsPage(props:Readonly<Props>) {
     const params = useParams()
     const id: string | undefined = params.id
-    const [usv, setUsv] = useState<Usv>({id: "new", name: "", address: "", community: ""})
+    const [ups, setUps] = useState<Ups>({id: "new", name: "", address: "", community: ""})
 
     useEffect(() => {
         if (id!=="new") {
-            axios.get('/api/usv/' + id)
+            axios.get('/api/ups/' + id)
                 .then(response => {
-                    setUsv(response.data)
+                    setUps(response.data)
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
@@ -25,7 +25,7 @@ export default function UsvPage(props:Readonly<Props>) {
     }, [id])
 
 return (
-    <UsvContentDisplayAndEditing usv={usv} usvUpdate={props.usvUpdate}/>
+    <UpsContentDisplayAndEditing ups={ups} upsUpdate={props.upsUpdate}/>
 )
 
 }

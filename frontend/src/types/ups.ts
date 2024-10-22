@@ -1,4 +1,4 @@
-export  type Usv = {
+export  type Ups = {
     id: string,
     name: string,
     address: string,

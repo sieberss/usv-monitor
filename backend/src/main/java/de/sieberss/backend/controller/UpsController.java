@@ -1,7 +1,7 @@
 package de.sieberss.backend.controller;
 
-import de.sieberss.backend.model.Usv;
-import de.sieberss.backend.service.UsvService;
+import de.sieberss.backend.model.Ups;
+import de.sieberss.backend.service.UpsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -11,33 +11,33 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/api/usv")
+@RequestMapping("/api/ups")
 @RequiredArgsConstructor
-public class UsvController {
-    private final UsvService service;
+public class UpsController {
+    private final UpsService service;
 
     @GetMapping()
-    public List<Usv> getUsvList() {
-        return service.getUsvList();
+    public List<Ups> getUpsList() {
+        return service.getUpsList();
     }
 
     @GetMapping("/{id}")
-    public Usv getUsvById(@PathVariable String id) {
-        return service.getUsvById(id);
+    public Ups getUpsById(@PathVariable String id) {
+        return service.getUpsById(id);
     }
 
     @PostMapping()
-    public Usv createUsv(@RequestBody Usv usv) {
-        return service.createUsv(usv);
+    public Ups createUps(@RequestBody Ups ups) {
+        return service.createUps(ups);
     }
 
     @PutMapping("/{id}")
-    public Usv updateUsv(@PathVariable String id, @RequestBody Usv usv) {
-        return service.updateUsv(id, usv);
+    public Ups updateUps(@PathVariable String id, @RequestBody Ups ups) {
+        return service.updateUps(id, ups);
     }
     @DeleteMapping("/{id}")
-    public void deleteUsv(@PathVariable String id) {
-        service.deleteUsv(id);
+    public void deleteUps(@PathVariable String id) {
+        service.deleteUps(id);
     }
 
     @ExceptionHandler(NoSuchElementException.class)
