@@ -52,12 +52,12 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
     }
 
     function testConnection() {
-        alert("Test angestoßen")
+        alert("Test initiated")
     }
 
     function submitEditForm(): void {
         if (!addressInput) {    // input error
-            setMessage("Fehler: Adresse muss angegeben werden")
+            setMessage("Error: Address is mandatory")
             return
         }
         if (ups.id==="new") {
@@ -139,9 +139,9 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
 
     return (
         <>
-            <h3>Daten der Anlage</h3>
+            <h3>Details of UPS</h3>
             <button onClick={() => backToList(false)} >
-                Zurück
+                Back
             </button>
 
             <form name={"edit"}>
@@ -153,20 +153,20 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                             : <p>{ups.name}</p>}
                     </li>
                     <li>
-                        <label htmlFor={'address'}>Adresse (IP oder FQDN):</label>
+                        <label htmlFor={'address'}>Adress (IP or FQDN):</label>
                         {editing
                             ? addressInputField
                             : <p>{ups.address}</p>}
                     </li>
                     <li>
-                        <label htmlFor={'community'}>Community-String:</label>
+                        <label htmlFor={'community'}>Community String:</label>
                         {editing
                             ? communityInputField
                             : <p>{ups.community}</p>}
                     </li>
                     <li>
                         <button id={"testbutton"} type={"button"} hidden={!editing} onClick={() => testConnection()}>
-                            Verbindungstest
+                            Connection Test
                         </button>
                     </li>
                     <li></li>
@@ -177,15 +177,15 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                             Reset
                         </button>
                         <button id={"submit"} type={"button"} onClick={() => submitEditForm()} hidden={!changedData}>
-                            Speichern
+                            Save
                         </button>
                     </li>
                     <li>
                         <button type={"button"} onClick={deleteClicked} hidden={editing}>
-                            Löschen
+                            Delete
                         </button>
                         <button type={"button"} hidden={editing} onClick={() => switchEditMode(true)}>
-                            Bearbeiten
+                            Edit
                         </button>
                     </li>
                     <p>{message}</p>
