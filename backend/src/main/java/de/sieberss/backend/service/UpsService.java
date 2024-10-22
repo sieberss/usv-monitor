@@ -2,7 +2,8 @@ package de.sieberss.backend.service;
 
 import de.sieberss.backend.model.Ups;
 import de.sieberss.backend.model.UpsListResponse;
-import de.sieberss.backend.model.UpsRepo;
+import de.sieberss.backend.repo.UpsRepo;
+import de.sieberss.backend.utils.IdService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,13 +28,14 @@ public class UpsService {
     }
 
     public Ups createUps(Ups ups) {
-        return repo.save(new Ups(idService.generateId(), ups.name(), ups.address(), ups.community()));
+        return repo.save(
+                new Ups(idService.generateId(), ups.name(), ups.address(), ups.community()));
     }
 
     public Ups updateUps(String id, Ups ups) {
         if (!repo.existsById(id))
             throw new NoSuchElementException(id);
-        return repo.save(new Ups(id, ups.name(), ups.address(), ups.community()));
+        return repo.save(ups);
     }
 
     public void deleteUps(String id) {

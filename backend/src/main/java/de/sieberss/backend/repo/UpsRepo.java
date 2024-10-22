@@ -1,5 +1,6 @@
-package de.sieberss.backend.model;
+package de.sieberss.backend.repo;
 
+import de.sieberss.backend.model.Ups;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

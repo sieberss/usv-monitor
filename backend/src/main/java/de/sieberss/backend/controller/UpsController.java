@@ -43,7 +43,7 @@ public class UpsController {
     @ExceptionHandler(NoSuchElementException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorMessage handleNoSuchElementException(NoSuchElementException e) {
-        return new ErrorMessage("Not found", e.getMessage(), Instant.now());
+        return new ErrorMessage("UPS not found", e.getMessage(), Instant.now());
     }
 
 }

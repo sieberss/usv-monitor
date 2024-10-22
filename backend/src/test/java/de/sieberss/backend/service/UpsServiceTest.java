@@ -1,7 +1,8 @@
 package de.sieberss.backend.service;
 
 import de.sieberss.backend.model.Ups;
-import de.sieberss.backend.model.UpsRepo;
+import de.sieberss.backend.repo.UpsRepo;
+import de.sieberss.backend.utils.IdService;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.*;
 

@@ -1,7 +1,7 @@
 package de.sieberss.backend.controller;
 
 import de.sieberss.backend.model.Ups;
-import de.sieberss.backend.model.UpsRepo;
+import de.sieberss.backend.repo.UpsRepo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
