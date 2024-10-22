@@ -33,7 +33,6 @@ class UpsControllerTest {
                                 [
                                  {
                                      "name": "Test-UPS",
-                                     "id": "1",
                                      "address": "192.168.1.1",
                                      "community": ""
                                  }
@@ -78,7 +77,7 @@ class UpsControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.content().json("""
                                      {
-                                     "message": "Not found",
+                                     "message": "UPS not found",
                                      "id": "1"
                                      }
                                      """
@@ -115,6 +114,7 @@ class UpsControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                  {
+                                     "id": "1",
                                      "name": "Test",
                                      "address": "192.168.1.2",
                                      "community": "com"
@@ -146,7 +146,7 @@ class UpsControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.content().json("""
                                      {
-                                     "message": "Not found",
+                                     "message": "UPS not found",
                                      "id": "1"
                                      }
                                      """
@@ -179,7 +179,7 @@ class UpsControllerTest {
             .andExpect(MockMvcResultMatchers.status().isNotFound())
             .andExpect(MockMvcResultMatchers.content().json("""
                                      {
-                                     "message": "Not found",
+                                     "message": "UPS not found",
                                      "id": "1"
                                      }
                                      """

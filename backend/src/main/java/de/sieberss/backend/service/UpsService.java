@@ -35,7 +35,7 @@ public class UpsService {
     public Ups updateUps(String id, Ups ups) {
         if (!repo.existsById(id))
             throw new NoSuchElementException(id);
-        return repo.save(ups);
+        return repo.save(new Ups(id, ups.name(), ups.address(), ups.community()));
     }
 
     public void deleteUps(String id) {
