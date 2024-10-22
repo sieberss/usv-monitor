@@ -10,14 +10,14 @@ function App() {
 
     const [monitoring, setMonitoring] = useState<boolean>(false)
 
-    const [upses, setUpss] = useState<Ups[]>([])
+    const [upses, setUpses] = useState<Ups[]>([])
     const [upsUpdates, setUpsUpdates] = useState<number>(0)         // keeps track of crud operations in other components
     const upsUpdateOccured = () => setUpsUpdates(upsUpdates + 1)    // passed to components that do crud operations
 
-    const getAllUpss = () => {
+    const getAllUpses = () => {
         axios.get('/api/ups')
             .then(response => {
-                setUpss(response.data);
+                setUpses(response.data);
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
@@ -25,7 +25,7 @@ function App() {
     };
 
     useEffect(() => {
-        getAllUpss();
+        getAllUpses();
     }, [upsUpdates])
 
 
