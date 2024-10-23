@@ -3,6 +3,7 @@ package de.sieberss.backend.utils;
 import de.sieberss.backend.exception.EncryptionException;
 import de.sieberss.backend.model.Credentials;
 import de.sieberss.backend.model.CredentialsWithoutEncryption;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Cipher;
@@ -12,8 +13,9 @@ import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
 @Service
+@RequiredArgsConstructor
 public class EncryptionService {
-    private static final String ALGORITHM = "AES";
+    private final String ALGORITHM = "AES";
 
     /** Class copied from external source, only my added code at the bottom to be tested
      *
