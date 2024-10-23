@@ -25,7 +25,10 @@ class EncryptionServiceTest {
         CredentialsWithoutEncryption credentialsWithoutEncryption = new CredentialsWithoutEncryption("1", "user", "password", true);
         Credentials encryptedCredentials = encryptionService.encryptCredentials(credentialsWithoutEncryption);
         CredentialsWithoutEncryption decryptedCredentials = encryptionService.decryptCredentials(encryptedCredentials);
+
         assertEquals(credentialsWithoutEncryption, decryptedCredentials);
+
+        // fields after encryption must be equal, except password (different and not empty)
         assertEquals(credentialsWithoutEncryption.id(), encryptedCredentials.id());
         assertEquals(credentialsWithoutEncryption.user(), encryptedCredentials.user());
         assertEquals(credentialsWithoutEncryption.localOnly(), encryptedCredentials.localOnly());
