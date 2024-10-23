@@ -1,6 +1,6 @@
 package de.sieberss.backend.controller;
 
-import de.sieberss.backend.model.Server;
+import de.sieberss.backend.model.ServerDTO;
 import de.sieberss.backend.service.ServerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,23 +17,23 @@ public class ServerController {
     private final ServerService service;
 
     @GetMapping()
-    public List<Server> getServerList() {
-        return service.getServerList();
+    public List<ServerDTO> getServerDTOList() {
+        return service.getServerDTOList();
     }
 
     @GetMapping("/{id}")
-    public Server getServerById(@PathVariable String id) {
-        return service.getServerById(id);
+    public ServerDTO getServerDTOById(@PathVariable String id) {
+        return service.getServerDTOById(id);
     }
 
     @PostMapping()
-    public Server createServer(@RequestBody Server server) {
-        return service.createServer(server);
+    public ServerDTO createServer(@RequestBody ServerDTO serverDTO) {
+        return service.createServer(serverDTO);
     }
 
     @PutMapping("/{id}")
-    public Server updateServer(@PathVariable String id, @RequestBody Server server) {
-        return service.updateServer(id, server);
+    public ServerDTO updateServer(@PathVariable String id, @RequestBody ServerDTO serverDTO) {
+        return service.updateServer(id, serverDTO);
     }
     @DeleteMapping("/{id}")
     public void deleteServer(@PathVariable String id) {
