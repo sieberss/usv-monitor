@@ -3,6 +3,7 @@ package de.sieberss.backend.model;
 public record Credentials(
         String id,
         String user,
-        String password
+        String password,
+        boolean localOnly
 ) {
 }

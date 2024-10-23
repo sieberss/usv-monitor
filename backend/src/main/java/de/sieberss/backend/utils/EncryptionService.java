@@ -1,5 +1,8 @@
 package de.sieberss.backend.utils;
 
+import de.sieberss.backend.exception.EncryptionException;
+import de.sieberss.backend.model.Credentials;
+import de.sieberss.backend.model.CredentialsWithoutEncryption;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Cipher;
@@ -12,6 +15,9 @@ import java.util.Base64;
 public class EncryptionService {
     private static final String ALGORITHM = "AES";
 
+    /** Class copied from external source, only my added code at the bottom to be tested
+     *
+     */
     public String encrypt(String data, String key) throws Exception {
         SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), ALGORITHM);
         Cipher cipher = Cipher.getInstance(ALGORITHM);
@@ -34,4 +40,37 @@ public class EncryptionService {
         SecretKey secretKey = keyGen.generateKey();
         return Base64.getEncoder().encodeToString(secretKey.getEncoded());
     }
+
+    /** start of my added code
+     *
+     */
+    private final String key = System.getenv("ENCRYPT_KEY");
+
+    public String encryptPassword(String value) {
+        try {
+            return encrypt(value, key);
+        } catch (Exception e) {
+            throw new EncryptionException(e.getMessage());
+        }
+    }
+
+    public Credentials encryptCredentials(CredentialsWithoutEncryption unencrypted) {
+        return new Credentials(unencrypted.id(), unencrypted.user(), encryptPassword(unencrypted.password()), unencrypted.localOnly());
+    }
+
+    public String decryptPassword(String value) {
+        try {
+            return decrypt(value, key);
+        }
+        catch (Exception e) {
+            throw new EncryptionException(e.getMessage());
+        }
+    }
+
+    public CredentialsWithoutEncryption decryptCredentials(Credentials encrypted) {
+        return new CredentialsWithoutEncryption(encrypted.id(), encrypted.user(), decryptPassword(encrypted.password()), encrypted.localOnly());
+    }
+
+
+
 }

@@ -67,10 +67,11 @@ class UpsServiceTest {
 
     @Test
     void updateUps_shouldUpdateUpsWithSubmittedData_ifIdExists() {
+        Ups submitted = new Ups(null, "Test", "192.168.1.1", "rrr");
         Ups expected = new Ups("1", "Test", "192.168.1.1", "rrr");
         when(repo.existsById("1")).thenReturn(true);
         when(repo.save(expected)).thenReturn(expected);
-        Ups actual = service.updateUps("1", expected);
+        Ups actual = service.updateUps("1", submitted);
         assertEquals(expected, actual);
         verify(repo).existsById("1");
         verify(repo).save(expected);
@@ -96,5 +97,6 @@ class UpsServiceTest {
     void deleteUps_shouldThrowNoSuchElementException_whenIdDoesNotExist(){
         when(repo.existsById("1")).thenReturn(false);
         assertThrows(NoSuchElementException.class, () -> service.deleteUps("1"));
+        verify(repo).existsById("1");
     }
 }
