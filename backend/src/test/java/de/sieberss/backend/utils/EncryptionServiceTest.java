@@ -2,19 +2,17 @@ package de.sieberss.backend.utils;
 
 import de.sieberss.backend.model.Credentials;
 import de.sieberss.backend.model.CredentialsWithoutEncryption;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Disabled
-// Test run successfully, but prevent Maven Build. Therefore disabled
 class EncryptionServiceTest {
 
     private final EncryptionService encryptionService = new EncryptionService();
 
     @Test
-    void encryptPassword_shouldEncryptPassword_decryptPassword_shouldRestoreIt() {
+    void encryptPassword_shouldEncryptPassword_decryptPassword_shouldRestoreIt() throws Exception {
+        encryptionService.setTestKey();
         final String password = "password";
         final String encryptedPassword = encryptionService.encryptPassword(password);
         final String decryptedPassword = encryptionService.decryptPassword(encryptedPassword);
@@ -24,7 +22,8 @@ class EncryptionServiceTest {
     }
 
     @Test
-    void encryptCredentials_shouldEncryptCredentials_decryptCredentials_shouldRestoreIt() {
+    void encryptCredentials_shouldEncryptCredentials_decryptCredentials_shouldRestoreIt() throws Exception {
+        encryptionService.setTestKey();
         CredentialsWithoutEncryption credentialsWithoutEncryption = new CredentialsWithoutEncryption("1", "user", "password", true);
         Credentials encryptedCredentials = encryptionService.encryptCredentials(credentialsWithoutEncryption);
         CredentialsWithoutEncryption decryptedCredentials = encryptionService.decryptCredentials(encryptedCredentials);

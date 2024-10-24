@@ -1,7 +1,14 @@
 package de.sieberss.backend.controller;
 
+import de.sieberss.backend.model.Credentials;
+import de.sieberss.backend.model.CredentialsWithoutEncryption;
+import de.sieberss.backend.model.Server;
 import de.sieberss.backend.model.Ups;
+import de.sieberss.backend.repo.CredentialsRepo;
+import de.sieberss.backend.repo.ServerRepo;
 import de.sieberss.backend.repo.UpsRepo;
+import de.sieberss.backend.utils.DTOConverter;
+import de.sieberss.backend.utils.EncryptionService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -13,29 +20,55 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @SpringBootTest
+//@TestPropertySource(properties = {"ENCRYPT_KEY="})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
-class UpsControllerTest {
+class ServerControllerTest {
 
     @Autowired
     private MockMvc mvc;
     @Autowired
-    private UpsRepo repo;
+    private ServerRepo serverRepo;
+    @Autowired
+    private DTOConverter dtoConverter;
+    @Autowired
+    private EncryptionService encryptionService;
+    @Autowired
+    private UpsRepo UpsRepo;
+    @Autowired
+    private CredentialsRepo credentialsRepo;
+
+   /* @DynamicPropertySource
+    static void dynamicProperties(DynamicPropertyRegistry registry) {
+        registry.add("ENCRYPT_KEY", () -> "HpHm7OOOTs9n7hUeO3YiKg==");
+    }*/
 
     @Test
-    void getAllUpss_shouldReturnListWithOneObject_whenOneObjectWasSavedInRepository() throws Exception {
+    void getServerDTOList_shouldReturnListWithOneObject_whenOneObjectWasSavedInRepository() throws Exception {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
-        repo.save(ups);
-        mvc.perform(MockMvcRequestBuilders.get("/api/ups"))
+        UpsRepo.save(ups);
+        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("u","user", "password", true);
+        Credentials encrypted = encryptionService.encryptCredentials(decrypted);
+        //Credentials encrypted = new Credentials("u", "user", "N/x2pVHKXGTMxWTqrWirjQ==", true);
+        credentialsRepo.save(encrypted);
+        Server server = new Server("22", "Test-server", "1.1.1.1", encrypted, ups);
+        serverRepo.save(server);
+        mvc.perform(MockMvcRequestBuilders.get("/api/server"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(
                         """
                                 [
                                  {
-                                     "id": "1",
-                                     "name": "Test-UPS",
-                                     "address": "192.168.1.1",
-                                     "community": ""
+                                     "id": "22",
+                                     "name": "Test-server",
+                                     "address": "1.1.1.1",
+                                     "credentials": {
+                                          "id" : "u",
+                                          "user": "user",
+                                          "password": "password",
+                                          "localOnly": true
+                                     },
+                                     "upsId": "1"
                                  }
                                 ]
                                 """
@@ -43,8 +76,8 @@ class UpsControllerTest {
     }
 
     @Test
-    void getAllUpss_shouldReturnEmptyList_initially() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/api/ups"))
+    void getServerDTOList_shouldReturnEmptyList_initially() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/api/server"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(
                         """
@@ -58,7 +91,7 @@ class UpsControllerTest {
     @Test
     void getUpsById_shouldReturnUps_whenIdExists() throws Exception {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
-        repo.save(ups);
+        UpsRepo.save(ups);
         mvc.perform(MockMvcRequestBuilders.get("/api/ups/1"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json("""
@@ -110,7 +143,7 @@ class UpsControllerTest {
 
     @Test
     void updateUps_shouldUpdateUps_whenIdExists() throws Exception {
-        repo.save(new Ups("1", "Test-UPS", "192.168.1.1", ""));
+        UpsRepo.save(new Ups("1", "Test-UPS", "192.168.1.1", ""));
         mvc.perform(MockMvcRequestBuilders.put("/api/ups/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -157,8 +190,8 @@ class UpsControllerTest {
 
     @Test
     void deleteUps_shouldDeleteUps_whenIdExists() throws Exception {
-        repo.save(new Ups("1", "Test-UPS", "192.168.1.1", ""));
-        repo.save(new Ups("2", "Test 2", "192.168.1.2", "com"));
+        UpsRepo.save(new Ups("1", "Test-UPS", "192.168.1.1", ""));
+        UpsRepo.save(new Ups("2", "Test 2", "192.168.1.2", "com"));
         mvc.perform(MockMvcRequestBuilders.delete("/api/ups/1"))
             .andExpect(MockMvcResultMatchers.status().isOk());
         mvc.perform(MockMvcRequestBuilders.get("/api/ups"))

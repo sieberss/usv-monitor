@@ -99,18 +99,18 @@ private final ServerService service = new ServerService(repo, idService, convert
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", true);
         ServerDTO submitted
                 = new ServerDTO(null, "server", "1.1.1.1", decrypted, "1");
-        Server UpdatedServer
+        Server updatedServer
                 = new Server("22", "server", "1.1.1.1", encrypted, ups);
         ServerDTO expected
                 = new ServerDTO("22", "server", "1.1.1.1", decrypted, "1");
         when(repo.existsById("22")).thenReturn(true);
-        when(converter.getServerFromDTO(expected)).thenReturn(UpdatedServer);
-        when(repo.save(UpdatedServer)).thenReturn(UpdatedServer);
+        when(converter.getServerFromDTO(expected)).thenReturn(updatedServer);
+        when(repo.save(updatedServer)).thenReturn(updatedServer);
         // execute method
         ServerDTO actual = service.updateServer("22", submitted);
         verify(repo).existsById("22");
         verify(converter).getServerFromDTO(expected);
-        verify(repo).save(UpdatedServer);
+        verify(repo).save(updatedServer);
         assertEquals(expected, actual);
     }
 
