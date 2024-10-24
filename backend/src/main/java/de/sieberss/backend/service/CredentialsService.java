@@ -32,7 +32,6 @@ public class CredentialsService {
     }
 
     public CredentialsWithoutEncryption createCredentials(CredentialsWithoutEncryption submitted) {
-        // add id to submitted data
         CredentialsWithoutEncryption completed =
                 new CredentialsWithoutEncryption(idService.generateId(), submitted.user(), submitted.password(), submitted.localOnly());
         Credentials dbObject = encryptionService.encryptCredentials(completed);

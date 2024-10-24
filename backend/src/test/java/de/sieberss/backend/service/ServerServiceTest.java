@@ -84,11 +84,37 @@ private final ServerService service = new ServerService(repo, idService, convert
                 = new ServerDTO("22", "server", "1.1.1.1", decrypted, "1");
         when(idService.generateId()).thenReturn("22");
         when(converter.getServerFromDTO(expected)).thenReturn(server);
+        when(converter.getDTOFromServer(server)).thenReturn(expected);
         when(repo.save(server)).thenReturn(server);
         // execute method
         ServerDTO actual = service.createServer(submitted);
         verify(repo).save(server);
         verify(idService).generateId();
+        verify(converter).getServerFromDTO(expected);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void createServer_shouldCreateServerwithSubmittedData_butEmptyUpsId_whenUpsIdNotInDatabase() {
+        Credentials encrypted = new Credentials("8", "user", "UHJHJK", true);
+        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", true);
+        ServerDTO submitted
+                = new ServerDTO(null, "server", "1.1.1.1", decrypted, "1");
+        ServerDTO completed
+                = new ServerDTO("22", "server", "1.1.1.1", decrypted, "1");
+        Server server
+                = new Server("22", "server", "1.1.1.1", encrypted, null);
+        ServerDTO expected
+                = new ServerDTO("22", "server", "1.1.1.1", decrypted, "");
+        when(idService.generateId()).thenReturn("22");
+        when(converter.getServerFromDTO(completed)).thenReturn(server);
+        when(converter.getDTOFromServer(server)).thenReturn(expected);
+        when(repo.save(server)).thenReturn(server);
+        // execute method
+        ServerDTO actual = service.createServer(submitted);
+        verify(repo).save(server);
+        verify(idService).generateId();
+        verify(converter).getServerFromDTO(completed);
         assertEquals(expected, actual);
     }
 
@@ -114,6 +140,30 @@ private final ServerService service = new ServerService(repo, idService, convert
         assertEquals(expected, actual);
     }
 
+    @Test
+    void updateServer_shouldUpdateServerWithSubmittedData_butEmptyUpsId_ifIdExists_butNotUpsId() {
+        Credentials encrypted = new Credentials("8", "user", "UHJHJK", true);
+        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", true);
+        ServerDTO submitted
+                = new ServerDTO(null, "server", "1.1.1.1", decrypted, "1");
+        ServerDTO completed
+                = new ServerDTO("22", "server", "1.1.1.1", decrypted, "1");
+        Server updatedServer
+                = new Server("22", "server", "1.1.1.1", encrypted, null);
+        ServerDTO expected
+                = new ServerDTO("22", "server", "1.1.1.1", decrypted, "");
+        when(repo.existsById("22")).thenReturn(true);
+        when(converter.getServerFromDTO(completed)).thenReturn(updatedServer);
+        when(converter.getDTOFromServer(updatedServer)).thenReturn(expected);
+        when(repo.save(updatedServer)).thenReturn(updatedServer);
+        // execute method
+        ServerDTO actual = service.updateServer("22", submitted);
+        verify(repo).existsById("22");
+        verify(converter).getServerFromDTO(completed);
+        verify(converter).getDTOFromServer(updatedServer);
+        verify(repo).save(updatedServer);
+        assertEquals(expected, actual);
+    }
 
     @Test
     void updateServer_shouldThrowNoSuchElementException_whenIdDoesNotExist() {

@@ -42,9 +42,9 @@ public class ServerService {
      */
     public ServerDTO createServer(ServerDTO serverDTO) {
          ServerDTO completed = new ServerDTO(idService.generateId(), serverDTO.name(), serverDTO.address(), serverDTO.credentials(), serverDTO.upsId());
-         Server dbObject = converter.getServerFromDTO(completed);
-         repo.save(dbObject);
-         return completed;
+         Server toStore = converter.getServerFromDTO(completed);
+         repo.save(toStore);
+         return converter.getDTOFromServer(toStore);
     }
 
     /**
@@ -59,7 +59,7 @@ public class ServerService {
         ServerDTO completed = new ServerDTO(id, submitted.name(), submitted.address(), submitted.credentials(), submitted.upsId());
         Server toStore = converter.getServerFromDTO(completed);
         repo.save(toStore);
-        return completed;
+        return converter.getDTOFromServer(toStore);
     }
 
     /**
