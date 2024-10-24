@@ -37,7 +37,6 @@ class ServerControllerTest {
         upsRepo.save(ups);
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("u","user", "password", true);
         Credentials encrypted = encryptionService.encryptCredentials(decrypted);
-        //Credentials encrypted = new Credentials("u", "user", "N/x2pVHKXGTMxWTqrWirjQ==", true);
         credentialsRepo.save(encrypted);
         Server server = new Server("22", "Test-server", "1.1.1.1", encrypted, ups);
         serverRepo.save(server);
