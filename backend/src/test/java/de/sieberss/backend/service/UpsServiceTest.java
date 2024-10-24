@@ -86,7 +86,7 @@ class UpsServiceTest {
     }
 
     @Test
-    void deleteUps_shouldDeleteUpsUps_ifIdExists() {
+    void deleteUps_shouldDeleteUps_ifIdExists() {
         when(repo.existsById("1")).thenReturn(true);
         service.deleteUps("1");
         verify(repo).existsById("1");

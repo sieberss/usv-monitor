@@ -24,11 +24,22 @@ public class ServerService {
                 .map(converter::getDTOFromServer).toList();
     }
 
+    /**
+     *
+     * @param id ID of the requested database object
+     *           NoSuchElementException thrown if ID not in database
+     * @return DTO with data from database
+     */
     public ServerDTO getServerDTOById(String id) {
          Server found = repo.findById(id).orElseThrow(()-> new NoSuchElementException(id));
          return converter.getDTOFromServer(found);
     }
 
+    /**
+     *
+     * @param serverDTO DTO received from client. Any ID provided within will be ignored
+     * @return submitted DTO completed with random ID, when successfully stored in database
+     */
     public ServerDTO createServer(ServerDTO serverDTO) {
          ServerDTO completed = new ServerDTO(idService.generateId(), serverDTO.name(), serverDTO.address(), serverDTO.credentials(), serverDTO.upsId());
          Server dbObject = converter.getServerFromDTO(completed);
@@ -36,14 +47,26 @@ public class ServerService {
          return completed;
     }
 
-    public ServerDTO updateServer(String id, ServerDTO serverDTO) {
+    /**
+     * @param id ID of server to update.
+     *           NoSuchElementException thrown if ID not in database
+     * @param submitted DTO received from client. Need not contain ID.
+     * @return Submitted DTO completed with ID, if server exists in database
+     */
+    public ServerDTO updateServer(String id, ServerDTO submitted) {
         if (!repo.existsById(id))
             throw new NoSuchElementException(id);
-        Server toStore = converter.getServerFromDTO(serverDTO);
-        Server stored = repo.save(toStore);
-        return converter.getDTOFromServer(stored);
+        ServerDTO completed = new ServerDTO(id, submitted.name(), submitted.address(), submitted.credentials(), submitted.upsId());
+        Server toStore = converter.getServerFromDTO(completed);
+        repo.save(toStore);
+        return completed;
     }
 
+    /**
+     *
+     * @param id ID of the database object to delete
+     *           NoSuchElementException thrown if ID not in database
+     */
     public void deleteServer(String id) {
         if (!repo.existsById(id))
             throw new NoSuchElementException(id);
