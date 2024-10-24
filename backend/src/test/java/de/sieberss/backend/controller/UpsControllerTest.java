@@ -23,7 +23,7 @@ class UpsControllerTest {
     private UpsRepo repo;
 
     @Test
-    void getAllUpss_shouldReturnListWithOneObject_whenOneObjectWasSavedInRepository() throws Exception {
+    void getUpsList_shouldReturnListWithOneObject_whenOneObjectWasSavedInRepository() throws Exception {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
         repo.save(ups);
         mvc.perform(MockMvcRequestBuilders.get("/api/ups"))
