@@ -131,11 +131,13 @@ private final ServerService service = new ServerService(repo, idService, convert
                 = new ServerDTO("22", "server", "1.1.1.1", decrypted, "1");
         when(repo.existsById("22")).thenReturn(true);
         when(converter.getServerFromDTO(expected)).thenReturn(updatedServer);
+        when(converter.getDTOFromServer(updatedServer)).thenReturn(expected);
         when(repo.save(updatedServer)).thenReturn(updatedServer);
         // execute method
         ServerDTO actual = service.updateServer("22", submitted);
         verify(repo).existsById("22");
         verify(converter).getServerFromDTO(expected);
+        verify(converter).getDTOFromServer(updatedServer);
         verify(repo).save(updatedServer);
         assertEquals(expected, actual);
     }
