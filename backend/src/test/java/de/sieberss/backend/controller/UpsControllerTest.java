@@ -1,7 +1,7 @@
 package de.sieberss.backend.controller;
 
 import de.sieberss.backend.model.Ups;
-import de.sieberss.backend.model.UpsRepo;
+import de.sieberss.backend.repo.UpsRepo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,7 +23,7 @@ class UpsControllerTest {
     private UpsRepo repo;
 
     @Test
-    void getAllUpss_shouldReturnListWithOneObject_whenOneObjectWasSavedInRepository() throws Exception {
+    void getUpsList_shouldReturnListWithOneObject_whenOneObjectWasSavedInRepository() throws Exception {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
         repo.save(ups);
         mvc.perform(MockMvcRequestBuilders.get("/api/ups"))
@@ -32,8 +32,8 @@ class UpsControllerTest {
                         """
                                 [
                                  {
-                                     "name": "Test-UPS",
                                      "id": "1",
+                                     "name": "Test-UPS",
                                      "address": "192.168.1.1",
                                      "community": ""
                                  }
@@ -78,7 +78,7 @@ class UpsControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.content().json("""
                                      {
-                                     "message": "Not found",
+                                     "message": "UPS not found",
                                      "id": "1"
                                      }
                                      """
@@ -115,6 +115,7 @@ class UpsControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                  {
+                                     "id": "1",
                                      "name": "Test",
                                      "address": "192.168.1.2",
                                      "community": "com"
@@ -146,7 +147,7 @@ class UpsControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.content().json("""
                                      {
-                                     "message": "Not found",
+                                     "message": "UPS not found",
                                      "id": "1"
                                      }
                                      """
@@ -179,7 +180,7 @@ class UpsControllerTest {
             .andExpect(MockMvcResultMatchers.status().isNotFound())
             .andExpect(MockMvcResultMatchers.content().json("""
                                      {
-                                     "message": "Not found",
+                                     "message": "UPS not found",
                                      "id": "1"
                                      }
                                      """

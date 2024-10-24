@@ -1,4 +1,4 @@
-package de.sieberss.backend.service;
+package de.sieberss.backend.utils;
 
 import org.springframework.stereotype.Service;
 
