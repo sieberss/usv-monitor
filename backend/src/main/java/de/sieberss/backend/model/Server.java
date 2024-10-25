@@ -8,6 +8,6 @@ public record Server(
         String address,
         Credentials credentials,
         @DocumentReference
-        Ups ups
-) {
+        Ups ups,
+        int shutdownTime) {
 }

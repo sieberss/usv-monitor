@@ -34,9 +34,9 @@ private final ServerService service = new ServerService(repo, idService, convert
         Credentials encrypted = new Credentials("8", "user", "UHJHJK", true);
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", true);
         Server server
-                = new Server("22", "server", "1.1.1.1", encrypted, ups);
+                = new Server("22", "server", "1.1.1.1", encrypted, ups, 180);
         ServerDTO dto
-                = new ServerDTO("22", "server", "1.1.1.1", decrypted, "1");
+                = new ServerDTO("22", "server", "1.1.1.1", decrypted, "1", 180);
         when(repo.findAll()).thenReturn(List.of(server));
         when(converter.getDTOFromServer(server)).thenReturn(dto);
         //execute method
@@ -52,9 +52,9 @@ private final ServerService service = new ServerService(repo, idService, convert
         Credentials encrypted = new Credentials("8", "user", "UHJHJK", true);
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", true);
         Server server
-                = new Server("22", "server", "1.1.1.1", encrypted, ups);
+                = new Server("22", "server", "1.1.1.1", encrypted, ups, 180);
         ServerDTO expected
-                = new ServerDTO("22", "server", "1.1.1.1", decrypted, "1");
+                = new ServerDTO("22", "server", "1.1.1.1", decrypted, "1", 180);
         when(repo.findById("22")).thenReturn(Optional.of(server));
         when(converter.getDTOFromServer(server)).thenReturn(expected);
         // execute method
@@ -77,11 +77,11 @@ private final ServerService service = new ServerService(repo, idService, convert
         Credentials encrypted = new Credentials("8", "user", "UHJHJK", true);
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", true);
         ServerDTO submitted
-                = new ServerDTO(null, "server", "1.1.1.1", decrypted, "1");
+                = new ServerDTO(null, "server", "1.1.1.1", decrypted, "1", 180);
         Server server
-                = new Server("22", "server", "1.1.1.1", encrypted, ups);
+                = new Server("22", "server", "1.1.1.1", encrypted, ups, 180);
         ServerDTO expected
-                = new ServerDTO("22", "server", "1.1.1.1", decrypted, "1");
+                = new ServerDTO("22", "server", "1.1.1.1", decrypted, "1", 180);
         when(idService.generateId()).thenReturn("22");
         when(converter.getServerFromDTO(expected)).thenReturn(server);
         when(converter.getDTOFromServer(server)).thenReturn(expected);
@@ -99,13 +99,13 @@ private final ServerService service = new ServerService(repo, idService, convert
         Credentials encrypted = new Credentials("8", "user", "UHJHJK", true);
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", true);
         ServerDTO submitted
-                = new ServerDTO(null, "server", "1.1.1.1", decrypted, "1");
+                = new ServerDTO(null, "server", "1.1.1.1", decrypted, "1", 180);
         ServerDTO completed
-                = new ServerDTO("22", "server", "1.1.1.1", decrypted, "1");
+                = new ServerDTO("22", "server", "1.1.1.1", decrypted, "1", 180);
         Server server
-                = new Server("22", "server", "1.1.1.1", encrypted, null);
+                = new Server("22", "server", "1.1.1.1", encrypted, null, 180);
         ServerDTO expected
-                = new ServerDTO("22", "server", "1.1.1.1", decrypted, "");
+                = new ServerDTO("22", "server", "1.1.1.1", decrypted, "", 180);
         when(idService.generateId()).thenReturn("22");
         when(converter.getServerFromDTO(completed)).thenReturn(server);
         when(converter.getDTOFromServer(server)).thenReturn(expected);
@@ -124,11 +124,11 @@ private final ServerService service = new ServerService(repo, idService, convert
         Credentials encrypted = new Credentials("8", "user", "UHJHJK", true);
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", true);
         ServerDTO submitted
-                = new ServerDTO(null, "server", "1.1.1.1", decrypted, "1");
+                = new ServerDTO(null, "server", "1.1.1.1", decrypted, "1", 180);
         Server updatedServer
-                = new Server("22", "server", "1.1.1.1", encrypted, ups);
+                = new Server("22", "server", "1.1.1.1", encrypted, ups, 180);
         ServerDTO expected
-                = new ServerDTO("22", "server", "1.1.1.1", decrypted, "1");
+                = new ServerDTO("22", "server", "1.1.1.1", decrypted, "1", 180);
         when(repo.existsById("22")).thenReturn(true);
         when(converter.getServerFromDTO(expected)).thenReturn(updatedServer);
         when(converter.getDTOFromServer(updatedServer)).thenReturn(expected);
@@ -147,13 +147,13 @@ private final ServerService service = new ServerService(repo, idService, convert
         Credentials encrypted = new Credentials("8", "user", "UHJHJK", true);
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", true);
         ServerDTO submitted
-                = new ServerDTO(null, "server", "1.1.1.1", decrypted, "1");
+                = new ServerDTO(null, "server", "1.1.1.1", decrypted, "1", 180);
         ServerDTO completed
-                = new ServerDTO("22", "server", "1.1.1.1", decrypted, "1");
+                = new ServerDTO("22", "server", "1.1.1.1", decrypted, "1", 180);
         Server updatedServer
-                = new Server("22", "server", "1.1.1.1", encrypted, null);
+                = new Server("22", "server", "1.1.1.1", encrypted, null, 180);
         ServerDTO expected
-                = new ServerDTO("22", "server", "1.1.1.1", decrypted, "");
+                = new ServerDTO("22", "server", "1.1.1.1", decrypted, "", 180);
         when(repo.existsById("22")).thenReturn(true);
         when(converter.getServerFromDTO(completed)).thenReturn(updatedServer);
         when(converter.getDTOFromServer(updatedServer)).thenReturn(expected);
@@ -171,7 +171,7 @@ private final ServerService service = new ServerService(repo, idService, convert
     void updateServer_shouldThrowNoSuchElementException_whenIdDoesNotExist() {
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", true);
         ServerDTO submitted
-                = new ServerDTO("", "server", "1.1.1.1", decrypted, "1");
+                = new ServerDTO("", "server", "1.1.1.1", decrypted, "1", 180);
         // execute method
         assertThrows(NoSuchElementException.class, () -> service.updateServer("22", submitted));
         verify(repo).existsById("22");
