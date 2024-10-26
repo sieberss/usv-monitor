@@ -39,7 +39,7 @@ class CredentialsControllerTest {
                                      "id": "1",
                                      "user": "user",
                                      "password": "password",
-                                     "localOnly": true
+                                     "global": true
                                  }
                                 ]
                                 """
@@ -70,7 +70,7 @@ class CredentialsControllerTest {
                                      "id": "1",
                                      "user": "user",
                                      "password": "password",
-                                     "localOnly": true
+                                     "global": true
                                  }
                                 """
                 ));
@@ -98,7 +98,7 @@ class CredentialsControllerTest {
                                  {
                                      "user": "user",
                                      "password": "password",
-                                     "localOnly": true
+                                     "global": true
                                  }
                           """))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -107,7 +107,7 @@ class CredentialsControllerTest {
                                  {
                                      "user": "user",
                                      "password": "password",
-                                     "localOnly": true
+                                     "global": true
                                  }
                              """));
     }
@@ -123,7 +123,7 @@ class CredentialsControllerTest {
                                      "id": "1jkgjdkrte",
                                      "user": "user",
                                      "password": "password",
-                                     "localOnly": true
+                                     "global": true
                                  }
                           """))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -133,7 +133,7 @@ class CredentialsControllerTest {
                                      "id": "1",
                                      "user": "user",
                                      "password": "password",
-                                     "localOnly": true
+                                     "global": true
                                  }
                              """));
     }
@@ -147,7 +147,7 @@ class CredentialsControllerTest {
                                      "id": "1",
                                      "user": "user",
                                      "password": "password",
-                                     "localOnly": true
+                                     "global": true
                                  }
                           """))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
@@ -176,7 +176,7 @@ class CredentialsControllerTest {
                                      "id": "1",
                                      "user": "user",
                                      "password": "password",
-                                     "localOnly": true
+                                     "global": true
                                  }]
                                  """
                 ));

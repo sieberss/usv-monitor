@@ -4,6 +4,6 @@ public record CredentialsWithoutEncryption(
         String id,
         String user,
         String password,
-        boolean localOnly
+        boolean global
 ) {
 }

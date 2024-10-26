@@ -61,7 +61,7 @@ public class EncryptionService {
     }
 
     public Credentials encryptCredentials(CredentialsWithoutEncryption unencrypted) {
-        return new Credentials(unencrypted.id(), unencrypted.user(), encryptPassword(unencrypted.password()), unencrypted.localOnly());
+        return new Credentials(unencrypted.id(), unencrypted.user(), encryptPassword(unencrypted.password()), unencrypted.global());
     }
 
     public String decryptPassword(String value) {
@@ -74,7 +74,7 @@ public class EncryptionService {
     }
 
     public CredentialsWithoutEncryption decryptCredentials(Credentials encrypted) {
-        return new CredentialsWithoutEncryption(encrypted.id(), encrypted.user(), decryptPassword(encrypted.password()), encrypted.localOnly());
+        return new CredentialsWithoutEncryption(encrypted.id(), encrypted.user(), decryptPassword(encrypted.password()), encrypted.global());
     }
 
 

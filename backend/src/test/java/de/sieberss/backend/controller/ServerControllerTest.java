@@ -53,7 +53,7 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
                                      "upsId": "1",
                                      "shutdownTime" : 180
@@ -97,7 +97,7 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
                                      "upsId": "1",
                                      "shutdownTime" : 180
@@ -138,7 +138,7 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
                                      "upsId": "1",
                                      "shutdownTime" : 180
@@ -156,7 +156,7 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
                                      "upsId": "1",
                                      "shutdownTime" : 180
@@ -180,7 +180,7 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
                                      "upsId": "1",
                                      "shutdownTime" : 180
@@ -198,7 +198,7 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
                                      "upsId": "",
                                      "shutdownTime" : 180
@@ -224,7 +224,7 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
                                      "upsId": "1",
                                      "shutdownTime" : 180
@@ -241,7 +241,7 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
                                      "upsId": "1",
                                      "shutdownTime" : 180
@@ -265,7 +265,7 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
                                      "upsId": "1",
                                      "shutdownTime" : 180
@@ -282,7 +282,7 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
                                      "upsId": "",
                                      "shutdownTime" : 180
@@ -302,7 +302,7 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
                                      "upsId": "1",
                                      "shutdownTime" : 180
@@ -340,7 +340,7 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
                                      "upsId": "",
                                      "shutdownTime" : 180
