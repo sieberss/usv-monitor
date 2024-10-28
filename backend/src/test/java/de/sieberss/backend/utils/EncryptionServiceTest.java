@@ -38,4 +38,12 @@ class EncryptionServiceTest {
         assertNotEquals("", encryptedCredentials.password());
     }
 
+    @Test
+    void encryptCredentials_shouldEncryptandDecryptNullToNull() throws Exception {
+        encryptionService.setTestKey();
+        assertNull(encryptionService.encryptCredentials(null));
+        assertNull(encryptionService.decryptCredentials(null));
+
+    }
+
 }
