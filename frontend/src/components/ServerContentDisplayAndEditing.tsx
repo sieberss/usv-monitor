@@ -6,6 +6,7 @@ import {Server} from "../types/server.ts";
 import {Credentials} from "../types/credentials.ts";
 import CredentialsSelect from "./CredentialsSelect.tsx";
 import UpsSelect from "./UpsSelect.tsx";
+import FormBottom from "./FormBottom.tsx";
 
 type EditProps = {
     server: Server,
@@ -415,27 +416,9 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                             : <p>{server.shutdownTime}</p>}
                         <label htmlFor={"seconds"}> seconds remaining battery time</label>
                     </li>
-                    <li></li>
-                    <li>
-                        <button id={"reset"} type={"button"} onClick={() => {
-                            resetForm()
-                        }} hidden={!changedData}>
-                            Reset
-                        </button>
-                        <button id={"submit"} type={"button"} onClick={() => submitEditForm()} hidden={!changedData}>
-                            Save
-                        </button>
-                    </li>
-                    <li>
-                        <button type={"button"} onClick={deleteClicked} hidden={editing}>
-                            Delete
-                        </button>
-                        <button type={"button"} onClick={() => switchEditMode(true)}
-                                hidden={editing || message === confirmationMessage}>
-                            Edit
-                        </button>
-                    </li>
-                    <p>{message}</p>
+                    <FormBottom resetForm={resetForm} changedData={changedData} submitEditForm={submitEditForm}
+                                deleteClicked={deleteClicked} editing={editing} switchEditMode={switchEditMode}
+                                message={message} confirmationMessage={confirmationMessage} />
                 </ul>
             </form>
         </>

@@ -2,6 +2,7 @@ import {Credentials} from "../types/credentials.ts";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
+import FormBottom from "./FormBottom.tsx";
 
 type EditProps = {
     credentials: Credentials
@@ -153,26 +154,9 @@ export default function CredentialsContentDisplayAndEditing(props: Readonly<Edit
                             ? passwordInputField
                             : <p>********</p>}
                     </li>
-                    <li></li>
-                    <li>
-                        <button id={"reset"} type={"button"} onClick={() => {
-                            resetForm()
-                        }} hidden={!changedData}>
-                            Reset
-                        </button>
-                        <button id={"submit"} type={"button"} onClick={() => submitEditForm()} hidden={!changedData}>
-                            Save
-                        </button>
-                    </li>
-                    <li>
-                        <button type={"button"} onClick={deleteClicked} hidden={editing}>
-                            Delete
-                        </button>
-                        <button type={"button"} onClick={() => switchEditMode(true)} hidden={editing || message===confirmationMessage}>
-                            Edit
-                        </button>
-                    </li>
-                    <p>{message}</p>
+                    <FormBottom resetForm={resetForm} changedData={changedData} submitEditForm={submitEditForm}
+                                deleteClicked={deleteClicked} editing={editing} switchEditMode={switchEditMode}
+                                message={message} confirmationMessage={confirmationMessage} />
                 </ul>
             </form>
         </>
