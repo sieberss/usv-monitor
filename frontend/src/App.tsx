@@ -42,14 +42,15 @@ function App() {
 
     /**  Credentials ***********************/
 
-    const [credentialsList, setCredentialsList] = useState<Credentials[]>([])
-    const [credentialsUpdates, setCredentialsUpdates] = useState<number>(0)         // keeps track of crud operations in other components
+    const [credentialsList, setCredentialsList] = useState<Credentials[]>([])               // holds only the global credentials
+    const [credentialsUpdates, setCredentialsUpdates] = useState<number>(0)                 // keeps track of crud operations in other components
     const credentialsUpdateOccured = () => setCredentialsUpdates(credentialsUpdates + 1)    // passed to components that do crud operations
 
     const getCredentialsList = () => {
         axios.get('/api/credentials')
             .then(response => {
-                setCredentialsList(response.data);
+                setCredentialsList(response.data
+                    .filter( (credentials:Credentials) => credentials.global));
             })
             .catch(error => {
                 console.error('getCredentialsList failed:', error);
