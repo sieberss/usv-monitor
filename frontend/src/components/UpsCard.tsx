@@ -11,7 +11,7 @@ type UpsCardProps = {
 export default function UpsCard(props: Readonly<UpsCardProps>){
     const navigate = useNavigate()
     return(
-        <div onClick={() => navigate("/ups/" + props.ups?.id)}>
+        <article onClick={() => navigate("/ups/" + props.ups?.id)}>
             {props.ups?.id !== "new"
               ? <>
                 <h3>{props.ups?.name}</h3>
@@ -20,6 +20,6 @@ export default function UpsCard(props: Readonly<UpsCardProps>){
                 : // plus-button for adding
                  <h2><FaPlus/></h2>
             }
-        </div>
+        </article>
     )
 }

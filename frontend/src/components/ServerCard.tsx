@@ -15,7 +15,7 @@ type ServerCardProps = {
 export default function ServerCard(props: Readonly<ServerCardProps>){
     const navigate = useNavigate()
     return(
-        <div onClick={() => navigate("/server/" + props.server?.id)}>
+        <article onClick={() => navigate("/server/" + props.server?.id)}>
             {props.server?.id !== "new"
               ? <>
                     <h3>{props.server?.name}</h3>
@@ -24,6 +24,6 @@ export default function ServerCard(props: Readonly<ServerCardProps>){
                 : // plus-button for adding
                  <h2><FaPlus/></h2>
             }
-        </div>
+        </article>
     )
 }

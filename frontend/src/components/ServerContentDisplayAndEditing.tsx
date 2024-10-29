@@ -354,14 +354,13 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         </li>
     </>;
 
-    const globalUserInput = <>
+    const globalUserInput =
         <li>
-            <label>Global Credentials:</label>
+            <label htmlFor={"credentials"}>Global Credentials:</label>
             <CredentialsSelect disabled={!editing} selection={globalCredentialsSelection}
                                setSelected={setGlobalCredentialsSelection}
                                setChangedData={setChangedData} credentialsList={props.credentialsList}/>
         </li>
-    </>
 
     const shutdownSecondsField = <input
         id={'seconds'}
@@ -404,7 +403,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                         : globalUserInput
                     }
                     <li>
-                        <label>On UPS:</label>
+                        <label htmlFor={"ups"}>On UPS:</label>
                         <UpsSelect disabled={!editing} selection={globalCredentialsSelection}
                                            setSelected={setUpsSelection}
                                            setChangedData={setChangedData} upsList={props.upses}/>

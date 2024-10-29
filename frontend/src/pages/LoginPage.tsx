@@ -35,7 +35,7 @@ export default function LoginPage (props:Readonly<Props>){
     }
 
     return(
-        <>
+
             <form name={"login"}>
                 <p>Welcome to your UPS Monitor.</p>
                 <p>Please enter your password</p>
@@ -44,6 +44,6 @@ export default function LoginPage (props:Readonly<Props>){
                 <button type={"button"} onClick={submitPassword}/>
                 <p>{message}</p>
             </form>
-        </>
+
     )
 }
