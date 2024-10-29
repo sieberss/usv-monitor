@@ -11,6 +11,8 @@ import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
 import AllCredentialsPage from "./pages/AllCredentialsPage.tsx";
 import CredentialsPage from "./pages/CredentialsPage.tsx";
+import ServerPage from './pages/ServerPage.tsx';
+import AllServersPage from './pages/AllServersPage.tsx';
 
 function App() {
 
@@ -30,7 +32,7 @@ function App() {
                 setUpses(response.data);
             })
             .catch(error => {
-                console.error('Error fetching data:', error);
+                console.error('getAllUpses failed:', error);
             });
     };
 
@@ -50,7 +52,7 @@ function App() {
                 setCredentialsList(response.data);
             })
             .catch(error => {
-                console.error('Error fetching data:', error);
+                console.error('getCredentialsList failed:', error);
             });
     };
 
@@ -70,7 +72,7 @@ function App() {
                 setServers(response.data);
             })
             .catch(error => {
-                console.error('Error fetching data:', error);
+                console.error('getAllServers failed:', error);
             });
     };
 
@@ -86,7 +88,7 @@ function App() {
                 <Route path={"/login"} element={<LoginPage setLoggedIn={setLoggedIn}/>}/>
                 <Route element={<ProtectedRoute loggedIn={loggedIn}/>}>
                     <Route path={"/"} element={<AllUpsesPage upses={upses} monitoring={monitoring}/>}/>
-                    <Route path={"/server"} element={<AllServersPage servers={servers} upses={upses} monitoring={monitoring}/>}/>
+                    <Route path={"/server"} element={<AllServersPage servers={servers} upses={upses} credentialsList={credentialsList} monitoring={monitoring}/>}/>
                     <Route path={"/credentials"} element={<AllCredentialsPage credentialsList={credentialsList} monitoring={monitoring}/>}/>
                     <Route path={"/ups/:id"} element={<UpsPage upsUpdate={upsUpdateOccured}/>}/>
                     <Route path={"/server/:id"} element={<ServerPage upses={upses} credentialsList={credentialsList} serverUpdate={serverUpdateOccured}/>}/>

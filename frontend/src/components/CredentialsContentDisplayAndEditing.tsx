@@ -32,6 +32,7 @@ export default function CredentialsContentDisplayAndEditing(props: Readonly<Edit
         navigate("/credentials")
     }
 
+    /** initialize data from props */
     useEffect(() => {
         setCredentials(props.credentials)
         setEditing(props.credentials.id === "new")
@@ -48,35 +49,32 @@ export default function CredentialsContentDisplayAndEditing(props: Readonly<Edit
         setChangedData(false)
     }
 
-    function submitEditForm(): void {
-        if (!userInput || !passwordInput) {    // input error
-            setMessage("Error: Username and password are mandatory")
-            return
-        }
-        if (credentials.id==="new") {
-            axios.post('/api/credentials', {user: userInput, password: passwordInput, global: true})
-                .then(response => {
-                    if (response.status == 200) backToList(true);
-                    else setMessage(response.data);
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                });
-        } else {                // updating an existing credentials
-            axios.put('/api/credentials/' + credentials.id, {user: userInput, password: passwordInput, global: true})
-                .then(response => {
-                    if (response.status == 200){
-                        backToList(true)
-                    }
-                    else setMessage(response.data)
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                });
-        }
+    /** axios calls ************************************************************************/
+    function createGlobalCredentials() {
+        axios.post('/api/credentials', {user: userInput, password: passwordInput, global: true})
+            .then(response => {
+                if (response.status == 200) backToList(true);
+                else setMessage(response.data);
+            })
+            .catch(error => {
+                console.error('createGlobalCredentials failed:', error);
+            });
     }
 
-    function deleteCredentials(): void {
+    function updateGlobalCredentials() {
+        axios.put('/api/credentials/' + credentials.id, {user: userInput, password: passwordInput, global: true})
+            .then(response => {
+                if (response.status == 200){
+                    backToList(true)
+                }
+                else setMessage(response.data)
+            })
+            .catch(error => {
+                console.error('updateGlobalCredentials failed:', error);
+            });
+    }
+
+    function deleteGlobalCredentials(): void {
         axios.delete('/api/credentials/' + credentials.id)
             .then(response => {
                 if (response.status == 200) {
@@ -85,13 +83,27 @@ export default function CredentialsContentDisplayAndEditing(props: Readonly<Edit
                 else setMessage(response.data)
             })
             .catch(error => {
-                console.error('Error fetching data:', error);
+                console.error('deleteGlobalCredentials failed:', error);
             });
+    }
+    /** end axios calls *******************************************************************************/
+
+    function submitEditForm(): void {
+        if (!userInput || !passwordInput) {    // input error
+            setMessage("Error: Username and password are mandatory")
+            return
+        }
+        if (credentials.id==="new") {
+            createGlobalCredentials()
+        }
+        else {
+            updateGlobalCredentials()
+        }
     }
 
     function deleteClicked(): void {
         if (message === confirmationMessage) {
-            deleteCredentials()
+            deleteGlobalCredentials()
         } else
             setMessage(confirmationMessage)
     }
@@ -107,19 +119,20 @@ export default function CredentialsContentDisplayAndEditing(props: Readonly<Edit
         }}
     />;
 
-    const passwordInputField = <input
-        id={'password'}
-        type={'password'}
-        name={'password'}
-        value={passwordInput}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setPasswordInput(event.target.value)
-            setChangedData(true)
-        }}
-    />;
+    const passwordInputField =
+        <input
+            id={'password'}
+            type={'password'}
+            name={'password'}
+            value={passwordInput}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setPasswordInput(event.target.value)
+                setChangedData(true)
+            }}/>
+   ;
 
 
-    return (
+        return (
         <>
             <h3>Details of credentials</h3>
             <button onClick={() => backToList(false)} >

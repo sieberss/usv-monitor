@@ -1,11 +1,12 @@
-import UpsList from "../components/UpsList.tsx";
 import {Ups} from "../types/ups.ts";
-import {useEffect, useState} from "react";
-import axios from "axios";
 import {Server} from "../types/server.ts";
+import ServerList from "../components/ServerList.tsx";
+import { Credentials } from "../types/credentials.ts";
 
 type OverviewProps = {
+    servers: Server[],
     upses: Ups[],
+    credentialsList: Credentials[],
     monitoring: boolean
 }
 
@@ -14,7 +15,7 @@ export default function AllUpsesPage(props:Readonly<OverviewProps>){
         <>
             {props.monitoring ? <h3> Monitoring mode </h3> : <h3> no Monitoring</h3>}
             <h1>List of Servers</h1>
-            <ServerList servers={servers} upses={props.upses} monitoring={props.monitoring}/>
+            <ServerList servers={props.servers} upses={props.upses} credentialsList={props.credentialsList} monitoring={props.monitoring}/>
         </>
     )
 }

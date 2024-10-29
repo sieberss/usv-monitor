@@ -33,6 +33,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         navigate("/")
     }
 
+    /** initialize data from props */
     useEffect(() => {
         setUps(props.ups)
         setEditing(props.ups.id === "new")
@@ -41,13 +42,10 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         setCommunityInput(props.ups.community)
     }, [props.ups])
 
-    function setInputStartValues(){
+    function resetForm(){
         setNameInput(ups.name)
         setAddressInput(ups.address)
         setCommunityInput(ups.community)
-    }
-    function resetForm() {
-        setInputStartValues()
         setChangedData(false)
     }
 
@@ -55,32 +53,29 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         alert("Test initiated")
     }
 
-    function submitEditForm(): void {
-        if (!addressInput) {    // input error
-            setMessage("Error: Address is mandatory")
-            return
-        }
-        if (ups.id==="new") {
-            axios.post('/api/ups', {name: nameInput, address: addressInput, community: communityInput})
-                .then(response => {
-                    if (response.status == 200) backToList(true);
-                    else setMessage(response.data);
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                });
-        } else {                // updating an existing UPS
-            axios.put('/api/ups/' + ups.id, {name: nameInput, address: addressInput, community: communityInput})
-                .then(response => {
-                    if (response.status == 200){
-                        backToList(true)
-                    }
-                    else setMessage(response.data)
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                });
-        }
+    /** axios calls ****************************************************************************************/
+    function addUps() : void {
+        axios.post('/api/ups', {name: nameInput, address: addressInput, community: communityInput})
+            .then(response => {
+                if (response.status == 200) backToList(true);
+                else setMessage(response.data);
+            })
+            .catch(error => {
+                console.error('Creating new UPS failed:', error);
+            });
+    }
+
+    function updateUps() : void {
+        axios.put('/api/ups/' + ups.id, {name: nameInput, address: addressInput, community: communityInput})
+            .then(response => {
+                if (response.status == 200){
+                    backToList(true)
+                }
+                else setMessage(response.data)
+            })
+            .catch(error => {
+                console.error('Updating UPS failed:', error);
+            });
     }
 
     function deleteUps(): void {
@@ -92,8 +87,21 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                 else setMessage(response.data)
             })
             .catch(error => {
-                console.error('Error fetching data:', error);
+                console.error('Deleting UPS failed:', error);
             });
+    }
+    /** end axios calls ***************************************************************************************/
+
+    function submitEditForm(): void {
+        if (!addressInput) {    // input error
+            setMessage("Error: Address is mandatory")
+            return
+        }
+        if (ups.id==="new") {
+            addUps()
+        } else {
+            updateUps()
+        }
     }
 
     function deleteClicked(): void {
