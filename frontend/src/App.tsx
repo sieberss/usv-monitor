@@ -13,6 +13,7 @@ import AllCredentialsPage from "./pages/AllCredentialsPage.tsx";
 import CredentialsPage from "./pages/CredentialsPage.tsx";
 import ServerPage from './pages/ServerPage.tsx';
 import AllServersPage from './pages/AllServersPage.tsx';
+import Navbar from './components/Navbar.tsx';
 
 function App() {
 
@@ -85,6 +86,7 @@ function App() {
     return (
 
         <>
+            <Navbar/>
             <Routes>
                 <Route path={"/login"} element={<LoginPage setLoggedIn={setLoggedIn}/>}/>
                 <Route element={<ProtectedRoute loggedIn={loggedIn}/>}>
