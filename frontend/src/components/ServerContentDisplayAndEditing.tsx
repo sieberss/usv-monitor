@@ -7,6 +7,7 @@ import {Credentials} from "../types/credentials.ts";
 import CredentialsSelect from "./CredentialsSelect.tsx";
 import UpsSelect from "./UpsSelect.tsx";
 import FormBottom from "./FormBottom.tsx";
+import NameAndAddressInputFields from "./NameAndAddressInputFields.tsx";
 
 type EditProps = {
     server: Server,
@@ -280,28 +281,6 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
             setMessage(confirmationMessage)
     }
 
-    const nameInputField = <input
-        id={'name'}
-        type={'text'}
-        name={'name'}
-        value={nameInput}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setNameInput(event.target.value)
-            setChangedData(true)
-        }}
-    />;
-
-    const addressInputField = <input
-        id={'address'}
-        type={'text'}
-        name={'address'}
-        value={addressInput}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setAddressInput(event.target.value)
-            setChangedData(true)
-        }}
-    />;
-
     const localCheckbox = <>
         <input
             id={"local"}
@@ -384,18 +363,9 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
 
             <form name={"edit"}>
                 <ul>
-                    <li>
-                        <label htmlFor={'name'}>Name:</label>
-                        {editing
-                            ? nameInputField
-                            : <p>{server.name}</p>}
-                    </li>
-                    <li>
-                        <label htmlFor={'address'}>Address (IP or FQDN):</label>
-                        {editing
-                            ? addressInputField
-                            : <p>{server.address}</p>}
-                    </li>
+                    <NameAndAddressInputFields editing={editing} name={server.name} nameInput={nameInput} setNameInput={setNameInput}
+                                               address={server.address} addressInput={addressInput} setAddressInput={setAddressInput}
+                                               setChangedData={setChangedData}/>
                     <li>
                         {localCheckbox}
                     </li>

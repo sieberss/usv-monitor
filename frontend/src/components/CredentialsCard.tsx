@@ -9,7 +9,7 @@ type UpsCardProps = {
 export default function CredentialsCard(props: Readonly<UpsCardProps>){
     const navigate = useNavigate()
     return(
-        <article onClick={() => navigate("/credentials/" + props.credentials.id)}>
+        <div onClick={() => navigate("/credentials/" + props.credentials.id)} role={"button"}>
             {props.credentials.id !== "new"
               ?
                 <h3>{props.credentials.user}</h3>
@@ -17,6 +17,6 @@ export default function CredentialsCard(props: Readonly<UpsCardProps>){
                 : // plus-button for adding
                  <h2><FaPlus/></h2>
             }
-        </article>
+        </div>
     )
 }

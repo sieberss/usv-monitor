@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import FormBottom from "./FormBottom.tsx";
+import NameAndAddressInputFields from "./NameAndAddressInputFields.tsx";
 
 type EditProps = {
     ups: Ups
@@ -112,28 +113,6 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
             setMessage(confirmationMessage)
     }
 
-    const nameInputField = <input
-        id={'name'}
-        type={'text'}
-        name={'name'}
-        value={nameInput}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setNameInput(event.target.value)
-            setChangedData(true)
-        }}
-    />;
-
-    const addressInputField = <input
-        id={'address'}
-        type={'text'}
-        name={'address'}
-        value={addressInput}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setAddressInput(event.target.value)
-            setChangedData(true)
-        }}
-    />;
-
     const communityInputField = <input
         id={'community'}
         type={'text'}
@@ -155,18 +134,9 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
 
             <form name={"edit"}>
                 <ul>
-                    <li>
-                        <label htmlFor={'name'}>Name:</label>
-                        {editing
-                            ? nameInputField
-                            : <p>{ups.name}</p>}
-                    </li>
-                    <li>
-                        <label htmlFor={'address'}>Address (IP or FQDN):</label>
-                        {editing
-                            ? addressInputField
-                            : <p>{ups.address}</p>}
-                    </li>
+                    <NameAndAddressInputFields editing={editing} name={ups.name} nameInput={nameInput} setNameInput={setNameInput}
+                                               address={ups.address} addressInput={addressInput} setAddressInput={setAddressInput}
+                                               setChangedData={setChangedData}/>
                     <li>
                         <label htmlFor={'community'}>Community String:</label>
                         {editing

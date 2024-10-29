@@ -9,7 +9,7 @@ type BottomProps = {
     confirmationMessage: string
 }
 
-export default function FormBottom(props:BottomProps){
+export default function FormBottom(props:Readonly<BottomProps>){
     return (
         <>
             <li></li>
