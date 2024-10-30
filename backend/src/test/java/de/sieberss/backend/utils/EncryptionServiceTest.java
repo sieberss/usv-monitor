@@ -33,9 +33,17 @@ class EncryptionServiceTest {
         // fields after encryption must be equal, except password (different and not empty)
         assertEquals(credentialsWithoutEncryption.id(), encryptedCredentials.id());
         assertEquals(credentialsWithoutEncryption.user(), encryptedCredentials.user());
-        assertEquals(credentialsWithoutEncryption.localOnly(), encryptedCredentials.localOnly());
+        assertEquals(credentialsWithoutEncryption.global(), encryptedCredentials.global());
         assertNotEquals(credentialsWithoutEncryption.password(), encryptedCredentials.password());
         assertNotEquals("", encryptedCredentials.password());
+    }
+
+    @Test
+    void encryptCredentials_shouldEncryptandDecryptNullToNull() throws Exception {
+        encryptionService.setTestKey();
+        assertNull(encryptionService.encryptCredentials(null));
+        assertNull(encryptionService.decryptCredentials(null));
+
     }
 
 }

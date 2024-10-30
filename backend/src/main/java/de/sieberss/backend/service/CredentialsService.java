@@ -33,7 +33,7 @@ public class CredentialsService {
 
     public CredentialsWithoutEncryption createCredentials(CredentialsWithoutEncryption submitted) {
         CredentialsWithoutEncryption completed =
-                new CredentialsWithoutEncryption(idService.generateId(), submitted.user(), submitted.password(), submitted.localOnly());
+                new CredentialsWithoutEncryption(idService.generateId(), submitted.user(), submitted.password(), submitted.global());
         Credentials dbObject = encryptionService.encryptCredentials(completed);
         repo.save(dbObject);
         return completed;
@@ -42,7 +42,7 @@ public class CredentialsService {
     public CredentialsWithoutEncryption updateCredentials(String id, CredentialsWithoutEncryption submitted) {
         if (!repo.existsById(id))
             throw new NoSuchElementException(id);
-        CredentialsWithoutEncryption completed = new CredentialsWithoutEncryption(id, submitted.user(), submitted.password(), submitted.localOnly());
+        CredentialsWithoutEncryption completed = new CredentialsWithoutEncryption(id, submitted.user(), submitted.password(), submitted.global());
         Credentials dbObject = encryptionService.encryptCredentials(completed);
         repo.save(dbObject);
         return completed;

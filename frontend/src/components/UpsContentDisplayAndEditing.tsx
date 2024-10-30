@@ -2,6 +2,8 @@ import {Ups} from "../types/ups.ts";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
+import FormBottom from "./FormBottom.tsx";
+import NameAndAddressInputFields from "./NameAndAddressInputFields.tsx";
 
 type EditProps = {
     ups: Ups
@@ -33,6 +35,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         navigate("/")
     }
 
+    /** initialize data from props */
     useEffect(() => {
         setUps(props.ups)
         setEditing(props.ups.id === "new")
@@ -41,13 +44,10 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         setCommunityInput(props.ups.community)
     }, [props.ups])
 
-    function setInputStartValues(){
+    function resetForm(){
         setNameInput(ups.name)
         setAddressInput(ups.address)
         setCommunityInput(ups.community)
-    }
-    function resetForm() {
-        setInputStartValues()
         setChangedData(false)
     }
 
@@ -55,32 +55,29 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         alert("Test initiated")
     }
 
-    function submitEditForm(): void {
-        if (!addressInput) {    // input error
-            setMessage("Error: Address is mandatory")
-            return
-        }
-        if (ups.id==="new") {
-            axios.post('/api/ups', {name: nameInput, address: addressInput, community: communityInput})
-                .then(response => {
-                    if (response.status == 200) backToList(true);
-                    else setMessage(response.data);
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                });
-        } else {                // updating an existing UPS
-            axios.put('/api/ups/' + ups.id, {name: nameInput, address: addressInput, community: communityInput})
-                .then(response => {
-                    if (response.status == 200){
-                        backToList(true)
-                    }
-                    else setMessage(response.data)
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                });
-        }
+    /** axios calls ****************************************************************************************/
+    function addUps() : void {
+        axios.post('/api/ups', {name: nameInput, address: addressInput, community: communityInput})
+            .then(response => {
+                if (response.status == 200) backToList(true);
+                else setMessage(response.data);
+            })
+            .catch(error => {
+                console.error('Creating new UPS failed:', error);
+            });
+    }
+
+    function updateUps() : void {
+        axios.put('/api/ups/' + ups.id, {name: nameInput, address: addressInput, community: communityInput})
+            .then(response => {
+                if (response.status == 200){
+                    backToList(true)
+                }
+                else setMessage(response.data)
+            })
+            .catch(error => {
+                console.error('Updating UPS failed:', error);
+            });
     }
 
     function deleteUps(): void {
@@ -92,8 +89,21 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                 else setMessage(response.data)
             })
             .catch(error => {
-                console.error('Error fetching data:', error);
+                console.error('Deleting UPS failed:', error);
             });
+    }
+    /** end axios calls ***************************************************************************************/
+
+    function submitEditForm(): void {
+        if (!addressInput) {    // input error
+            setMessage("Error: Address is mandatory")
+            return
+        }
+        if (ups.id==="new") {
+            addUps()
+        } else {
+            updateUps()
+        }
     }
 
     function deleteClicked(): void {
@@ -102,28 +112,6 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         } else
             setMessage(confirmationMessage)
     }
-
-    const nameInputField = <input
-        id={'name'}
-        type={'text'}
-        name={'name'}
-        value={nameInput}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setNameInput(event.target.value)
-            setChangedData(true)
-        }}
-    />;
-
-    const addressInputField = <input
-        id={'address'}
-        type={'text'}
-        name={'address'}
-        value={addressInput}
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setAddressInput(event.target.value)
-            setChangedData(true)
-        }}
-    />;
 
     const communityInputField = <input
         id={'community'}
@@ -146,18 +134,9 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
 
             <form name={"edit"}>
                 <ul>
-                    <li>
-                        <label htmlFor={'name'}>Name:</label>
-                        {editing
-                            ? nameInputField
-                            : <p>{ups.name}</p>}
-                    </li>
-                    <li>
-                        <label htmlFor={'address'}>Address (IP or FQDN):</label>
-                        {editing
-                            ? addressInputField
-                            : <p>{ups.address}</p>}
-                    </li>
+                    <NameAndAddressInputFields editing={editing} name={ups.name} nameInput={nameInput} setNameInput={setNameInput}
+                                               address={ups.address} addressInput={addressInput} setAddressInput={setAddressInput}
+                                               setChangedData={setChangedData}/>
                     <li>
                         <label htmlFor={'community'}>Community String:</label>
                         {editing
@@ -169,26 +148,9 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                             Connection Test
                         </button>
                     </li>
-                    <li></li>
-                    <li>
-                        <button id={"reset"} type={"button"} onClick={() => {
-                            resetForm()
-                        }} hidden={!changedData}>
-                            Reset
-                        </button>
-                        <button id={"submit"} type={"button"} onClick={() => submitEditForm()} hidden={!changedData}>
-                            Save
-                        </button>
-                    </li>
-                    <li>
-                        <button type={"button"} onClick={deleteClicked} hidden={editing}>
-                            Delete
-                        </button>
-                        <button type={"button"} onClick={() => switchEditMode(true)} hidden={editing || message===confirmationMessage}>
-                            Edit
-                        </button>
-                    </li>
-                    <p>{message}</p>
+                    <FormBottom resetForm={resetForm} changedData={changedData} submitEditForm={submitEditForm}
+                                deleteClicked={deleteClicked} editing={editing} switchEditMode={switchEditMode}
+                                message={message} confirmationMessage={confirmationMessage} />
                 </ul>
             </form>
         </>

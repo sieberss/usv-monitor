@@ -38,7 +38,7 @@ class ServerControllerTest {
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("u","user", "password", true);
         Credentials encrypted = encryptionService.encryptCredentials(decrypted);
         credentialsRepo.save(encrypted);
-        Server server = new Server("22", "Test-server", "1.1.1.1", encrypted, ups);
+        Server server = new Server("22", "Test-server", "1.1.1.1", encrypted, ups, 180);
         serverRepo.save(server);
         mvc.perform(MockMvcRequestBuilders.get("/api/server"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -53,9 +53,10 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
-                                     "upsId": "1"
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
                                  }
                                 ]
                                 """
@@ -82,7 +83,7 @@ class ServerControllerTest {
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("u","user", "password", true);
         Credentials encrypted = encryptionService.encryptCredentials(decrypted);
         credentialsRepo.save(encrypted);
-        Server server = new Server("22", "Test-server", "1.1.1.1", encrypted, ups);
+        Server server = new Server("22", "Test-server", "1.1.1.1", encrypted, ups, 180);
         serverRepo.save(server);
         mvc.perform(MockMvcRequestBuilders.get("/api/server/22"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -96,9 +97,10 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
-                                     "upsId": "1"
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
                                  }
                                 """
                 ));
@@ -136,9 +138,10 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
-                                     "upsId": "1"
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
                                  }
                                 """
                         ))
@@ -153,9 +156,10 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
-                                     "upsId": "1"
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
                                  }
                                 """
                 ));    }
@@ -176,9 +180,10 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
-                                     "upsId": "1"
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
                                  }
                                 """
                         ))
@@ -193,9 +198,10 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
-                                     "upsId": ""
+                                     "upsId": "",
+                                     "shutdownTime" : 180
                                  }
                                 """
                 ));    }
@@ -207,7 +213,7 @@ class ServerControllerTest {
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("u","user", "password", true);
         Credentials encrypted = encryptionService.encryptCredentials(decrypted);
         credentialsRepo.save(encrypted);
-        serverRepo.save(new Server("22", "unnamed", "", null, null));
+        serverRepo.save(new Server("22", "unnamed", "", null, null, 180));
         mvc.perform(MockMvcRequestBuilders.put("/api/server/22")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -218,9 +224,10 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
-                                     "upsId": "1"
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
                                  }
                                 """))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -234,9 +241,10 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
-                                     "upsId": "1"
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
                                  }
                              """));
     }
@@ -246,7 +254,7 @@ class ServerControllerTest {
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("u","user", "password", true);
         Credentials encrypted = encryptionService.encryptCredentials(decrypted);
         credentialsRepo.save(encrypted);
-        serverRepo.save(new Server("22", "unnamed", "", null, null));
+        serverRepo.save(new Server("22", "unnamed", "", null, null, 180));
         mvc.perform(MockMvcRequestBuilders.put("/api/server/22")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -257,9 +265,10 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
-                                     "upsId": "1"
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
                                  }
                                 """))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -273,9 +282,10 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
-                                     "upsId": ""
+                                     "upsId": "",
+                                     "shutdownTime" : 180
                                  }
                              """));
     }
@@ -292,9 +302,10 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
-                                     "upsId": "1"
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
                                  }
                           """))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
@@ -313,8 +324,8 @@ class ServerControllerTest {
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("u","user", "password", true);
         Credentials encrypted = encryptionService.encryptCredentials(decrypted);
         credentialsRepo.save(encrypted);
-        serverRepo.save(new Server("22", "Test-server", "1.1.1.1", encrypted, null));
-        serverRepo.save(new Server("33", "unnamed", "", null, null));
+        serverRepo.save(new Server("22", "Test-server", "1.1.1.1", encrypted, null, 180));
+        serverRepo.save(new Server("33", "unnamed", "", null, null, 180));
         mvc.perform(MockMvcRequestBuilders.delete("/api/server/33"))
             .andExpect(MockMvcResultMatchers.status().isOk());
         mvc.perform(MockMvcRequestBuilders.get("/api/server"))
@@ -329,9 +340,10 @@ class ServerControllerTest {
                                           "id" : "u",
                                           "user": "user",
                                           "password": "password",
-                                          "localOnly": true
+                                          "global": true
                                      },
-                                     "upsId": ""
+                                     "upsId": "",
+                                     "shutdownTime" : 180
                                  }
                                ]
                                """

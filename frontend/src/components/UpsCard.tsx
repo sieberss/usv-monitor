@@ -11,7 +11,7 @@ type UpsCardProps = {
 export default function UpsCard(props: Readonly<UpsCardProps>){
     const navigate = useNavigate()
     return(
-        <div onClick={() => navigate("/upsdetails/" + props.ups?.id)}>
+        <div onClick={() => navigate("/ups/" + props.ups?.id)} role={"button"}>
             {props.ups?.id !== "new"
               ? <>
                 <h3>{props.ups?.name}</h3>

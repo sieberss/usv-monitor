@@ -41,7 +41,7 @@ public class ServerService {
      * @return submitted DTO completed with random ID, when successfully stored in database
      */
     public ServerDTO createServer(ServerDTO serverDTO) {
-         ServerDTO completed = new ServerDTO(idService.generateId(), serverDTO.name(), serverDTO.address(), serverDTO.credentials(), serverDTO.upsId());
+         ServerDTO completed = new ServerDTO(idService.generateId(), serverDTO.name(), serverDTO.address(), serverDTO.credentials(), serverDTO.upsId(), serverDTO.shutdownTime());
          Server toStore = converter.getServerFromDTO(completed);
          repo.save(toStore);
          return converter.getDTOFromServer(toStore);
@@ -56,7 +56,7 @@ public class ServerService {
     public ServerDTO updateServer(String id, ServerDTO submitted) {
         if (!repo.existsById(id))
             throw new NoSuchElementException(id);
-        ServerDTO completed = new ServerDTO(id, submitted.name(), submitted.address(), submitted.credentials(), submitted.upsId());
+        ServerDTO completed = new ServerDTO(id, submitted.name(), submitted.address(), submitted.credentials(), submitted.upsId(), submitted.shutdownTime());
         Server toStore = converter.getServerFromDTO(completed);
         repo.save(toStore);
         return converter.getDTOFromServer(toStore);

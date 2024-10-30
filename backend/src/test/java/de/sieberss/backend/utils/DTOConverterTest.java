@@ -29,9 +29,9 @@ class DTOConverterTest {
         Credentials encrypted
                 = new Credentials("1", "user", "klkjterer", true);
         ServerDTO dto
-                = new ServerDTO("44", "server", "1.1.1.1", decrypted, "2");
+                = new ServerDTO("44", "server", "1.1.1.1", decrypted, "2", 180);
         Server expected
-                = new Server("44", "server", "1.1.1.1", encrypted, ups);
+                = new Server("44", "server", "1.1.1.1", encrypted, ups, 180);
         when(upsRepo.findById("2"))
                 .thenReturn(Optional.of(ups));
         when(encryptionService.encryptCredentials(decrypted))
@@ -50,9 +50,9 @@ class DTOConverterTest {
         Credentials encrypted
                 = new Credentials("1", "user", "klkjterer", true);
         ServerDTO dto
-                = new ServerDTO("44", "server", "1.1.1.1", decrypted, "2");
+                = new ServerDTO("44", "server", "1.1.1.1", decrypted, "2", 180);
         Server expected
-                = new Server("44", "server", "1.1.1.1", encrypted, null);
+                = new Server("44", "server", "1.1.1.1", encrypted, null, 180);
         when(upsRepo.findById("2"))
                 .thenReturn(Optional.empty());
         when(encryptionService.encryptCredentials(decrypted))
@@ -73,9 +73,9 @@ class DTOConverterTest {
         Credentials encrypted
                 = new Credentials("1", "user", "klkjterer", true);
         Server server
-                = new Server("44", "server", "1.1.1.1", encrypted, ups);
+                = new Server("44", "server", "1.1.1.1", encrypted, ups, 180);
         ServerDTO dto
-                = new ServerDTO("44", "server", "1.1.1.1", decrypted, "2");
+                = new ServerDTO("44", "server", "1.1.1.1", decrypted, "2", 180);
         when(encryptionService.decryptCredentials(encrypted))
                 .thenReturn(decrypted);
         // execute method
@@ -90,9 +90,9 @@ class DTOConverterTest {
         Credentials encrypted
                 = new Credentials("1", "user", "klkjterer", true);
         Server server
-                = new Server("44", "server", "1.1.1.1", encrypted, null);
+                = new Server("44", "server", "1.1.1.1", encrypted, null, 180);
         ServerDTO dto
-                = new ServerDTO("44", "server", "1.1.1.1", decrypted, "");
+                = new ServerDTO("44", "server", "1.1.1.1", decrypted, "", 180);
         when(encryptionService.decryptCredentials(encrypted))
                 .thenReturn(decrypted);
         // execute method
