@@ -104,52 +104,11 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
     }
 
 
-    /** axios calls for credentials *********************************************************************************/
+    /** axios calls  *********************************************************************************/
 
-    /** @return new Credentials object from backend with provided data in case of success,
-     *          null in case of failure
-     */
-    function addLocalCredentials(): Credentials | undefined {
-        axios.post('/api/credentials', {user: userInput, password: passwordInput, global: false})
-            .then(response => {
-                if (response.status == 200) {
-                    return response.data
-                } else {
-                    setMessage(response.data)
-                }
-            })
-            .catch(error => {
-                console.error("addLocalredentials failed:", error)
-            })
-        return undefined
-    }
-
-    /** @return true if update was successful, false otherwise */
-    function updateLocalCredentials(): boolean {
-        axios.post('/api/credentials/' + server.credentials.id, {
-            user: userInput,
-            password: passwordInput,
-            global: false
-        })
-            .then(response => {
-                if (response.status == 200) {
-                    return true
-                } else {
-                    setMessage(response.data)
-                    return false
-                }
-            })
-            .catch(error => {
-                console.error("updateLocalredentials failed:", error)
-                return false
-            })
-        return false
-    }
-
-    /** @return true if delete was successful, false otherwise */
-    function deleteLocalCredentials(): boolean {
-        if (!server.credentials)  /** when credentials value was null, nothing needs to be deleted => success */
-            return true
+    function deleteLocalCredentials(): void {
+        if (!server.credentials || server.credentials.global)  /** nothing needs to be deleted => success */
+            return
         axios.delete('/api/credentials/' + server.credentials.id)
             .then(response => {
                 if (response.status == 200) {
@@ -163,45 +122,14 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                 console.error('deleteLocalCredentials failed:', error);
                 return false
             });
-        return false
     }
 
-    /** preparation of embedded credentials object before server object can be stored **************************************/
-    function buildEmbeddedCredentialsObject(): Credentials | undefined {
-        if (localSelected) {
-            if (server.id === "new" || !server.credentials || server.credentials.global) {
-                /** when for a new server local Credentials are chosen
-                 *  (or for an existing server with no value for credentials)
-                 *  or an existing server changes from global to local credentials,
-                 *  then a new local Credentials object has to be created first
-                 */
-                return addLocalCredentials()
-            } else if (changedCredentialsInput) {
-                /** local credentials are changed, need to be updated in database first,
-                 * in case of failure keep old data */
-                return updateLocalCredentials()
-                    ? {
-                        id: server.credentials.id,
-                        user: userInput,
-                        password: passwordInput,
-                        global: false
-                    }
-                    : server.credentials
-            } else /** no changes to local credentials */
-                return server.credentials
-        } else
-            /** when global credentials are chosen, data is found in credentialsList
-             */
-            return getGlobalCredentialsById(globalCredentialsSelection)
-    }
-
-    /** axios calls for server ********************************************************************/
-    function addServer(): void {
-        const credentialsToStore: Credentials | undefined = buildEmbeddedCredentialsObject()
-        axios.post('/api/server', {
+    function postToLocalEndpoint() : void {
+        axios.post('/api/server/localcredentials', {
             name: nameInput,
             address: addressInput,
-            credentials: credentialsToStore,
+            user: userInput,
+            password: passwordInput,
             upsId: upsSelection,
             shutdownTime: shutdownSecondsInput
         })
@@ -215,20 +143,57 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
             });
     }
 
-    function updateServer(): void {
-        const credentialsToStore = buildEmbeddedCredentialsObject()
-        axios.put('/api/server/' + server.id, {
+    function postToGlobalEndpoint(){
+        axios.post('/api/server', {
             name: nameInput,
             address: addressInput,
-            credentials: credentialsToStore,
+            credentials: getGlobalCredentialsById(globalCredentialsSelection),
+            upsId: upsSelection,
+            shutdownTime: shutdownSecondsInput
+        })
+            .then(response => {
+                if (response.status == 200)
+                    backToList(true);
+                else setMessage(response.data);
+            })
+            .catch(error => {
+                console.error('addServer failed:', error);
+            });
+    }
+
+    function putToLocalEndpoint(){
+        axios.put('/api/server/localcredentials/' + server.id, {
+            name: nameInput,
+            address: addressInput,
+            user: userInput,
+            password: passwordInput,
             upsId: upsSelection,
             shutdownTime: shutdownSecondsInput
         })
             .then(response => {
                 if (response.status == 200) {
-                    /** delete localCredentials if not contained in updated server object */
-                    if ((!credentialsToStore || credentialsToStore.global) && !server.credentials?.global)
-                        deleteLocalCredentials()
+                    /** delete old localCredentials as endpoint generates new ones */
+                    deleteLocalCredentials()
+                    backToList(true)
+                } else setMessage(response.data)
+            })
+            .catch(error => {
+                console.error('updateServer failed:', error);
+            });
+    }
+
+    function putToGlobalEndpoint(){
+        axios.put('/api/server/' + server.id, {
+            name: nameInput,
+            address: addressInput,
+            credentials: getGlobalCredentialsById(globalCredentialsSelection),
+            upsId: upsSelection,
+            shutdownTime: shutdownSecondsInput
+        })
+            .then(response => {
+                if (response.status == 200) {
+                    /** delete old localCredentials when changed to global */
+                    deleteLocalCredentials()
                     backToList(true)
                 } else setMessage(response.data)
             })
@@ -242,8 +207,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
             .then(response => {
                 if (response.status == 200) {
                     /** local credentials for a deleted server can be deleted */
-                    if (!server.credentials.global)
-                        deleteLocalCredentials()
+                    deleteLocalCredentials()
                     backToList(true)
                 } else setMessage(response.data)
             })
@@ -252,7 +216,21 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
             });
     }
 
+     function addServer(): void {
+        if (localSelected)
+            postToLocalEndpoint()
+        else
+            postToGlobalEndpoint()
+    }
+
+    function updateServer(): void {
+        if (localSelected && changedCredentialsInput)
+            putToLocalEndpoint()
+        else
+            putToGlobalEndpoint()
+    }
     /** end axios calls for server *************************************************************/
+
 
     function submitEditForm(): void {
         if (!addressInput) {    // input error
@@ -350,7 +328,6 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             setShutdownSecondsInput(parseInt(event.target.value))
             setChangedData(true)
-            setChangedCredentialsInput(true)
         }}
     />;
 
