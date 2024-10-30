@@ -61,19 +61,16 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         setEditing(props.server.id === "new")
         setNameInput(props.server.name)
         setAddressInput(props.server.address)
-        if (props.server.credentials === null) {
-            setGlobalCredentialsSelection("")
-            setLocalSelected(true)
-        } else if (props.server.credentials.global) {
+        if (!props.server.credentials || props.server.credentials.global) {
             setLocalSelected(false)
-            setGlobalCredentialsSelection(props.server.credentials.id)
+            setGlobalCredentialsSelection(props.server.credentials ?  props.server.credentials.id : "")
             setUserInput("")
             setPasswordInput("")
         } else {
-            setUserInput(props.server.credentials?.user)
-            setPasswordInput(props.server.credentials?.password)
             setLocalSelected(true)
             setGlobalCredentialsSelection("")
+            setUserInput(props.server.credentials.user)
+            setPasswordInput(props.server.credentials.password)
         }
         setUpsSelection(props.server.upsId)
         setShutdownSecondsInput(props.server.shutdownTime)
@@ -83,15 +80,16 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
     function resetForm() {
         setNameInput(server.name)
         setAddressInput(server.address)
-        if (server.credentials?.global) {
+        if (!server.credentials || server.credentials.global) {
             setLocalSelected(false)
-            setGlobalCredentialsSelection(props.server.credentials.id)
+            setGlobalCredentialsSelection(server.credentials ?  server.credentials.id : "")
             setUserInput("")
             setPasswordInput("")
         } else {
             setLocalSelected(true)
-            setUserInput(server.credentials?.user)
-            setPasswordInput(server.credentials?.password)
+            setGlobalCredentialsSelection("")
+            setUserInput(server.credentials.user)
+            setPasswordInput(server.credentials.password)
         }
         setUpsSelection(server.upsId)
         setShutdownSecondsInput(server.shutdownTime)
@@ -305,10 +303,10 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                 : <p>{server.credentials?.user}</p>}
         </li>
         <li>
-            <label htmlFor={'password'}>Password:</label>
-            {editing
-                ? passwordInputField
-                : <p>********</p>}
+            {editing && <>
+                <label htmlFor={'password'}>Password:</label>
+                {passwordInputField}
+            </>}
         </li>
     </>;
 
@@ -344,7 +342,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                                                address={server.address} addressInput={addressInput} setAddressInput={setAddressInput}
                                                setChangedData={setChangedData}/>
                     <li>
-                        {localCheckbox}
+                        {editing && localCheckbox}
                     </li>
                     {localSelected
                         ? localUserInput
@@ -352,7 +350,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                     }
                     <li>
                         <label htmlFor={"ups"}>On UPS:</label>
-                        <UpsSelect disabled={!editing} selection={globalCredentialsSelection}
+                        <UpsSelect disabled={!editing} selection={upsSelection}
                                            setSelected={setUpsSelection}
                                            setChangedData={setChangedData} upsList={props.upses}/>
                     </li>
