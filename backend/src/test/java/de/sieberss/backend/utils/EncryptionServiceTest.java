@@ -43,7 +43,19 @@ class EncryptionServiceTest {
         encryptionService.setTestKey();
         assertNull(encryptionService.encryptCredentials(null));
         assertNull(encryptionService.decryptCredentials(null));
+    }
 
+    @Test
+    void encryptCredentials_shouldReturnNull_WhenUsernameOrPasswordAreEmptyOrNull() throws Exception {
+        encryptionService.setTestKey();
+        CredentialsWithoutEncryption userNull = new CredentialsWithoutEncryption("1", null, "password", true);
+        CredentialsWithoutEncryption userEmpty = new CredentialsWithoutEncryption("1", "", "password", false);
+        CredentialsWithoutEncryption passwordNull = new CredentialsWithoutEncryption("1", "user", null, true);
+        CredentialsWithoutEncryption passwordEmpty = new CredentialsWithoutEncryption("1", "user", "", false);
+        assertNull(encryptionService.encryptCredentials(userNull));
+        assertNull(encryptionService.encryptCredentials(userEmpty));
+        assertNull(encryptionService.encryptCredentials(passwordNull));
+        assertNull(encryptionService.encryptCredentials(passwordEmpty));
     }
 
 }

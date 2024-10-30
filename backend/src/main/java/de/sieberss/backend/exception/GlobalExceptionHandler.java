@@ -23,4 +23,10 @@ public class GlobalExceptionHandler {
     public ErrorMessage handleEncryptionException(EncryptionException e) {
         return new ErrorMessage("Encryption failed", e.getMessage(), Instant.now());
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorMessage handleIllegalArgumentException(IllegalArgumentException e) {
+        return new ErrorMessage("Illegal argument", e.getMessage(), Instant.now());
+    }
 }

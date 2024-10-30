@@ -1,6 +1,7 @@
 package de.sieberss.backend.controller;
 
 import de.sieberss.backend.model.ServerDTO;
+import de.sieberss.backend.model.ServerDTOWithoutCredentialsId;
 import de.sieberss.backend.service.ServerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,16 @@ public class ServerController {
     @DeleteMapping("/{id}")
     public void deleteServer(@PathVariable String id) {
         service.deleteServer(id);
+    }
+
+    @PostMapping("/localcredentials")
+    public ServerDTO createServerWithNewLocalCredentials(@RequestBody ServerDTOWithoutCredentialsId dto) {
+        return service.createServerWithNewLocalCredentials(dto);
+    }
+
+    @PutMapping("/localcredentials/{id}")
+    public ServerDTO updateServerWithNewLocalCredentials(@PathVariable String id, @RequestBody ServerDTOWithoutCredentialsId dto) {
+        return service.updateServerWithNewLocalCredentials(id, dto);
     }
 
     @ExceptionHandler(NoSuchElementException.class)

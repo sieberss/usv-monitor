@@ -364,4 +364,314 @@ class ServerControllerTest {
 
     }
 
+    @Test
+    void createServerWithNewLocalCredentials_shouldCreateServer_withSubmittedData() throws Exception {
+        Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
+        upsRepo.save(ups);
+        mvc.perform(MockMvcRequestBuilders.post("/api/server/localcredentials")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                """
+                                 {
+                                     "name": "Test-server",
+                                     "address": "1.1.1.1",
+                                     "user": "user",
+                                     "password": "password",
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
+                                 }
+                                """
+                        ))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.credentials.id").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.content().json(
+                        """
+                                 {
+                                     "name": "Test-server",
+                                     "address": "1.1.1.1",
+                                     "credentials": {
+                                          "user": "user",
+                                          "password": "password",
+                                          "global": false
+                                     },
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
+                                 }
+                                """
+                ));
+    }
+
+    @Test
+    void createServerWithNewLocalCredentials_shouldTriggerErrorMessage_whenUsernameEmpty() throws Exception {
+        Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
+        upsRepo.save(ups);
+        mvc.perform(MockMvcRequestBuilders.post("/api/server/localcredentials")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                """
+                                 {
+                                     "name": "Test-server",
+                                     "address": "1.1.1.1",
+                                     "user": "",
+                                     "password": "password",
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
+                                 }
+                                """
+                        ))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().json(
+                        """
+                                 {
+                                     "message": "Illegal argument",
+                                     "id": "Credentials invalid"
+                                 }
+                                """
+                ));
+    }
+
+    @Test
+    void createServerWithNewLocalCredentials_shouldTriggerErrorMessage_whenUsernameNull() throws Exception {
+        Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
+        upsRepo.save(ups);
+        mvc.perform(MockMvcRequestBuilders.post("/api/server/localcredentials")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                """
+                                 {
+                                     "name": "Test-server",
+                                     "address": "1.1.1.1",
+                                     "user": null,
+                                     "password": "password",
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
+                                 }
+                                """
+                        ))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().json(
+                        """
+                                 {
+                                     "message": "Illegal argument",
+                                     "id": "Credentials invalid"
+                                 }
+                                """
+                ));
+    }
+
+    @Test
+    void createServerWithNewLocalCredentials_shouldTriggerErrorMessage_whenPasswordEmpty() throws Exception {
+        Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
+        upsRepo.save(ups);
+        mvc.perform(MockMvcRequestBuilders.post("/api/server/localcredentials")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                """
+                                 {
+                                     "name": "Test-server",
+                                     "address": "1.1.1.1",
+                                     "user": "user",
+                                     "password": "",
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
+                                 }
+                                """
+                        ))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().json(
+                        """
+                                 {
+                                     "message": "Illegal argument",
+                                     "id": "Credentials invalid"
+                                 }
+                                """
+                ));
+    }
+
+    @Test
+    void createServerWithNewLocalCredentials_shouldTriggerErrorMessage_whenPasswordNull() throws Exception {
+        Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
+        upsRepo.save(ups);
+        mvc.perform(MockMvcRequestBuilders.post("/api/server/localcredentials")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                """
+                                 {
+                                     "name": "Test-server",
+                                     "address": "1.1.1.1",
+                                     "user": "user",
+                                     "password": null,
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
+                                 }
+                                """
+                        ))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().json(
+                        """
+                                 {
+                                     "message": "Illegal argument",
+                                     "id": "Credentials invalid"
+                                 }
+                                """
+                ));
+    }
+
+    @Test
+    void updateServerWithNewLocalCredentials_shouldUpdateServer() throws Exception {
+        Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
+        upsRepo.save(ups);
+        serverRepo.save(new Server("22", "unnamed", "", null, null, 180));
+        mvc.perform(MockMvcRequestBuilders.put("/api/server/localcredentials/22")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                 {
+                                     "name": "Test-server",
+                                     "address": "1.1.1.1",
+                                     "user": "user",
+                                     "password": "password",
+                                     "global": false,
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
+                                 }
+                                """))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.credentials.id").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.content().json("""
+                             {
+                                     "id": "22",
+                                     "name": "Test-server",
+                                     "address": "1.1.1.1",
+                                     "credentials": {
+                                          "user": "user",
+                                          "password": "password",
+                                          "global": false
+                                     },
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
+                                 }
+                             """));
+    }
+
+
+    @Test
+    void updateServerWithNewLocalCredentials_shouldTriggerErrorMessage_whenUsernameEmpty() throws Exception {
+        Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
+        upsRepo.save(ups);
+        serverRepo.save(new Server("22", "unnamed", "", null, null, 180));
+        mvc.perform(MockMvcRequestBuilders.put("/api/server/localcredentials/22")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                """
+                                 {
+                                     "name": "Test-server",
+                                     "address": "1.1.1.1",
+                                     "user": "",
+                                     "password": "password",
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
+                                 }
+                                """
+                        ))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().json(
+                        """
+                                 {
+                                     "message": "Illegal argument",
+                                     "id": "Credentials invalid"
+                                 }
+                                """
+                ));
+    }
+
+    @Test
+    void updateServerWithNewLocalCredentials_shouldTriggerErrorMessage_whenUsernameNull() throws Exception {
+        Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
+        upsRepo.save(ups);
+        serverRepo.save(new Server("22", "unnamed", "", null, null, 180));
+        mvc.perform(MockMvcRequestBuilders.put("/api/server/localcredentials/22")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                """
+                                 {
+                                     "name": "Test-server",
+                                     "address": "1.1.1.1",
+                                     "user": null,
+                                     "password": "password",
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
+                                 }
+                                """
+                        ))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().json(
+                        """
+                                 {
+                                     "message": "Illegal argument",
+                                     "id": "Credentials invalid"
+                                 }
+                                """
+                ));
+    }
+
+    @Test
+    void updateServerWithNewLocalCredentials_shouldTriggerErrorMessage_whenPasswordEmpty() throws Exception {
+        Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
+        upsRepo.save(ups);
+        serverRepo.save(new Server("22", "unnamed", "", null, null, 180));
+        mvc.perform(MockMvcRequestBuilders.put("/api/server/localcredentials/22")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                """
+                                 {
+                                     "name": "Test-server",
+                                     "address": "1.1.1.1",
+                                     "user": "user",
+                                     "password": "",
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
+                                 }
+                                """
+                        ))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().json(
+                        """
+                                 {
+                                     "message": "Illegal argument",
+                                     "id": "Credentials invalid"
+                                 }
+                                """
+                ));
+    }
+
+    @Test
+    void updateServerWithNewLocalCredentials_shouldTriggerErrorMessage_whenPasswordNull() throws Exception {
+        Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
+        upsRepo.save(ups);
+        serverRepo.save(new Server("22", "unnamed", "", null, null, 180));
+        mvc.perform(MockMvcRequestBuilders.put("/api/server/localcredentials/22")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                """
+                                 {
+                                     "name": "Test-server",
+                                     "address": "1.1.1.1",
+                                     "user": "user",
+                                     "password": null,
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
+                                 }
+                                """
+                        ))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().json(
+                        """
+                                 {
+                                     "message": "Illegal argument",
+                                     "id": "Credentials invalid"
+                                 }
+                                """
+                ));
+    }
 }
