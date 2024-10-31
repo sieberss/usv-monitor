@@ -93,8 +93,8 @@ class CredentialsControllerTest {
     @Test
     void createCredentials_shouldReturnSubmittedObjectWithNewId() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/api/credentials")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
                                  {
                                      "user": "user",
                                      "password": "password",
@@ -113,7 +113,85 @@ class CredentialsControllerTest {
     }
 
     @Test
-    void updateUps_shouldUpdateCredentials_whenIdExists() throws Exception {
+    void createCredentials_shouldTriggerErrorMessage_whenUserEmpty() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/api/credentials")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                 {
+                                     "user": "",
+                                     "password": "password",
+                                     "global": true
+                                 }
+                          """))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().json("""
+                                {
+                                     "message": "Illegal argument",
+                                     "id": "Credentials invalid"
+                                     }
+                             """));
+    }
+
+    @Test
+    void createCredentials_shouldTriggerErrorMessage_whenUserNull() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/api/credentials")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                 {
+                                     "user": null,
+                                     "password": "password",
+                                     "global": true
+                                 }
+                          """))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().json("""
+                                {
+                                     "message": "Illegal argument",
+                                     "id": "Credentials invalid"
+                                     }
+                             """));
+    }
+    @Test
+    void createCredentials_shouldTriggerErrorMessage_whenPasswordEmpty() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/api/credentials")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                 {
+                                     "user": "user",
+                                     "password": "",
+                                     "global": true
+                                 }
+                          """))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().json("""
+                                {
+                                     "message": "Illegal argument",
+                                     "id": "Credentials invalid"
+                                     }
+                             """));
+    }
+    @Test
+    void createCredentials_shouldTriggerErrorMessage_whenPasswordNull() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/api/credentials")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                 {
+                                     "user": "user",
+                                     "password": null,
+                                     "global": true
+                                 }
+                          """))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().json("""
+                                {
+                                     "message": "Illegal argument",
+                                     "id": "Credentials invalid"
+                                     }
+                             """));
+    }
+
+    @Test
+    void updateCredentials_shouldUpdateCredentials_whenIdExists() throws Exception {
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("1", "user", "password", true);
         repo.save(encryptionService.encryptCredentials(decrypted));
         mvc.perform(MockMvcRequestBuilders.put("/api/credentials/1")

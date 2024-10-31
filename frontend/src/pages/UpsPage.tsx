@@ -3,9 +3,11 @@ import axios from "axios";
 import {Ups} from "../types/ups.ts";
 import UpsContentDisplayAndEditing from "../components/UpsContentDisplayAndEditing.tsx";
 import {useParams} from "react-router-dom";
+import { Server } from "../types/server.ts";
 
 type Props = {
-    upsUpdate : () => void
+    upsUpdate : () => void,
+    servers: Server[]
 }
 export default function UpsPage(props:Readonly<Props>) {
     const params = useParams()
@@ -25,7 +27,7 @@ export default function UpsPage(props:Readonly<Props>) {
     }, [id])
 
 return (
-    <UpsContentDisplayAndEditing ups={ups} upsUpdate={props.upsUpdate}/>
+    <UpsContentDisplayAndEditing ups={ups} upsUpdate={props.upsUpdate} servers={props.servers}/>
 )
 
 }

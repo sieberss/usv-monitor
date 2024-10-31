@@ -137,7 +137,7 @@ export default function CredentialsContentDisplayAndEditing(props: Readonly<Edit
         <>
             <h3>Details of credentials</h3>
             <button onClick={() => backToList(false)} >
-                Back
+                Show List
             </button>
 
             <form name={"edit"}>

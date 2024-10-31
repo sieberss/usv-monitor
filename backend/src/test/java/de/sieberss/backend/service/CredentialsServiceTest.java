@@ -60,7 +60,39 @@ class CredentialsServiceTest {
     }
 
     @Test
-    void createCredentials_shouldReturn_ObjectWithNewIdAndSubmittedData() {
+    void createCredentials_shouldThrowIllegalArgumentException_whenUsernameEmpty() {
+        when(idService.generateId()).thenReturn("1");
+        CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("", "", "pass", true);
+        // execute tested method
+        assertThrows(IllegalArgumentException.class, () -> service.createCredentials(submitted));
+    }
+
+    @Test
+    void createCredentials_shouldThrowIllegalArgumentException_whenUsernameNull() {
+        when(idService.generateId()).thenReturn("1");
+        CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("", null, "pass", true);
+        // execute tested method
+        assertThrows(IllegalArgumentException.class, () -> service.createCredentials(submitted));
+    }
+
+    @Test
+    void createCredentials_shouldThrowIllegalArgumentException_whenPasswordEmpty() {
+        when(idService.generateId()).thenReturn("1");
+        CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("", "user", "", true);
+        // execute tested method
+        assertThrows(IllegalArgumentException.class, () -> service.createCredentials(submitted));
+    }
+
+    @Test
+    void createCredentials_shouldThrowIllegalArgumentException_whenPasswordNull() {
+        when(idService.generateId()).thenReturn("1");
+        CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("", "user", null, true);
+        // execute tested method
+        assertThrows(IllegalArgumentException.class, () -> service.createCredentials(submitted));
+    }
+
+    @Test
+    void createCredentials_shouldReturn_ObjectWithNewIdAndSubmittedData_whenUserAndPasswordProvided() {
         when(idService.generateId()).thenReturn("1");
         CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("", "user", "pass", true);
         CredentialsWithoutEncryption expected = new CredentialsWithoutEncryption("1", "user", "pass", true);

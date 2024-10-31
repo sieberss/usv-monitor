@@ -1,7 +1,9 @@
 package de.sieberss.backend.service;
 
+import de.sieberss.backend.model.CredentialsWithoutEncryption;
 import de.sieberss.backend.model.Server;
 import de.sieberss.backend.model.ServerDTO;
+import de.sieberss.backend.model.ServerDTOWithoutCredentialsId;
 import de.sieberss.backend.repo.ServerRepo;
 import de.sieberss.backend.utils.DTOConverter;
 import de.sieberss.backend.utils.IdService;
@@ -17,7 +19,7 @@ public class ServerService {
     private final ServerRepo repo;
     private final IdService idService;
     private final DTOConverter converter;
-
+    private final CredentialsService credentialsService;
 
     public List<ServerDTO> getServerDTOList() {
         return repo.findAll().stream()
@@ -71,5 +73,20 @@ public class ServerService {
         if (!repo.existsById(id))
             throw new NoSuchElementException(id);
         repo.deleteById(id);
+    }
+
+
+    public ServerDTO createServerWithNewLocalCredentials(ServerDTOWithoutCredentialsId dto) {
+        CredentialsWithoutEncryption credentials
+                = credentialsService.createCredentials(new CredentialsWithoutEncryption("", dto.user(), dto.password(), false));
+        return createServer(new ServerDTO("", dto.name(), dto.address(), credentials, dto.upsId(), dto.shutdownTime()));
+    }
+
+
+    public ServerDTO updateServerWithNewLocalCredentials(String id, ServerDTOWithoutCredentialsId dto) {
+        CredentialsWithoutEncryption credentials
+                = credentialsService.createCredentials(new CredentialsWithoutEncryption("", dto.user(), dto.password(), false));
+        return updateServer(id,
+                new ServerDTO("", dto.name(), dto.address(), credentials, dto.upsId(), dto.shutdownTime()));
     }
 }

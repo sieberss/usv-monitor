@@ -43,7 +43,6 @@ class EncryptionServiceTest {
         encryptionService.setTestKey();
         assertNull(encryptionService.encryptCredentials(null));
         assertNull(encryptionService.decryptCredentials(null));
-
     }
 
 }

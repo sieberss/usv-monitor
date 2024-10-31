@@ -1,8 +1,10 @@
 package de.sieberss.backend.service;
 
 import de.sieberss.backend.model.*;
+import de.sieberss.backend.repo.CredentialsRepo;
 import de.sieberss.backend.repo.ServerRepo;
 import de.sieberss.backend.utils.DTOConverter;
+import de.sieberss.backend.utils.EncryptionService;
 import de.sieberss.backend.utils.IdService;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +20,10 @@ class ServerServiceTest {
 private final ServerRepo repo = mock(ServerRepo.class);
 private final IdService idService = mock(IdService.class);
 private final DTOConverter converter = mock (DTOConverter.class);
-private final ServerService service = new ServerService(repo, idService, converter);
+private final CredentialsRepo credentialsRepo = mock(CredentialsRepo.class);
+private final EncryptionService encryptionService = mock(EncryptionService.class);
+private final CredentialsService credentialsService = new CredentialsService(credentialsRepo, idService, encryptionService);
+private final ServerService service = new ServerService(repo, idService, converter, credentialsService);
 
     @Test
     void getServerDTOList_shouldReturnEmptyList_whenRepoIsEmpty() {
@@ -66,7 +71,7 @@ private final ServerService service = new ServerService(repo, idService, convert
 
     @Test
     void getServerDTOById_shouldThrowNoSuchElementException_whenIdDoesNotExist() {
-        // requested Id does not exist by default in mocked db, so no when-clause necessary
+        // requested ID does not exist by default in mocked db, so no when-clause necessary
         assertThrows(NoSuchElementException.class, () -> service.getServerDTOById("22"));
         verify(repo).findById("22");
     }
@@ -189,5 +194,127 @@ private final ServerService service = new ServerService(repo, idService, convert
         service.deleteServer("22");
         verify(repo).existsById("22");
         verify(repo).deleteById("22");
+    }
+
+    @Test
+    void createServerWithNewLocalCredentials_shouldCreateServer_withSubmittedData() {
+        Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
+        Credentials encrypted = new Credentials("8", "user", "UHJHJK", false);
+        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", false);
+        ServerDTOWithoutCredentialsId submitted
+                = new ServerDTOWithoutCredentialsId(null, "server", "1.1.1.1", "user", "pass","1", 180);
+        Server server
+                = new Server("22", "server", "1.1.1.1", encrypted, ups, 180);
+        ServerDTO expected
+                = new ServerDTO("22", "server", "1.1.1.1", decrypted, "1", 180);
+        when(idService.generateId()).thenReturn("8","22");
+        when(encryptionService.encryptCredentials(decrypted)).thenReturn(encrypted);
+        when(credentialsRepo.save(encrypted)).thenReturn(encrypted);
+        when(converter.getServerFromDTO(expected)).thenReturn(server);
+        when(converter.getDTOFromServer(server)).thenReturn(expected);
+        when(repo.save(server)).thenReturn(server);
+        // execute method
+        ServerDTO actual = service.createServerWithNewLocalCredentials(submitted);
+        verify(repo).save(server);
+        verify(idService, times(2)).generateId();
+        verify(encryptionService).encryptCredentials(decrypted);
+        verify(credentialsRepo).save(encrypted);
+        verify(converter).getServerFromDTO(expected);
+        verify(converter).getDTOFromServer(server);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void createServerWithNewLocalCredentials_shouldThrowIllegalArgumentException_whenUsernameEmpty() {
+        ServerDTOWithoutCredentialsId submitted
+                = new ServerDTOWithoutCredentialsId(null, "server", "1.1.1.1", "", "pass","1", 180);
+        // execute method
+        assertThrows(IllegalArgumentException.class, () -> service.createServerWithNewLocalCredentials(submitted));
+    }
+
+    @Test
+    void createServerWithNewLocalCredentials_shouldThrowIllegalArgumentException_whenUsernameNull() {
+        ServerDTOWithoutCredentialsId submitted
+                = new ServerDTOWithoutCredentialsId(null, "server", "1.1.1.1", null, "pass","1", 180);
+        // execute method
+        assertThrows(IllegalArgumentException.class, () -> service.createServerWithNewLocalCredentials(submitted));
+    }
+
+    @Test
+    void createServerWithNewLocalCredentials_shouldThrowIllegalArgumentException_whenPasswordEmpty() {
+        ServerDTOWithoutCredentialsId submitted
+                = new ServerDTOWithoutCredentialsId(null, "server", "1.1.1.1", "user", "","1", 180);
+        // execute method
+        assertThrows(IllegalArgumentException.class, () -> service.createServerWithNewLocalCredentials(submitted));
+    }
+
+    @Test
+    void createServerWithNewLocalCredentials_shouldThrowIllegalArgumentException_whenPasswordNull() {
+        ServerDTOWithoutCredentialsId submitted
+                = new ServerDTOWithoutCredentialsId(null, "server", "1.1.1.1", "user", null,"1", 180);
+        // execute method
+        assertThrows(IllegalArgumentException.class, () -> service.createServerWithNewLocalCredentials(submitted));
+    }
+
+    @Test
+    void updateServerWithNewLocalCredentials_shouldUpdateData_WithNewLocalCredentials() {
+        Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
+        Credentials encrypted = new Credentials("8", "user", "UHJHJK", false);
+        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", false);
+        ServerDTOWithoutCredentialsId submitted
+                = new ServerDTOWithoutCredentialsId(null, "server", "1.1.1.1", "user", "pass","1", 180);
+        Server server
+                = new Server("22", "server", "1.1.1.1", encrypted, ups, 180);
+        ServerDTO expected
+                = new ServerDTO("22", "server", "1.1.1.1", decrypted, "1", 180);
+        when(repo.existsById("22")).thenReturn(true);
+        when(idService.generateId()).thenReturn("8");
+        when(encryptionService.encryptCredentials(decrypted)).thenReturn(encrypted);
+        when(credentialsRepo.save(encrypted)).thenReturn(encrypted);
+        when(converter.getServerFromDTO(expected)).thenReturn(server);
+        when(converter.getDTOFromServer(server)).thenReturn(expected);
+        when(repo.save(server)).thenReturn(server);
+        // execute method
+        ServerDTO actual = service.updateServerWithNewLocalCredentials("22", submitted);
+        verify(repo).existsById("22");
+        verify(repo).save(server);
+        verify(idService).generateId();
+        verify(encryptionService).encryptCredentials(decrypted);
+        verify(credentialsRepo).save(encrypted);
+        verify(converter).getServerFromDTO(expected);
+        verify(converter).getDTOFromServer(server);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void updateServerWithNewLocalCredentials_shouldThrowIllegalArgumentException_whenUsernameEmpty() {
+        ServerDTOWithoutCredentialsId submitted
+                = new ServerDTOWithoutCredentialsId(null, "server", "1.1.1.1", "", "pass","1", 180);
+        // execute method
+        assertThrows(IllegalArgumentException.class, () -> service.updateServerWithNewLocalCredentials("1", submitted));
+    }
+
+    @Test
+    void updateServerWithNewLocalCredentials_shouldThrowIllegalArgumentException_whenUsernameNull() {
+        ServerDTOWithoutCredentialsId submitted
+                = new ServerDTOWithoutCredentialsId(null, "server", "1.1.1.1", null, "pass","1", 180);
+        // execute method
+        assertThrows(IllegalArgumentException.class, () -> service.updateServerWithNewLocalCredentials("1", submitted));
+    }
+
+    @Test
+    void updateServerWithNewLocalCredentials_shouldThrowIllegalArgumentException_whenPasswordEmpty() {
+        ServerDTOWithoutCredentialsId submitted
+                = new ServerDTOWithoutCredentialsId(null, "server", "1.1.1.1", "user", "","1", 180);
+        // execute method
+        assertThrows(IllegalArgumentException.class, () -> service.updateServerWithNewLocalCredentials("1", submitted));
+    }
+
+    @Test
+    void updateServerWithNewLocalCredentials_shouldThrowIllegalArgumentException_whenPasswordNull() {
+        ServerDTOWithoutCredentialsId submitted
+                = new ServerDTOWithoutCredentialsId(null, "server", "1.1.1.1", "user", null,"1", 180);
+        // execute method
+        assertThrows(IllegalArgumentException.class, () -> service.updateServerWithNewLocalCredentials("!", submitted));
     }
 }

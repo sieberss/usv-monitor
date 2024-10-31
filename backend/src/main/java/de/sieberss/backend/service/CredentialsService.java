@@ -19,6 +19,10 @@ public class CredentialsService {
     private final IdService idService;
     private final EncryptionService encryptionService;
 
+    private boolean missingData(CredentialsWithoutEncryption unencrypted) {
+        return unencrypted == null || unencrypted.user() == null || unencrypted.password() == null
+                || unencrypted.user().isEmpty() || unencrypted.password().isEmpty();
+    }
     public List<CredentialsWithoutEncryption> getCredentialsList() {
         return repo.findAll()
                 .stream()
@@ -32,6 +36,8 @@ public class CredentialsService {
     }
 
     public CredentialsWithoutEncryption createCredentials(CredentialsWithoutEncryption submitted) {
+        if (missingData(submitted))
+            throw new IllegalArgumentException("Credentials invalid");
         CredentialsWithoutEncryption completed =
                 new CredentialsWithoutEncryption(idService.generateId(), submitted.user(), submitted.password(), submitted.global());
         Credentials dbObject = encryptionService.encryptCredentials(completed);
@@ -42,6 +48,8 @@ public class CredentialsService {
     public CredentialsWithoutEncryption updateCredentials(String id, CredentialsWithoutEncryption submitted) {
         if (!repo.existsById(id))
             throw new NoSuchElementException(id);
+        if (missingData(submitted))
+            throw new IllegalArgumentException("credentials invalid");
         CredentialsWithoutEncryption completed = new CredentialsWithoutEncryption(id, submitted.user(), submitted.password(), submitted.global());
         Credentials dbObject = encryptionService.encryptCredentials(completed);
         repo.save(dbObject);
