@@ -90,10 +90,10 @@ function App() {
             <Routes>
                 <Route path={"/login"} element={<LoginPage setLoggedIn={setLoggedIn}/>}/>
                 <Route element={<ProtectedRoute loggedIn={loggedIn}/>}>
-                    <Route path={"/"} element={<AllUpsesPage upses={upses} monitoring={monitoring}/>}/>
+                    <Route path={"/"} element={<AllUpsesPage upses={upses} servers={servers} monitoring={monitoring}/>}/>
                     <Route path={"/server"} element={<AllServersPage servers={servers} upses={upses} credentialsList={credentialsList} monitoring={monitoring}/>}/>
                     <Route path={"/credentials"} element={<AllCredentialsPage credentialsList={credentialsList} monitoring={monitoring}/>}/>
-                    <Route path={"/ups/:id"} element={<UpsPage upsUpdate={upsUpdateOccured}/>}/>
+                    <Route path={"/ups/:id"} element={<UpsPage upsUpdate={upsUpdateOccured} servers={servers}/>}/>
                     <Route path={"/server/:id"} element={<ServerPage upses={upses} credentialsList={credentialsList} serverUpdate={serverUpdateOccured}/>}/>
                     <Route path={"/credentials/:id"} element={<CredentialsPage credentialsUpdate={credentialsUpdateOccured}/>} />
                 </Route>

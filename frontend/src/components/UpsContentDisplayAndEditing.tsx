@@ -4,16 +4,19 @@ import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import FormBottom from "./FormBottom.tsx";
 import NameAndAddressInputFields from "./NameAndAddressInputFields.tsx";
+import { Server } from "../types/server.ts";
 
 type EditProps = {
-    ups: Ups
-    upsUpdate: () => void
+    ups: Ups,
+    upsUpdate: () => void,
+    servers: Server[]
 }
 
 
 export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) {
 
     const [ups, setUps] = useState<Ups>({id:"new", name:"", address:"", community:""})
+    const [servers, setServers] = useState<Server[]>([])
     const [editing, setEditing] = useState<boolean>(false)
     const [changedData, setChangedData] = useState<boolean>(false)
     const [nameInput, setNameInput] = useState<string>("")
@@ -38,6 +41,8 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
     /** initialize data from props */
     useEffect(() => {
         setUps(props.ups)
+        setServers(props.servers.filter(server => server.upsId === props.ups.id)
+    )
         setEditing(props.ups.id === "new")
         setNameInput(props.ups.name)
         setAddressInput(props.ups.address)
@@ -129,7 +134,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         <>
             <h3>Details of UPS</h3>
             <button onClick={() => backToList(false)} >
-                Back
+                Show List
             </button>
 
             <form name={"edit"}>
@@ -151,6 +156,10 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                     <FormBottom resetForm={resetForm} changedData={changedData} submitEditForm={submitEditForm}
                                 deleteClicked={deleteClicked} editing={editing} switchEditMode={switchEditMode}
                                 message={message} confirmationMessage={confirmationMessage} />
+                    <li>Servers connected:</li>
+                    {servers.map(server =>
+                        <li> <a href={"/server/" + server.id}> {server.name} ({server.address}) </a></li>
+                    )}
                 </ul>
             </form>
         </>

@@ -8,6 +8,8 @@ import CredentialsSelect from "./CredentialsSelect.tsx";
 import UpsSelect from "./UpsSelect.tsx";
 import FormBottom from "./FormBottom.tsx";
 import NameAndAddressInputFields from "./NameAndAddressInputFields.tsx";
+import CredentialsInfoline from "./CredentialsInfoline.tsx";
+import UpsInfoline from "./UpsInfoline.tsx";
 
 type EditProps = {
     server: Server,
@@ -313,9 +315,12 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
     const globalUserInput =
         <li>
             <label htmlFor={"credentials"}>Global Credentials:</label>
-            <CredentialsSelect disabled={!editing} selection={globalCredentialsSelection}
+            {editing
+                ? <CredentialsSelect disabled={!editing} selection={globalCredentialsSelection}
                                setSelected={setGlobalCredentialsSelection}
                                setChangedData={setChangedData} credentialsList={props.credentialsList}/>
+                : <CredentialsInfoline selection={globalCredentialsSelection} credentialsList={props.credentialsList} />
+            }
         </li>
 
     const shutdownSecondsField = <input
@@ -333,7 +338,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         <>
             <h3>Details of Server</h3>
             <button onClick={() => backToList(false)}>
-                Back
+                Show List
             </button>
 
             <form name={"edit"}>
@@ -350,9 +355,13 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                     }
                     <li>
                         <label htmlFor={"ups"}>On UPS:</label>
-                        <UpsSelect disabled={!editing} selection={upsSelection}
-                                           setSelected={setUpsSelection}
-                                           setChangedData={setChangedData} upsList={props.upses}/>
+                        {editing
+                            ? <UpsSelect disabled={!editing} selection={upsSelection}
+                                         setSelected={setUpsSelection}
+                                         setChangedData={setChangedData} upsList={props.upses}/>
+                            : <UpsInfoline selection={upsSelection} upsList={props.upses} />
+                        }
+
                     </li>
                     <li>
                         <label htmlFor={'seconds'}>Shutdown Trigger:</label>
