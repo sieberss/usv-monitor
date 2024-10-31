@@ -17,9 +17,10 @@ export default function UpsCard(props: Readonly<UpsCardProps>) {
                     ? <>
                         <h3>{props.ups?.name}</h3>
                         <p>{props.ups?.address}</p>
-                        {props.servers?.map(server =>
+                        {/*props.servers?.map(server =>
                             <p className={"server"}> {server.name} ({server.address})</p>
-                        )}</>
+                        )  not sure whether to display here */}
+                    </>
                     : // plus-button for adding
                     <h2><FaPlus/></h2>
                 }

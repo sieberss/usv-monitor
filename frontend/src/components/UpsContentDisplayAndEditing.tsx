@@ -47,7 +47,8 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         setNameInput(props.ups.name)
         setAddressInput(props.ups.address)
         setCommunityInput(props.ups.community)
-    }, [props.ups])
+    }, [props.ups, props.servers])
+    
 
     function resetForm(){
         setNameInput(ups.name)
@@ -158,7 +159,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                                 message={message} confirmationMessage={confirmationMessage} />
                     <li>Servers connected:</li>
                     {servers.map(server =>
-                        <li> <a href={"/server/" + server.id}> {server.name} ({server.address}) </a></li>
+                        <li key={server.id}> <a href={"/server/" + server.id}> {server.name} ({server.address}) </a></li>
                     )}
                 </ul>
             </form>
