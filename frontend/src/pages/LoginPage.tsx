@@ -1,5 +1,5 @@
 import axios from "axios";
-import {useState} from "react";
+import {FormEvent, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 type Props = {
@@ -12,23 +12,22 @@ export default function LoginPage (props:Readonly<Props>){
     const navigate = useNavigate()
 
     const checkLogin = () => {
-        axios.post('/api/login', {password})
-            .then(response => {
-                if (response.status == 200 && response.data.loggedIn){
-                    props.setLoggedIn(true)
-                    setMessage("")
-                    navigate("/")
-                }
-                else setMessage("Password was wrong")
+        axios.post('/api/login', undefined, {auth: {"username": "APP:admin", "password": "adminpass"}})
+            .then(r => {
+                console.log(r.data)
+                console.log(r.status)
             })
+
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
     }
 
     function submitPassword() {
-        if (password.length < 8)
+        if (password.length < 8) {
             setMessage("Password must have at least 8 characters")
+            alert(password)
+        }
         else {
             checkLogin()
         }

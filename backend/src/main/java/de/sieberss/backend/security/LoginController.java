@@ -1,12 +1,13 @@
 package de.sieberss.backend.security;
 
+import de.sieberss.backend.model.CredentialsWithoutEncryption;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/login")
 @RequiredArgsConstructor
 public class LoginController {
 
@@ -29,8 +30,8 @@ public class LoginController {
     }
 
     @PostMapping("/register")
-    public void registerAdmin(@RequestBody String password){
-        loginService.addNewAdminUser(password);
+    public void register(@RequestBody CredentialsWithoutEncryption credentials){
+        loginService.register(credentials);
     }
 
     @GetMapping("/logout")
