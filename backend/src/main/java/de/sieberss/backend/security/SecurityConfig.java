@@ -7,10 +7,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 @EnableWebSecurity
@@ -30,13 +30,12 @@ public class SecurityConfig {
         CsrfTokenRequestAttributeHandler requestAttributeHandler = new CsrfTokenRequestAttributeHandler();
         requestAttributeHandler.setCsrfRequestAttributeName(null);
         return httpSecurity
-                .csrf(csrf -> csrf
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .csrfTokenRequestHandler(requestAttributeHandler))
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(c -> {
-                    c.requestMatchers(HttpMethod.DELETE).authenticated();
-                    c.requestMatchers(HttpMethod.PUT).authenticated();
-                    c.anyRequest().permitAll();
+                    c.requestMatchers("/api/login").permitAll();
+                    c.requestMatchers("/api/login/*").permitAll();
+                    c.requestMatchers(HttpMethod.GET).permitAll();
+                    c.anyRequest().permitAll(); //c.anyRequest().authenticated();
                 })
                 .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .httpBasic(Customizer.withDefaults())

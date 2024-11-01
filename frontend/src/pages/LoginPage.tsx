@@ -12,7 +12,7 @@ export default function LoginPage (props:Readonly<Props>){
     const navigate = useNavigate()
 
     const checkLogin = () => {
-        axios.post('/api/login', undefined, {auth: {"username": "APP:admin", "password": "adminpass"}})
+        axios.post('/api/login', {}, {auth: {"username": "APP:admin", "password": "adminpass"}})
             .then(r => {
                 console.log(r.data)
                 console.log(r.status)
