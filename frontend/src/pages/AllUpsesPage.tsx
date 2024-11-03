@@ -5,7 +5,8 @@ import {Ups} from "../types/ups.ts";
 type AllUpsesProps = {
     upses: Ups[],
     servers: Server[]
-    monitoring: boolean
+    monitoring: boolean,
+    username: string
 }
 
 export default function AllUpsesPage(props:Readonly<AllUpsesProps>){

@@ -1,5 +1,6 @@
 package de.sieberss.backend.security;
 
+import de.sieberss.backend.utils.EncryptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,31 +12,29 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 @EnableWebSecurity
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final CustomPasswordEncoder passwordEncoder;
 
+private final EncryptionService encryptionService;
 
-    @Bean
     public PasswordEncoder passwordEncoder(){
-        return passwordEncoder;
+        return new CustomPasswordEncoder(encryptionService);
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        CsrfTokenRequestAttributeHandler requestAttributeHandler = new CsrfTokenRequestAttributeHandler();
-        requestAttributeHandler.setCsrfRequestAttributeName(null);
+        // CsrfTokenRequestAttributeHandler requestAttributeHandler = new CsrfTokenRequestAttributeHandler();
+        // requestAttributeHandler.setCsrfRequestAttributeName(null);
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(c -> {
                     c.requestMatchers("/api/login").permitAll();
                     c.requestMatchers("/api/login/*").permitAll();
                     c.requestMatchers(HttpMethod.GET).permitAll();
-                    c.anyRequest().permitAll(); //c.anyRequest().authenticated();
+                    c.anyRequest().authenticated();
                 })
                 .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .httpBasic(Customizer.withDefaults())
