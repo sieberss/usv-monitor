@@ -19,11 +19,12 @@ function App() {
 
     const [monitoring, setMonitoring] = useState<boolean>(false)
 
-    const [username, setUsername] = useState<string>("anonymousUser")
+    const [username, setUsername] = useState<string>("")
 
     useEffect(() => {
         axios.get("/api/login")
             .then((r) => setUsername(r.data))
+            .catch(error => console.error(error))
     }, [])
 
     /**  UPS ********************************/
@@ -95,12 +96,14 @@ function App() {
     return (
 
         <>
-            <h1>{username}</h1>
-            <Navbar/>
+            <Navbar username={username} setUsername={setUsername}/>
             <Routes>
-                <Route path={"/login"} element={<LoginPage appUserExists={appUserExists}
+               {!username || username === "anonymousUser"
+                    &&
+                         <Route path={"/login"} element={<LoginPage appUserExists={appUserExists}
                                                            credentialsUpdateOccured={credentialsUpdateOccured}
                                                            setUsername={setUsername} adminUser={adminUser}/>}/>
+                }
                 <Route element={<ProtectedRoute username={username}/>}>
                     <Route path={"/"} element={<AllUpsesPage upses={upses} servers={servers} monitoring={monitoring} username={username}/>}/>
                     <Route path={"/server"} element={<AllServersPage servers={servers} upses={upses} credentialsList={credentialsList} monitoring={monitoring} username={username}/>}/>
