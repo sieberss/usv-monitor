@@ -1,4 +1,4 @@
-package de.sieberss.backend.controller;
+package de.sieberss.backend.exception;
 
 import java.time.Instant;
 

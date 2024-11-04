@@ -427,7 +427,7 @@ class ServerControllerTest {
                         """
                                  {
                                      "message": "Illegal argument",
-                                     "id": "Credentials invalid"
+                                     "id": "Missing username and/or password"
                                  }
                                 """
                 ));
@@ -456,7 +456,7 @@ class ServerControllerTest {
                         """
                                  {
                                      "message": "Illegal argument",
-                                     "id": "Credentials invalid"
+                                     "id": "Missing username and/or password"
                                  }
                                 """
                 ));
@@ -485,7 +485,7 @@ class ServerControllerTest {
                         """
                                  {
                                      "message": "Illegal argument",
-                                     "id": "Credentials invalid"
+                                     "id": "Missing username and/or password"
                                  }
                                 """
                 ));
@@ -514,7 +514,7 @@ class ServerControllerTest {
                         """
                                  {
                                      "message": "Illegal argument",
-                                     "id": "Credentials invalid"
+                                     "id": "Missing username and/or password"
                                  }
                                 """
                 ));
@@ -581,7 +581,7 @@ class ServerControllerTest {
                         """
                                  {
                                      "message": "Illegal argument",
-                                     "id": "Credentials invalid"
+                                     "id": "Missing username and/or password"
                                  }
                                 """
                 ));
@@ -611,7 +611,7 @@ class ServerControllerTest {
                         """
                                  {
                                      "message": "Illegal argument",
-                                     "id": "Credentials invalid"
+                                     "id": "Missing username and/or password"
                                  }
                                 """
                 ));
@@ -641,7 +641,7 @@ class ServerControllerTest {
                         """
                                  {
                                      "message": "Illegal argument",
-                                     "id": "Credentials invalid"
+                                     "id": "Missing username and/or password"
                                  }
                                 """
                 ));
@@ -671,7 +671,7 @@ class ServerControllerTest {
                         """
                                  {
                                      "message": "Illegal argument",
-                                     "id": "Credentials invalid"
+                                     "id": "Missing username and/or password"
                                  }
                                 """
                 ));

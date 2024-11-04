@@ -1,5 +1,6 @@
 package de.sieberss.backend.controller;
 
+import de.sieberss.backend.exception.ErrorMessage;
 import de.sieberss.backend.model.Ups;
 import de.sieberss.backend.service.UpsService;
 import lombok.RequiredArgsConstructor;

@@ -23,7 +23,6 @@ public class LoginController {
 
     @PostMapping()
     public String login(){
-        System.out.println("login");
         return SecurityContextHolder
                 .getContext()
                 .getAuthentication()

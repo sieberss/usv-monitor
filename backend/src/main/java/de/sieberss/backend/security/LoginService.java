@@ -30,7 +30,7 @@ public class LoginService implements UserDetailsService {
     public void register(CredentialsWithoutEncryption submitted) {
         try {
             loadUserByUsername(submitted.user());
-            throw new IllegalArgumentException("user already exists");
+            throw new IllegalArgumentException(submitted.user() + " already exists");
         }
         catch (UsernameNotFoundException e) {
             credentialsService.createCredentials(

@@ -129,7 +129,7 @@ class CredentialsControllerTest {
                 .andExpect(MockMvcResultMatchers.content().json("""
                                 {
                                      "message": "Illegal argument",
-                                     "id": "Credentials invalid"
+                                     "id": "Missing username and/or password"
                                      }
                              """));
     }
@@ -149,7 +149,7 @@ class CredentialsControllerTest {
                 .andExpect(MockMvcResultMatchers.content().json("""
                                 {
                                      "message": "Illegal argument",
-                                     "id": "Credentials invalid"
+                                     "id": "Missing username and/or password"
                                      }
                              """));
     }
@@ -168,7 +168,7 @@ class CredentialsControllerTest {
                 .andExpect(MockMvcResultMatchers.content().json("""
                                 {
                                      "message": "Illegal argument",
-                                     "id": "Credentials invalid"
+                                     "id": "Missing username and/or password"
                                      }
                              """));
     }
@@ -187,7 +187,7 @@ class CredentialsControllerTest {
                 .andExpect(MockMvcResultMatchers.content().json("""
                                 {
                                      "message": "Illegal argument",
-                                     "id": "Credentials invalid"
+                                     "id": "Missing username and/or password"
                                      }
                              """));
     }
