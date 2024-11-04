@@ -24,14 +24,17 @@ public class LoginService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Credentials user = repo.findByUser(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
-        User u = new User(user.user(), user.password(), Collections.emptyList());
-        System.out.println(u);
-        return u;
+        return new User(user.user(), user.password(), Collections.emptyList());
     }
 
     public void register(CredentialsWithoutEncryption submitted) {
-        // App users receive a prefix in their username to distinguish from server relating credentials
-        credentialsService.createCredentials(
-                new CredentialsWithoutEncryption("", submitted.user(), submitted.password(), false));
+        try {
+            loadUserByUsername(submitted.user());
+            throw new IllegalArgumentException("user already exists");
+        }
+        catch (UsernameNotFoundException e) {
+            credentialsService.createCredentials(
+                    new CredentialsWithoutEncryption("", submitted.user(), submitted.password(), false));
+        }
     }
 }
