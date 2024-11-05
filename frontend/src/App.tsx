@@ -61,7 +61,7 @@ function App() {
             .then(response => {
                 setCredentialsList(response.data
                     .filter( (credentials:Credentials) => credentials.global));
-                setAppUserExists(response.data.some((c:Credentials) => c.user.substring(0,4) === "APP/")  )
+                setAppUserExists(response.data.some((c:Credentials) => c.user.startsWith("APP/") ))
             })
             .catch(error => {
                 console.error('getCredentialsList failed:', error);
