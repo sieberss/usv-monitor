@@ -1,12 +1,14 @@
 import {Navigate, Outlet} from "react-router-dom";
 
 type Props = {
-    loggedIn:boolean
+    username: string
 }
 
 export default function ProtectedRoute(props: Readonly<Props>) {
-
+    const loggedIn = props.username !== "anonymousUser"
     return (
-        props.loggedIn ? <Outlet/> : <Navigate to={"/login"}/>
+        <>
+            {loggedIn ? <Outlet/> : <Navigate to={"/login"}/>}
+        </>
     )
 }

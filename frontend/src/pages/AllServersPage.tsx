@@ -7,7 +7,8 @@ type OverviewProps = {
     servers: Server[],
     upses: Ups[],
     credentialsList: Credentials[],
-    monitoring: boolean
+    monitoring: boolean,
+    username: string
 }
 
 export default function AllUpsesPage(props:Readonly<OverviewProps>){

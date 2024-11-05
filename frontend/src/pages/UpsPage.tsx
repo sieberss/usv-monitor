@@ -7,7 +7,8 @@ import { Server } from "../types/server.ts";
 
 type Props = {
     upsUpdate : () => void,
-    servers: Server[]
+    servers: Server[],
+    username: string
 }
 export default function UpsPage(props:Readonly<Props>) {
     const params = useParams()

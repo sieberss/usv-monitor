@@ -37,7 +37,7 @@ public class CredentialsService {
 
     public CredentialsWithoutEncryption createCredentials(CredentialsWithoutEncryption submitted) {
         if (missingData(submitted))
-            throw new IllegalArgumentException("Credentials invalid");
+            throw new IllegalArgumentException("Missing username and/or password");
         CredentialsWithoutEncryption completed =
                 new CredentialsWithoutEncryption(idService.generateId(), submitted.user(), submitted.password(), submitted.global());
         Credentials dbObject = encryptionService.encryptCredentials(completed);
@@ -49,7 +49,7 @@ public class CredentialsService {
         if (!repo.existsById(id))
             throw new NoSuchElementException(id);
         if (missingData(submitted))
-            throw new IllegalArgumentException("credentials invalid");
+            throw new IllegalArgumentException("Missing username and/or password");
         CredentialsWithoutEncryption completed = new CredentialsWithoutEncryption(id, submitted.user(), submitted.password(), submitted.global());
         Credentials dbObject = encryptionService.encryptCredentials(completed);
         repo.save(dbObject);

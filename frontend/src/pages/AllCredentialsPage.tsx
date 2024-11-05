@@ -3,7 +3,8 @@ import {Credentials} from "../types/credentials.ts";
 
 type OverviewProps = {
     credentialsList: Credentials[],
-    monitoring: boolean
+    monitoring: boolean,
+    username: string
 }
 
 export default function AllCredentialsPage(props:Readonly<OverviewProps>){

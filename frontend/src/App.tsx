@@ -17,9 +17,15 @@ import Navbar from './components/Navbar.tsx';
 
 function App() {
 
-    const [monitoring, setMonitoring] = useState<boolean>(false)
+    const [monitoring, _setMonitoring] = useState<boolean>(false)
 
-    const [loggedIn, setLoggedIn] = useState<boolean>(true)
+    const [username, setUsername] = useState<string>("")
+
+    useEffect(() => {
+        axios.get("/api/login")
+            .then((r) => setUsername(r.data))
+            .catch(error => console.error(error))
+    }, [])
 
     /**  UPS ********************************/
 
@@ -45,6 +51,9 @@ function App() {
 
     const [credentialsList, setCredentialsList] = useState<Credentials[]>([])               // holds only the global credentials
     const [credentialsUpdates, setCredentialsUpdates] = useState<number>(0)                 // keeps track of crud operations in other components
+    const [appUserExists, setAppUserExists] = useState<boolean>(false)                      // app users are marked by this prefix
+    const adminUser = "APP/admin"
+
     const credentialsUpdateOccured = () => setCredentialsUpdates(credentialsUpdates + 1)    // passed to components that do crud operations
 
     const getCredentialsList = () => {
@@ -52,6 +61,7 @@ function App() {
             .then(response => {
                 setCredentialsList(response.data
                     .filter( (credentials:Credentials) => credentials.global));
+                setAppUserExists(response.data.some((c:Credentials) => c.user.startsWith("APP/") ))
             })
             .catch(error => {
                 console.error('getCredentialsList failed:', error);
@@ -86,16 +96,21 @@ function App() {
     return (
 
         <>
-            <Navbar/>
+            <Navbar username={username} setUsername={setUsername}/>
             <Routes>
-                <Route path={"/login"} element={<LoginPage setLoggedIn={setLoggedIn}/>}/>
-                <Route element={<ProtectedRoute loggedIn={loggedIn}/>}>
-                    <Route path={"/"} element={<AllUpsesPage upses={upses} servers={servers} monitoring={monitoring}/>}/>
-                    <Route path={"/server"} element={<AllServersPage servers={servers} upses={upses} credentialsList={credentialsList} monitoring={monitoring}/>}/>
-                    <Route path={"/credentials"} element={<AllCredentialsPage credentialsList={credentialsList} monitoring={monitoring}/>}/>
-                    <Route path={"/ups/:id"} element={<UpsPage upsUpdate={upsUpdateOccured} servers={servers}/>}/>
-                    <Route path={"/server/:id"} element={<ServerPage upses={upses} credentialsList={credentialsList} serverUpdate={serverUpdateOccured}/>}/>
-                    <Route path={"/credentials/:id"} element={<CredentialsPage credentialsUpdate={credentialsUpdateOccured}/>} />
+               {!username || username === "anonymousUser"
+                    &&
+                         <Route path={"/login"} element={<LoginPage appUserExists={appUserExists}
+                                                           credentialsUpdateOccured={credentialsUpdateOccured}
+                                                           setUsername={setUsername} adminUser={adminUser}/>}/>
+                }
+                <Route element={<ProtectedRoute username={username}/>}>
+                    <Route path={"/"} element={<AllUpsesPage upses={upses} servers={servers} monitoring={monitoring} username={username}/>}/>
+                    <Route path={"/server"} element={<AllServersPage servers={servers} upses={upses} credentialsList={credentialsList} monitoring={monitoring} username={username}/>}/>
+                    <Route path={"/credentials"} element={<AllCredentialsPage credentialsList={credentialsList} monitoring={monitoring} username={username}/>}/>
+                    <Route path={"/ups/:id"} element={<UpsPage upsUpdate={upsUpdateOccured} servers={servers} username={username}/>}/>
+                    <Route path={"/server/:id"} element={<ServerPage upses={upses} credentialsList={credentialsList} serverUpdate={serverUpdateOccured} username={username}/>}/>
+                    <Route path={"/credentials/:id"} element={<CredentialsPage credentialsUpdate={credentialsUpdateOccured} username={username}/>} />
                 </Route>
             </Routes>
         </>

@@ -32,7 +32,7 @@ export default function FormBottom(props:Readonly<BottomProps>){
             Edit
         </button>
     </li>
-    <p>{props.message}</p>
+    <p className={"message"}>{props.message}</p>
 </>
 )
 }

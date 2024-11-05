@@ -5,7 +5,8 @@ import CredentialsContentDisplayAndEditing from "../components/CredentialsConten
 import {Credentials} from "../types/credentials.ts";
 
 type Props = {
-    credentialsUpdate : () => void
+    credentialsUpdate : () => void,
+    username: string
 }
 export default function CredentialsPage(props:Readonly<Props>) {
     const params = useParams()

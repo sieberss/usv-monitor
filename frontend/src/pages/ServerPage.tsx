@@ -9,7 +9,8 @@ import { Ups } from "../types/ups.ts";
 type Props = {
     upses: Ups[],
     credentialsList: Credentials[],
-    serverUpdate : () => void
+    serverUpdate : () => void,
+    username: string
 }
 export default function ServerPage(props:Readonly<Props>) {
     const params = useParams()

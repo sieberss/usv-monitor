@@ -8,12 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @SpringBootTest
+@WithMockUser
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
 class CredentialsControllerTest {
@@ -127,7 +129,7 @@ class CredentialsControllerTest {
                 .andExpect(MockMvcResultMatchers.content().json("""
                                 {
                                      "message": "Illegal argument",
-                                     "id": "Credentials invalid"
+                                     "id": "Missing username and/or password"
                                      }
                              """));
     }
@@ -147,7 +149,7 @@ class CredentialsControllerTest {
                 .andExpect(MockMvcResultMatchers.content().json("""
                                 {
                                      "message": "Illegal argument",
-                                     "id": "Credentials invalid"
+                                     "id": "Missing username and/or password"
                                      }
                              """));
     }
@@ -166,7 +168,7 @@ class CredentialsControllerTest {
                 .andExpect(MockMvcResultMatchers.content().json("""
                                 {
                                      "message": "Illegal argument",
-                                     "id": "Credentials invalid"
+                                     "id": "Missing username and/or password"
                                      }
                              """));
     }
@@ -185,7 +187,7 @@ class CredentialsControllerTest {
                 .andExpect(MockMvcResultMatchers.content().json("""
                                 {
                                      "message": "Illegal argument",
-                                     "id": "Credentials invalid"
+                                     "id": "Missing username and/or password"
                                      }
                              """));
     }

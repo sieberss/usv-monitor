@@ -1,7 +1,6 @@
 package de.sieberss.backend.exception;
 
 import com.mongodb.MongoException;
-import de.sieberss.backend.controller.ErrorMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -29,4 +28,5 @@ public class GlobalExceptionHandler {
     public ErrorMessage handleIllegalArgumentException(IllegalArgumentException e) {
         return new ErrorMessage("Illegal argument", e.getMessage(), Instant.now());
     }
+
 }
