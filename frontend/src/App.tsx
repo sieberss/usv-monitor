@@ -17,7 +17,7 @@ import Navbar from './components/Navbar.tsx';
 
 function App() {
 
-    const [monitoring, setMonitoring] = useState<boolean>(false)
+    const [monitoring, _setMonitoring] = useState<boolean>(false)
 
     const [username, setUsername] = useState<string>("")
 
