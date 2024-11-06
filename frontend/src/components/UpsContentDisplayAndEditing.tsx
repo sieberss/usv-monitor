@@ -5,6 +5,7 @@ import {useNavigate} from "react-router-dom";
 import FormBottom from "./FormBottom.tsx";
 import NameAndAddressInputFields from "./NameAndAddressInputFields.tsx";
 import { Server } from "../types/server.ts";
+import {FaList} from "react-icons/fa";
 
 type EditProps = {
     ups: Ups,
@@ -134,9 +135,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
 
     return (
         <>
-            <button onClick={() => backToList(false)} >
-                Show List
-            </button>
+            <FaList onClick={() => backToList(false)} />
 
             <form name={"edit"}>
                 <ul>

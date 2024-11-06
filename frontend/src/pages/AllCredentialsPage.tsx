@@ -12,7 +12,6 @@ export default function AllCredentialsPage(props:Readonly<OverviewProps>){
     props.setMenuItem("credentials")
     return(
         <div className={"credentials"}>
-            <h1>Global users</h1>
             <CredentialsList credentialsList={props.credentialsList} monitoring={props.monitoring}/>
         </div>
     )

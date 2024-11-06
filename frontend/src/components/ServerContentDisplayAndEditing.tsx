@@ -336,6 +336,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
 
     return (
         <>
+            <h3>Details of Server</h3>
             <button onClick={() => backToList(false)}>
                 Show List
             </button>

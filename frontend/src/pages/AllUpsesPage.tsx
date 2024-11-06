@@ -15,7 +15,6 @@ export default function AllUpsesPage(props:Readonly<AllUpsesProps>){
     return(
         <div className={"ups"}>
             {props.monitoring ? <h3> Monitoring mode </h3> : <h3> no Monitoring</h3>}
-            <h1>UPSes</h1>
             <UpsList upses={props.upses} servers={props.servers} monitoring={props.monitoring}/>
         </div>
     )

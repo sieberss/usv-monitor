@@ -1,36 +1,42 @@
 .navbar {
     width: 50vw;
-}
 
-.active {
-    background-color: yellow;
-}
-.inactive {
-    background-color: bisque;
+    .active {
+        background-color: yellow;
+    }
+
+    .inactive {
+        background-color: bisque;
+    }
+
+    .monitoring {
+        background-color: darkblue;
+        color: white;
+    }
 }
 
 ul {
     background-color: bisque;
-        width: 100%;
-        display: flex;
-        justify-content: space-evenly;
-        margin: 0;
-        padding: 0;
-        list-style: none;
-        font-weight: bold;
-    }
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-weight: bold;
+}
 
 li {
-        display: flex;
-        align-items: center;
-        font-size: 17px;
-        margin: 0;
-        padding: 0;
+    display: flex;
+    align-items: center;
+    font-size: 17px;
+    margin: 0;
+    padding: 0;
 
-    }
+}
 
 
-    .login-link {
-        color: inherit;
-        font-weight: bold;
-    }
+.login-link {
+    color: inherit;
+    font-weight: bold;
+}

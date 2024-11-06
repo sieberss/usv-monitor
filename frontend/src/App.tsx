@@ -17,7 +17,7 @@ import Navbar from './components/Navbar.tsx';
 
 function App() {
 
-    const [monitoring, _setMonitoring] = useState<boolean>(false)
+    const [monitoring, setMonitoring] = useState<boolean>(false)
     const [selectedMenuItem, setSelectedMenuItem] = useState<string>("login")
     const [username, setUsername] = useState<string>("")
 
@@ -96,7 +96,7 @@ function App() {
     return (
 
         <>
-            <Navbar selectedItem={selectedMenuItem} username={username} setUsername={setUsername}/>
+            <Navbar monitoring={monitoring} setMonitoring={setMonitoring} selectedItem={selectedMenuItem} username={username} setUsername={setUsername}/>
             <Routes>
                {!username || username === "anonymousUser"
                     &&

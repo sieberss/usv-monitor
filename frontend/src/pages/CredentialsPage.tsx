@@ -28,7 +28,6 @@ export default function CredentialsPage(props:Readonly<Props>) {
 
 return (
     <div className={"credentials"}>
-        <h2>Detail view</h2>
         <CredentialsContentDisplayAndEditing credentials={credentials} credentialsUpdate={props.credentialsUpdate}/>
     </div>
 )

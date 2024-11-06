@@ -31,7 +31,6 @@ export default function UpsPage(props:Readonly<Props>) {
 
 return (
     <div className={"ups"}>
-        <h2>Detail view</h2>
         <UpsContentDisplayAndEditing ups={ups} upsUpdate={props.upsUpdate} servers={props.servers}/>
     </div>
 )

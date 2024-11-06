@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import FormBottom from "./FormBottom.tsx";
+import {FaList} from "react-icons/fa";
 
 type EditProps = {
     credentials: Credentials
@@ -135,9 +136,7 @@ export default function CredentialsContentDisplayAndEditing(props: Readonly<Edit
 
         return (
         <>
-            <button onClick={() => backToList(false)} >
-                Show List
-            </button>
+            <FaList onClick={() => backToList(false)} />
 
             <form name={"edit"}>
                 <ul>

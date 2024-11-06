@@ -33,7 +33,6 @@ export default function ServerPage(props:Readonly<Props>) {
 
 return (
     <div className={"server"}>
-        <h2>Detail view</h2>
         <ServerContentDisplayAndEditing server={server} serverUpdate={props.serverUpdate} upses={props.upses}
                                         credentialsList={props.credentialsList}/>
     </div>
