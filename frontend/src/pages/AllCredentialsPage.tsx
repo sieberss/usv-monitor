@@ -3,16 +3,12 @@ import {Credentials} from "../types/credentials.ts";
 
 type OverviewProps = {
     setMenuItem: (item:string) => void,
-    credentialsList: Credentials[],
-    monitoring: boolean,
-    username: string
+    credentialsList: Credentials[]
 }
 
-export default function AllCredentialsPage(props:Readonly<OverviewProps>){
+export default function AllCredentialsPage(props:Readonly<OverviewProps>) {
     props.setMenuItem("credentials")
-    return(
-        <div className={"credentials"}>
-            <CredentialsList credentialsList={props.credentialsList} monitoring={props.monitoring}/>
-        </div>
+    return (
+        <CredentialsList credentialsList={props.credentialsList}/>
     )
 }

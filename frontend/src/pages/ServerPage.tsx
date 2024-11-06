@@ -10,8 +10,7 @@ type Props = {
     setMenuItem: (item:string) => void,
     upses: Ups[],
     credentialsList: Credentials[],
-    serverUpdate : () => void,
-    username: string
+    serverUpdate : () => void
 }
 export default function ServerPage(props:Readonly<Props>) {
     props.setMenuItem("server")
@@ -32,7 +31,7 @@ export default function ServerPage(props:Readonly<Props>) {
     }, [id])
 
 return (
-    <div className={"server"}>
+    <div className={"serverlist"}>
         <ServerContentDisplayAndEditing server={server} serverUpdate={props.serverUpdate} upses={props.upses}
                                         credentialsList={props.credentialsList}/>
     </div>

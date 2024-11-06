@@ -6,16 +6,12 @@ type AllUpsesProps = {
     setMenuItem: (item:string) => void,
     upses: Ups[],
     servers: Server[]
-    monitoring: boolean,
-    username: string
+    monitoring: boolean
 }
 
 export default function AllUpsesPage(props:Readonly<AllUpsesProps>){
     props.setMenuItem("ups")
     return(
-        <div className={"ups"}>
-            {props.monitoring ? <h3> Monitoring mode </h3> : <h3> no Monitoring</h3>}
-            <UpsList upses={props.upses} servers={props.servers} monitoring={props.monitoring}/>
-        </div>
+        <UpsList upses={props.upses} servers={props.servers} monitoring={props.monitoring}/>
     )
 }

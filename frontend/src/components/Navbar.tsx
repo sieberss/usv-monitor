@@ -29,7 +29,7 @@ export default function NavBar(props:Readonly<Props>) {
 
     return (
         <ul className={"navbar"}>
-            <li><p className={"monitoring"}> {props.monitoring ? "Monitoring ON" : "Monitoring OFF"}</p>
+            <li><p className={"monitoring"}> &nbsp; {props.monitoring ? "Monitoring ON" : "Monitoring OFF"} &nbsp;</p>
                 &nbsp;
                 <MdOutlinePublishedWithChanges onClick={() => switchMonitoringMode(!props.monitoring)}/>
             </li>

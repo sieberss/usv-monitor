@@ -6,9 +6,9 @@ import {Credentials} from "../types/credentials.ts";
 
 type Props = {
     setMenuItem: (item:string) => void,
-    credentialsUpdate : () => void,
-    username: string
+    credentialsUpdate : () => void
 }
+
 export default function CredentialsPage(props:Readonly<Props>) {
     const params = useParams()
     const id: string | undefined = params.id
@@ -27,7 +27,7 @@ export default function CredentialsPage(props:Readonly<Props>) {
     }, [id])
 
 return (
-    <div className={"credentials"}>
+    <div className={"credentialslist"}>
         <CredentialsContentDisplayAndEditing credentials={credentials} credentialsUpdate={props.credentialsUpdate}/>
     </div>
 )

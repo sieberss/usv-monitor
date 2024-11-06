@@ -1,0 +1,12 @@
+.upscard {
+    border: solid 2px;
+    border-radius: 15px;
+    background-color: #DDEDEE;
+    padding: 5px;
+}
+.upslist {
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}

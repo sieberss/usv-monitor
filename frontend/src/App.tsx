@@ -105,12 +105,12 @@ function App() {
                                                            setUsername={setUsername} adminUser={adminUser}/>}/>
                 }
                 <Route element={<ProtectedRoute username={username}/>}>
-                    <Route path={"/"} element={<AllUpsesPage setMenuItem={setSelectedMenuItem} upses={upses} servers={servers} monitoring={monitoring} username={username}/>}/>
-                    <Route path={"/server"} element={<AllServersPage setMenuItem={setSelectedMenuItem} servers={servers} upses={upses} credentialsList={credentialsList} monitoring={monitoring} username={username}/>}/>
-                    <Route path={"/credentials"} element={<AllCredentialsPage setMenuItem={setSelectedMenuItem} credentialsList={credentialsList} monitoring={monitoring} username={username}/>}/>
-                    <Route path={"/ups/:id"} element={<UpsPage setMenuItem={setSelectedMenuItem} upsUpdate={upsUpdateOccured} servers={servers} username={username}/>}/>
-                    <Route path={"/server/:id"} element={<ServerPage setMenuItem={setSelectedMenuItem} upses={upses} credentialsList={credentialsList} serverUpdate={serverUpdateOccured} username={username}/>}/>
-                    <Route path={"/credentials/:id"} element={<CredentialsPage setMenuItem={setSelectedMenuItem} credentialsUpdate={credentialsUpdateOccured} username={username}/>} />
+                    <Route path={"/"} element={<AllUpsesPage setMenuItem={setSelectedMenuItem} upses={upses} servers={servers} monitoring={monitoring}/>}/>
+                    <Route path={"/server"} element={<AllServersPage setMenuItem={setSelectedMenuItem} servers={servers} upses={upses} credentialsList={credentialsList} monitoring={monitoring} />}/>
+                    <Route path={"/credentials"} element={<AllCredentialsPage setMenuItem={setSelectedMenuItem} credentialsList={credentialsList}/>}/>
+                    <Route path={"/ups/:id"} element={<UpsPage setMenuItem={setSelectedMenuItem} upsUpdate={upsUpdateOccured} servers={servers}/>}/>
+                    <Route path={"/server/:id"} element={<ServerPage setMenuItem={setSelectedMenuItem} upses={upses} credentialsList={credentialsList} serverUpdate={serverUpdateOccured} />}/>
+                    <Route path={"/credentials/:id"} element={<CredentialsPage setMenuItem={setSelectedMenuItem} credentialsUpdate={credentialsUpdateOccured}/>} />
                 </Route>
             </Routes>
         </>
