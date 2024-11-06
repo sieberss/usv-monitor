@@ -135,7 +135,6 @@ export default function CredentialsContentDisplayAndEditing(props: Readonly<Edit
 
         return (
         <>
-            <h3>Details of credentials</h3>
             <button onClick={() => backToList(false)} >
                 Show List
             </button>

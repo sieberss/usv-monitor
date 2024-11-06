@@ -4,7 +4,8 @@ import axios from "axios";
 
 type Props = {
     username: string,
-    setUsername: (username:string) => void
+    setUsername: (username:string) => void,
+    selectedItem: string
 }
 
 export default function NavBar(props:Readonly<Props>) {
@@ -18,19 +19,20 @@ export default function NavBar(props:Readonly<Props>) {
     }
 
     return (
-        <ul>
-            <li>
+        <ul className={"navbar"}>
+            <li className={props.selectedItem === "ups" ? "active" : "inactive"}>
                 <Link to={"/"}
                       className={"link"}> UPS </Link></li>
-            <li>
+            <li className={props.selectedItem === "server" ? "active" : "inactive"}>
                 <Link to={"/server"} className={"link"}> Server </Link>
             </li>
-            <li>
-                <Link to={"/credentials"} className={"link"}> Credentials </Link>
+            <li className={props.selectedItem === "credentials" ? "active" : "inactive"}>
+                <Link to={"/credentials"} className={"link"}> User </Link>
             </li>
-            {props.username !== "anonymousUser"
-                && <button onClick={logout}> Logout </button>
-            }
+            <li className={props.selectedItem === "login" ? "active" : "inactive"}>
+                <Link to={"/login"} className={"link"} onClick={logout}>
+                {props.username === "anonymousUser" ? "Login" : "Logout"}
+            </Link></li>
         </ul>
     )
 

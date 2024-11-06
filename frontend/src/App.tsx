@@ -18,7 +18,7 @@ import Navbar from './components/Navbar.tsx';
 function App() {
 
     const [monitoring, _setMonitoring] = useState<boolean>(false)
-
+    const [selectedMenuItem, setSelectedMenuItem] = useState<string>("login")
     const [username, setUsername] = useState<string>("")
 
     useEffect(() => {
@@ -96,21 +96,21 @@ function App() {
     return (
 
         <>
-            <Navbar username={username} setUsername={setUsername}/>
+            <Navbar selectedItem={selectedMenuItem} username={username} setUsername={setUsername}/>
             <Routes>
                {!username || username === "anonymousUser"
                     &&
-                         <Route path={"/login"} element={<LoginPage appUserExists={appUserExists}
+                         <Route path={"/login"} element={<LoginPage setMenuItem={setSelectedMenuItem} appUserExists={appUserExists}
                                                            credentialsUpdateOccured={credentialsUpdateOccured}
                                                            setUsername={setUsername} adminUser={adminUser}/>}/>
                 }
                 <Route element={<ProtectedRoute username={username}/>}>
-                    <Route path={"/"} element={<AllUpsesPage upses={upses} servers={servers} monitoring={monitoring} username={username}/>}/>
-                    <Route path={"/server"} element={<AllServersPage servers={servers} upses={upses} credentialsList={credentialsList} monitoring={monitoring} username={username}/>}/>
-                    <Route path={"/credentials"} element={<AllCredentialsPage credentialsList={credentialsList} monitoring={monitoring} username={username}/>}/>
-                    <Route path={"/ups/:id"} element={<UpsPage upsUpdate={upsUpdateOccured} servers={servers} username={username}/>}/>
-                    <Route path={"/server/:id"} element={<ServerPage upses={upses} credentialsList={credentialsList} serverUpdate={serverUpdateOccured} username={username}/>}/>
-                    <Route path={"/credentials/:id"} element={<CredentialsPage credentialsUpdate={credentialsUpdateOccured} username={username}/>} />
+                    <Route path={"/"} element={<AllUpsesPage setMenuItem={setSelectedMenuItem} upses={upses} servers={servers} monitoring={monitoring} username={username}/>}/>
+                    <Route path={"/server"} element={<AllServersPage setMenuItem={setSelectedMenuItem} servers={servers} upses={upses} credentialsList={credentialsList} monitoring={monitoring} username={username}/>}/>
+                    <Route path={"/credentials"} element={<AllCredentialsPage setMenuItem={setSelectedMenuItem} credentialsList={credentialsList} monitoring={monitoring} username={username}/>}/>
+                    <Route path={"/ups/:id"} element={<UpsPage setMenuItem={setSelectedMenuItem} upsUpdate={upsUpdateOccured} servers={servers} username={username}/>}/>
+                    <Route path={"/server/:id"} element={<ServerPage setMenuItem={setSelectedMenuItem} upses={upses} credentialsList={credentialsList} serverUpdate={serverUpdateOccured} username={username}/>}/>
+                    <Route path={"/credentials/:id"} element={<CredentialsPage setMenuItem={setSelectedMenuItem} credentialsUpdate={credentialsUpdateOccured} username={username}/>} />
                 </Route>
             </Routes>
         </>

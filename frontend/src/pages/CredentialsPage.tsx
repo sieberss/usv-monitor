@@ -5,6 +5,7 @@ import CredentialsContentDisplayAndEditing from "../components/CredentialsConten
 import {Credentials} from "../types/credentials.ts";
 
 type Props = {
+    setMenuItem: (item:string) => void,
     credentialsUpdate : () => void,
     username: string
 }
@@ -12,7 +13,7 @@ export default function CredentialsPage(props:Readonly<Props>) {
     const params = useParams()
     const id: string | undefined = params.id
     const [credentials, setCredentials] = useState<Credentials>({id: "new", user: "", password: "", global: true})
-
+    props.setMenuItem("credentials")
     useEffect(() => {
         if (id!=="new") {
             axios.get('/api/credentials/' + id)
@@ -26,7 +27,10 @@ export default function CredentialsPage(props:Readonly<Props>) {
     }, [id])
 
 return (
-    <CredentialsContentDisplayAndEditing credentials={credentials} credentialsUpdate={props.credentialsUpdate}/>
+    <div className={"credentials"}>
+        <h2>Detail view</h2>
+        <CredentialsContentDisplayAndEditing credentials={credentials} credentialsUpdate={props.credentialsUpdate}/>
+    </div>
 )
 
 }

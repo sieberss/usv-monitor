@@ -6,11 +6,13 @@ import {useParams} from "react-router-dom";
 import { Server } from "../types/server.ts";
 
 type Props = {
+    setMenuItem: (item:string) => void,
     upsUpdate : () => void,
     servers: Server[],
     username: string
 }
 export default function UpsPage(props:Readonly<Props>) {
+    props.setMenuItem("ups")
     const params = useParams()
     const id: string | undefined = params.id
     const [ups, setUps] = useState<Ups>({id: "new", name: "", address: "", community: ""})
@@ -28,7 +30,10 @@ export default function UpsPage(props:Readonly<Props>) {
     }, [id])
 
 return (
-    <UpsContentDisplayAndEditing ups={ups} upsUpdate={props.upsUpdate} servers={props.servers}/>
+    <div className={"ups"}>
+        <h2>Detail view</h2>
+        <UpsContentDisplayAndEditing ups={ups} upsUpdate={props.upsUpdate} servers={props.servers}/>
+    </div>
 )
 
 }

@@ -36,6 +36,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         switchEditMode(false)
         if (updated) props.upsUpdate()
         navigate("/")
+        //history.back()
     }
 
     /** initialize data from props */
@@ -133,7 +134,6 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
 
     return (
         <>
-            <h3>Details of UPS</h3>
             <button onClick={() => backToList(false)} >
                 Show List
             </button>
