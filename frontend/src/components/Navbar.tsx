@@ -29,20 +29,19 @@ export default function NavBar(props:Readonly<Props>) {
 
     return (
         <ul className={"navbar"}>
-            <li><p className={"monitoring"}> &nbsp; {props.monitoring ? "Monitoring ON" : "Monitoring OFF"} &nbsp;</p>
-                &nbsp;
-                <MdOutlinePublishedWithChanges onClick={() => switchMonitoringMode(!props.monitoring)}/>
+            <li className={"monitoring"}> {props.monitoring ? "Monitoring ON" : "Monitoring OFF"}
             </li>
-            <li className={props.selectedItem === "ups" ? "active" : "inactive"}>
+            <li> <MdOutlinePublishedWithChanges onClick={() => switchMonitoringMode(!props.monitoring)}/> </li>
+            <li className={"ups"}>
                 <Link to={"/"}
                       className={"link"}> UPSes </Link></li>
-            <li className={props.selectedItem === "server" ? "active" : "inactive"}>
+            <li className={"server"}>
                 <Link to={"/server"} className={"link"}> Servers </Link>
             </li>
-            <li className={props.selectedItem === "credentials" ? "active" : "inactive"}>
-                <Link to={"/credentials"} className={"link"}> global Users </Link>
+            <li className={"credentials"}>
+                <Link to={"/credentials"} className={"link"}> Credentials </Link>
             </li>
-            <li className={props.selectedItem === "login" ? "active" : "inactive"}>
+            <li className={"logout"}>
                 <Link to={"/login"} className={"link"} onClick={logout}>
                     {loggedIn ? "Logout" : "Login"}
                 </Link></li>

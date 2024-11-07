@@ -144,16 +144,16 @@ export default function CredentialsContentDisplayAndEditing(props: Readonly<Edit
                 <form name={"edit"}>
                     <ul className={"credentials-content"}>
                         <li>
-                            <label htmlFor={'user'}>Username:</label>
+                            <label className={"description"} htmlFor={'user'}>Username:</label>
                             {editing
                                 ? userInputField
-                                : <p>{credentials.user}</p>}
+                                : <p className={"value"}>{credentials.user}</p>}
                         </li>
                         <li>
-                            <label htmlFor={'password'}>Password:</label>
+                            <label className={"description"} htmlFor={'password'}>Password:</label>
                             {editing
                                 ? passwordInputField
-                                : <p>********</p>}
+                                : <p className={"value"}>********</p>}
                         </li>
                         <FormBottom resetForm={resetForm} changedData={changedData} submitEditForm={submitEditForm}
                                     deleteClicked={deleteClicked} editing={editing} switchEditMode={switchEditMode}

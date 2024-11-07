@@ -31,10 +31,8 @@ export default function ServerPage(props:Readonly<Props>) {
     }, [id])
 
 return (
-    <div className={"serverlist"}>
-        <ServerContentDisplayAndEditing server={server} serverUpdate={props.serverUpdate} upses={props.upses}
+    <ServerContentDisplayAndEditing server={server} serverUpdate={props.serverUpdate} upses={props.upses}
                                         credentialsList={props.credentialsList}/>
-    </div>
 )
 
 }

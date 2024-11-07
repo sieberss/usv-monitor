@@ -1,12 +1,43 @@
 .ups-content {
     background-color:  #DDEDEE;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-weight: bold;
 }
 .ups-content-poweroff {
     background-color: orange;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-weight: bold;
 }
 .ups-content-shutdown {
     background-color: red;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-weight: bold;
 }
 .serverline {
     background-color: #E7E1F3;
+    padding-left: 3em;
+}
+
+li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 17px;
+    margin: 0;
+    padding: 0;
 }

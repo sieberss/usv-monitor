@@ -271,7 +271,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                 setLocalSelected(event.target.checked)
             }}
         />
-        <label htmlFor={"local"}> use local credentials (only on this server)</label>
+        <label className={"description"} htmlFor={"local"}> use local credentials (only on this server)</label>
     </>;
 
     const userInputField = <input
@@ -300,22 +300,22 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
 
     const localUserInput = <>
         <li>
-            <label htmlFor={'user'}>Username:</label>
+            <label className={"description"} htmlFor={'user'}>Username:</label>
             {editing
                 ? userInputField
-                : <p>{server.credentials?.user}</p>}
+                : <p className={"value"}>{server.credentials?.user}</p>}
         </li>
         <li>
             {editing && <>
-                <label htmlFor={'password'}>Password:</label>
+                <label className={"description"} htmlFor={'password'}>Password:</label>
                 {passwordInputField}
             </>}
         </li>
     </>;
 
     const globalUserInput =
-        <li>
-            <label htmlFor={"credentials"}>Global Credentials:</label>
+        <li className={"credentials-infoline"}>
+            <label className={"description"} htmlFor={"credentials"}>Global Credentials:</label>
             {editing
                 ? <CredentialsSelect disabled={!editing} selection={globalCredentialsSelection}
                                setSelected={setGlobalCredentialsSelection}
@@ -342,10 +342,11 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
 
     return (
         <>
-            <h3>Details of Server</h3>
-            <button onClick={() => backToList(false)}>
-                Show List
-            </button>
+            <h3>Details of {server.name} &nbsp;
+                <button onClick={() => backToList(false)}>
+                    Show List
+                </button>
+            </h3>
 
             <form name={"edit"}>
                 <ul className={getClassName(server)}>
@@ -359,22 +360,21 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                         ? localUserInput
                         : globalUserInput
                     }
-                    <li>
-                        <label htmlFor={"ups"}>On UPS:</label>
+                    <li className={"ups-infoline"}>
+                        <label className={"description"} htmlFor={"ups"}>On UPS:</label>
                         {editing
                             ? <UpsSelect disabled={!editing} selection={upsSelection}
                                          setSelected={setUpsSelection}
                                          setChangedData={setChangedData} upsList={props.upses}/>
                             : <UpsInfoline selection={upsSelection} upsList={props.upses} />
                         }
-
                     </li>
                     <li>
-                        <label htmlFor={'seconds'}>Shutdown Trigger:</label>
+                        <label className={"description"} htmlFor={'seconds'}>Shutdown Trigger (remaining battery time in seconds):</label>
                         {editing
                             ? shutdownSecondsField
-                            : <p>{server.shutdownTime}</p>}
-                        <label htmlFor={"seconds"}> seconds remaining battery time</label>
+                            : <p className={"value"}> {server.shutdownTime} </p>
+                        }
                     </li>
                     <FormBottom resetForm={resetForm} changedData={changedData} submitEditForm={submitEditForm}
                                 deleteClicked={deleteClicked} editing={editing} switchEditMode={switchEditMode}

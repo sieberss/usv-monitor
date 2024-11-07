@@ -148,22 +148,23 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
 
     return (
         <>
-            <h3>Details of UPS</h3>
-            <button onClick={() => backToList(false)}>
-                Show List
-            </button>
+            <h3>Details of {ups.name} &nbsp;
+                <button onClick={() => backToList(false)}>
+                    Back to List
+                </button>
+            </h3>
             <form name={"edit"}>
                 <ul className={getClassName(ups)}>
-                    <NameAndAddressInputFields editing={editing} name={ups.name} nameInput={nameInput}
+                <NameAndAddressInputFields editing={editing} name={ups.name} nameInput={nameInput}
                                                setNameInput={setNameInput}
                                                address={ups.address} addressInput={addressInput}
                                                setAddressInput={setAddressInput}
                                                setChangedData={setChangedData}/>
                     <li>
-                        <label htmlFor={'community'}>Community String:</label>
+                        <label className={"description"} htmlFor={'community'}>Community String:</label>
                         {editing
                             ? communityInputField
-                            : <p>{ups.community}</p>}
+                            : <p className={"value"} >{ups.community}</p>}
                     </li>
                     <li>
                         <button id={"testbutton"} type={"button"} hidden={!editing} onClick={() => testConnection()}>
@@ -173,7 +174,9 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                     <FormBottom resetForm={resetForm} changedData={changedData} submitEditForm={submitEditForm}
                                 deleteClicked={deleteClicked} editing={editing} switchEditMode={switchEditMode}
                                 message={message} confirmationMessage={confirmationMessage}/>
-                    <li>Servers connected:</li>
+                    <li>
+                        <label className={"description"}>Servers connected:</label>
+                    </li>
                     {servers.map(server =>
                         <li key={server.id} className={"serverline"}><a
                             href={"/server/" + server.id}> {server.name} ({server.address}) </a></li>

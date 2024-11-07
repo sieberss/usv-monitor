@@ -1,26 +1,23 @@
 .navbar {
     border-radius: 15px;
-    min-width: 620px;
+    margin-bottom: 1em;
+}
 
-    .active {
-        background-color: yellow;
-    }
+.logout {
+    background-color: bisque;
+}
 
-    .inactive {
-        background-color: bisque;
-    }
-
-    .monitoring {
-        background-color: darkblue;
-        color: white;
-    }
+.monitoring {
+    background-color: darkblue;
+    color: white;
 }
 
 ul {
-    background-color: bisque;
+    background-color: white;
+    flex-direction: row;
     width: 100%;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-around;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -32,10 +29,20 @@ li {
     align-items: center;
     font-size: 17px;
     margin: 0;
-    padding: 0;
-
+    padding: 0 1em;
 }
 
+.ups {
+    background-color: #DDEDEE;
+}
+
+.server {
+    background-color: #E7E1F3;
+}
+
+.credentials {
+    background-color: #E6D9AC;
+}
 
 .login-link {
     color: inherit;

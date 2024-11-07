@@ -8,7 +8,8 @@ import { Server } from "../types/server.ts";
 type Props = {
     setMenuItem: (item:string) => void,
     upsUpdate : () => void,
-    servers: Server[]
+    servers: Server[],
+    monitoring: boolean
 }
 export default function UpsPage(props:Readonly<Props>) {
     props.setMenuItem("ups")
@@ -29,9 +30,7 @@ export default function UpsPage(props:Readonly<Props>) {
     }, [id])
 
 return (
-    <div className={"upslist"}>
-        <UpsContentDisplayAndEditing ups={ups} upsUpdate={props.upsUpdate} servers={props.servers}/>
-    </div>
+    <UpsContentDisplayAndEditing ups={ups} upsUpdate={props.upsUpdate} servers={props.servers} monitoring={props.monitoring}/>
 )
 
 }

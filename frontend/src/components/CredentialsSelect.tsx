@@ -12,7 +12,7 @@ type Props = {
 export default function CredentialsSelect(props: Readonly<Props>) {
     return (
 
-            <select className={"credentials-select"} name={"credentials"} disabled={props.disabled} onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+            <select name={"credentials"} disabled={props.disabled} onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
                 props.setChangedData(true)
                 props.setSelected(event.target.value)
             }}>

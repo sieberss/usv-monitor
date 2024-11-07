@@ -20,6 +20,7 @@ function App() {
     const [monitoring, setMonitoring] = useState<boolean>(false)
     const [selectedMenuItem, setSelectedMenuItem] = useState<string>("login")
     const [username, setUsername] = useState<string>("")
+    const [statusMap, setStatusMap] = useState<Map<string, Status>>
 
     useEffect(() => {
         axios.get("/api/login")
@@ -46,6 +47,9 @@ function App() {
     useEffect(() => {
         getAllUpses();
     }, [upsUpdates])
+
+    /** UPS status in monitoring mode *******/
+
 
     /**  Credentials ***********************/
 
@@ -108,7 +112,7 @@ function App() {
                     <Route path={"/"} element={<AllUpsesPage setMenuItem={setSelectedMenuItem} upses={upses} servers={servers} monitoring={monitoring}/>}/>
                     <Route path={"/server"} element={<AllServersPage setMenuItem={setSelectedMenuItem} servers={servers} upses={upses} credentialsList={credentialsList} monitoring={monitoring} />}/>
                     <Route path={"/credentials"} element={<AllCredentialsPage setMenuItem={setSelectedMenuItem} credentialsList={credentialsList}/>}/>
-                    <Route path={"/ups/:id"} element={<UpsPage setMenuItem={setSelectedMenuItem} upsUpdate={upsUpdateOccured} servers={servers}/>}/>
+                    <Route path={"/ups/:id"} element={<UpsPage setMenuItem={setSelectedMenuItem} upsUpdate={upsUpdateOccured} servers={servers} monitoring={monitoring}/>}/>
                     <Route path={"/server/:id"} element={<ServerPage setMenuItem={setSelectedMenuItem} upses={upses} credentialsList={credentialsList} serverUpdate={serverUpdateOccured} />}/>
                     <Route path={"/credentials/:id"} element={<CredentialsPage setMenuItem={setSelectedMenuItem} credentialsUpdate={credentialsUpdateOccured}/>} />
                 </Route>
