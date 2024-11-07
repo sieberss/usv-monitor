@@ -5,7 +5,6 @@ import {useNavigate} from "react-router-dom";
 import FormBottom from "./FormBottom.tsx";
 import NameAndAddressInputFields from "./NameAndAddressInputFields.tsx";
 import { Server } from "../types/server.ts";
-import {FaList} from "react-icons/fa";
 import "./UpsContent.css";
 
 type EditProps = {
@@ -150,12 +149,15 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
     return (
         <>
             <h3>Details of UPS</h3>
-            <FaList onClick={() => backToList(false)} />
-
+            <button onClick={() => backToList(false)}>
+                Show List
+            </button>
             <form name={"edit"}>
                 <ul className={getClassName(ups)}>
-                    <NameAndAddressInputFields editing={editing} name={ups.name} nameInput={nameInput} setNameInput={setNameInput}
-                                               address={ups.address} addressInput={addressInput} setAddressInput={setAddressInput}
+                    <NameAndAddressInputFields editing={editing} name={ups.name} nameInput={nameInput}
+                                               setNameInput={setNameInput}
+                                               address={ups.address} addressInput={addressInput}
+                                               setAddressInput={setAddressInput}
                                                setChangedData={setChangedData}/>
                     <li>
                         <label htmlFor={'community'}>Community String:</label>
@@ -170,10 +172,11 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                     </li>
                     <FormBottom resetForm={resetForm} changedData={changedData} submitEditForm={submitEditForm}
                                 deleteClicked={deleteClicked} editing={editing} switchEditMode={switchEditMode}
-                                message={message} confirmationMessage={confirmationMessage} />
+                                message={message} confirmationMessage={confirmationMessage}/>
                     <li>Servers connected:</li>
                     {servers.map(server =>
-                        <li key={server.id} className={"serverline"}> <a href={"/server/" + server.id}> {server.name} ({server.address}) </a></li>
+                        <li key={server.id} className={"serverline"}><a
+                            href={"/server/" + server.id}> {server.name} ({server.address}) </a></li>
                     )}
                 </ul>
             </form>

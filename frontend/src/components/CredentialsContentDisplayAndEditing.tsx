@@ -3,7 +3,6 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import FormBottom from "./FormBottom.tsx";
-import {FaList} from "react-icons/fa";
 import "./CredentialsContent.css"
 
 type EditProps = {
@@ -136,30 +135,32 @@ export default function CredentialsContentDisplayAndEditing(props: Readonly<Edit
 
 
         return (
-        <>
-            <h3>Details of User</h3>
-            <FaList onClick={() => backToList(false)} />
+            <>
+                <h3>Details of User</h3>
+                <button onClick={() => backToList(false)}>
+                    Show List
+                </button>
 
-            <form name={"edit"}>
-                <ul className={"credentials-content"}>
-                    <li>
-                        <label htmlFor={'user'}>Username:</label>
-                        {editing
-                            ? userInputField
-                            : <p>{credentials.user}</p>}
-                    </li>
-                    <li>
-                        <label htmlFor={'password'}>Password:</label>
-                        {editing
-                            ? passwordInputField
-                            : <p>********</p>}
-                    </li>
-                    <FormBottom resetForm={resetForm} changedData={changedData} submitEditForm={submitEditForm}
-                                deleteClicked={deleteClicked} editing={editing} switchEditMode={switchEditMode}
-                                message={message} confirmationMessage={confirmationMessage} />
-                </ul>
-            </form>
-        </>
-    )
+                <form name={"edit"}>
+                    <ul className={"credentials-content"}>
+                        <li>
+                            <label htmlFor={'user'}>Username:</label>
+                            {editing
+                                ? userInputField
+                                : <p>{credentials.user}</p>}
+                        </li>
+                        <li>
+                            <label htmlFor={'password'}>Password:</label>
+                            {editing
+                                ? passwordInputField
+                                : <p>********</p>}
+                        </li>
+                        <FormBottom resetForm={resetForm} changedData={changedData} submitEditForm={submitEditForm}
+                                    deleteClicked={deleteClicked} editing={editing} switchEditMode={switchEditMode}
+                                    message={message} confirmationMessage={confirmationMessage}/>
+                    </ul>
+                </form>
+            </>
+        )
 }
 
