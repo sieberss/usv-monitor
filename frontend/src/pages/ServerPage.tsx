@@ -7,13 +7,12 @@ import { Credentials } from "../types/credentials.ts";
 import { Ups } from "../types/ups.ts";
 
 type Props = {
-    setMenuItem: (item:string) => void,
     upses: Ups[],
     credentialsList: Credentials[],
-    serverUpdate : () => void
+    serverUpdate : () => void,
+    getServerClassName: (server: Server) => string
 }
 export default function ServerPage(props:Readonly<Props>) {
-    props.setMenuItem("server")
     const params = useParams()
     const id: string | undefined = params.id
     const [server, setServer] = useState<Server>({id: "new", name: "", address: "", upsId: "", shutdownTime: 180, credentials:{id:"", user:"", password:"", global:false}})
@@ -32,7 +31,7 @@ export default function ServerPage(props:Readonly<Props>) {
 
 return (
     <ServerContentDisplayAndEditing server={server} serverUpdate={props.serverUpdate} upses={props.upses}
-                                        credentialsList={props.credentialsList}/>
+                                        credentialsList={props.credentialsList} getServerClassName={props.getServerClassName}/>
 )
 
 }

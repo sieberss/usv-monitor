@@ -16,7 +16,8 @@ type EditProps = {
     server: Server,
     upses: Ups[],
     credentialsList: Credentials[],
-    serverUpdate: () => void
+    serverUpdate: () => void,
+    getServerClassName: (server: Server) => string
 }
 
 
@@ -335,10 +336,6 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         }}
     />;
 
-    function getClassName(server: Server) {
-        return "server-content"
-    }
-
 
     return (
         <>
@@ -349,7 +346,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
             </h3>
 
             <form name={"edit"}>
-                <ul className={getClassName(server)}>
+                <ul className={props.getServerClassName(server)}>
                     <NameAndAddressInputFields editing={editing} name={server.name} nameInput={nameInput} setNameInput={setNameInput}
                                                address={server.address} addressInput={addressInput} setAddressInput={setAddressInput}
                                                setChangedData={setChangedData}/>

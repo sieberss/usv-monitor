@@ -7,8 +7,7 @@ type Props = {
     monitoring: boolean,
     setMonitoring: (on: boolean) => void,
     username: string,
-    setUsername: (username:string) => void,
-    selectedItem: string
+    setUsername: (username:string) => void
 }
 
 export default function NavBar(props:Readonly<Props>) {

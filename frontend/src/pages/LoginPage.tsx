@@ -3,7 +3,6 @@ import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 type Props = {
-    setMenuItem: (item:string) => void,
     appUserExists: boolean,
     credentialsUpdateOccured: () => void,
     setUsername: (username: string) => void,
@@ -11,7 +10,6 @@ type Props = {
 }
 
 export default function LoginPage (props:Readonly<Props>){
-    props.setMenuItem("login")
     const [message, setMessage] = useState<string>("")
     const [password, setPassword] = useState<string>("")
     const navigate = useNavigate()

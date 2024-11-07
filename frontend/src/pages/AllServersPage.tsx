@@ -4,16 +4,16 @@ import ServerList from "../components/ServerList.tsx";
 import { Credentials } from "../types/credentials.ts";
 
 type OverviewProps = {
-    setMenuItem: (item:string) => void,
     servers: Server[],
     upses: Ups[],
     credentialsList: Credentials[],
-    monitoring: boolean
+    monitoring: boolean,
+    getServerClassName: (server: Server) => string
 }
 
-export default function AllUpsesPage(props:Readonly<OverviewProps>){
-    props.setMenuItem("server")
+export default function AllServersPage(props:Readonly<OverviewProps>){
      return(
-            <ServerList servers={props.servers} upses={props.upses} credentialsList={props.credentialsList} monitoring={props.monitoring}/>
+            <ServerList servers={props.servers} upses={props.upses} credentialsList={props.credentialsList}
+                        monitoring={props.monitoring} getServerClassName={props.getServerClassName}/>
      )
 }

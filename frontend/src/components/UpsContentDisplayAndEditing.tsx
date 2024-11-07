@@ -11,7 +11,8 @@ type EditProps = {
     ups: Ups,
     upsUpdate: () => void,
     servers: Server[],
-    monitoring: boolean
+    monitoring: boolean,
+    getUpsClassName: (id: string) => string
 }
 
 
@@ -141,11 +142,6 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         }}
     />;
 
-    function getClassName(ups: Ups): string {
-        return "ups-content"
-    }
-
-
     return (
         <>
             <h3>Details of {ups.name} &nbsp;
@@ -154,7 +150,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                 </button>
             </h3>
             <form name={"edit"}>
-                <ul className={getClassName(ups)}>
+                <ul className={props.getUpsClassName(ups.id)}>
                 <NameAndAddressInputFields editing={editing} name={ups.name} nameInput={nameInput}
                                                setNameInput={setNameInput}
                                                address={ups.address} addressInput={addressInput}

@@ -6,20 +6,18 @@ import './UpsList.css'
 type UpsListProps = {
     upses: Ups[],
     servers: Server[],
-    monitoring: boolean
+    monitoring: boolean,
+    getUpsClassName: (id: string) => string
 }
 
 export default function UpsList(props: Readonly<UpsListProps>) {
     const serversToUps: Map<Ups, Server[]> = new Map()
     props.upses.forEach(ups => serversToUps.set(ups, props.servers.filter((s => s.upsId === ups.id))))
-    function getClass(ups: Ups): string {
-        return "upscard"
-    }
 
     return (
         <ul className={"upslist"}>
             {props.upses.map((ups) =>
-                <li className={getClass(ups)} key={ups.id}>
+                <li className={props.getUpsClassName(ups.id)} key={ups.id}>
                     <UpsCard ups={ups}
                              servers={serversToUps.get(ups)}
                              monitoring={props.monitoring}/>

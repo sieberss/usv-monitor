@@ -7,7 +7,7 @@
 .upscard-poweroff {
      border: solid 2px;
      border-radius: 15px;
-     background-color: orange;
+     background-color: red;
      padding: 5px;
  }
 .upscard-shutdown {

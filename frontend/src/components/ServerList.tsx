@@ -8,18 +8,16 @@ type ServerListProps = {
     servers: Server[],
     upses: Ups[],
     credentialsList: Credentials[]
-    monitoring: boolean
+    monitoring: boolean,
+    getServerClassName: (server: Server) => string
 }
 
 export default function ServerList(props:Readonly<ServerListProps>){
-    function getClassName(server: Server): string {
-        return "servercard"
-    }
 
     return(
         <ul className={"serverlist"}>
             {props.servers.map(server =>
-                <li className={getClassName(server)} key={server.id}>
+                <li className={props.getServerClassName(server)} key={server.id}>
                     <ServerCard server={server} upses={props.upses} credentialsList={props.credentialsList} monitoring={props.monitoring}/>
                 </li>
             )}
