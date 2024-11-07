@@ -1,0 +1,12 @@
+.ups-content {
+    background-color:  #DDEDEE;
+}
+.ups-content-poweroff {
+    background-color: orange;
+}
+.ups-content-shutdown {
+    background-color: red;
+}
+.serverline {
+    background-color: #E7E1F3;
+}

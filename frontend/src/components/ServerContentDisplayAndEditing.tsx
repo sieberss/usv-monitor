@@ -10,6 +10,7 @@ import FormBottom from "./FormBottom.tsx";
 import NameAndAddressInputFields from "./NameAndAddressInputFields.tsx";
 import CredentialsInfoline from "./CredentialsInfoline.tsx";
 import UpsInfoline from "./UpsInfoline.tsx";
+import "./ServerContent.css"
 
 type EditProps = {
     server: Server,
@@ -334,6 +335,11 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         }}
     />;
 
+    function getClassName(server: Server) {
+        return "server-content"
+    }
+
+
     return (
         <>
             <h3>Details of Server</h3>
@@ -342,7 +348,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
             </button>
 
             <form name={"edit"}>
-                <ul>
+                <ul className={getClassName(server)}>
                     <NameAndAddressInputFields editing={editing} name={server.name} nameInput={nameInput} setNameInput={setNameInput}
                                                address={server.address} addressInput={addressInput} setAddressInput={setAddressInput}
                                                setChangedData={setChangedData}/>

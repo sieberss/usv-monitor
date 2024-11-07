@@ -4,6 +4,7 @@ import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import FormBottom from "./FormBottom.tsx";
 import {FaList} from "react-icons/fa";
+import "./CredentialsContent.css"
 
 type EditProps = {
     credentials: Credentials
@@ -136,12 +137,13 @@ export default function CredentialsContentDisplayAndEditing(props: Readonly<Edit
 
         return (
         <>
+            <h3>Details of User</h3>
             <FaList onClick={() => backToList(false)} />
 
             <form name={"edit"}>
-                <ul>
+                <ul className={"credentials-content"}>
                     <li>
-                        <label htmlFor={'user'}>User:</label>
+                        <label htmlFor={'user'}>Username:</label>
                         {editing
                             ? userInputField
                             : <p>{credentials.user}</p>}

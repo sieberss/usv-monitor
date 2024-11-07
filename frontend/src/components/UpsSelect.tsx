@@ -1,4 +1,5 @@
 import {Ups} from "../types/ups"
+import "./UpsSelect.css"
 
 type Props = {
     disabled: boolean
@@ -17,7 +18,7 @@ export default function UpsSelect(props: Readonly<Props>) {
         }}>
             <option value={""}> ...</option>
             {props.upsList.map(ups =>
-                <option key={ups.id} value={ups.id}
+                <option className={"ups-select"} key={ups.id} value={ups.id}
                         selected={ups.id === props.selection}> {ups.name} ({ups.address}) </option>)}
         </select>
 

@@ -1,0 +1,9 @@
+.server-content {
+    background-color: #E7E1F3;
+}
+.server-content-poweroff {
+    background-color: orange;
+}
+.server-content-shutdown {
+    background-color: red;
+}

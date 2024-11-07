@@ -6,6 +6,7 @@ import FormBottom from "./FormBottom.tsx";
 import NameAndAddressInputFields from "./NameAndAddressInputFields.tsx";
 import { Server } from "../types/server.ts";
 import {FaList} from "react-icons/fa";
+import "./UpsContent.css";
 
 type EditProps = {
     ups: Ups,
@@ -132,13 +133,18 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         }}
     />;
 
+    function getClassName(ups: Ups): string {
+        return "ups-content"
+    }
+
 
     return (
         <>
+            <h3>Details of UPS</h3>
             <FaList onClick={() => backToList(false)} />
 
             <form name={"edit"}>
-                <ul>
+                <ul className={getClassName(ups)}>
                     <NameAndAddressInputFields editing={editing} name={ups.name} nameInput={nameInput} setNameInput={setNameInput}
                                                address={ups.address} addressInput={addressInput} setAddressInput={setAddressInput}
                                                setChangedData={setChangedData}/>
@@ -158,7 +164,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                                 message={message} confirmationMessage={confirmationMessage} />
                     <li>Servers connected:</li>
                     {servers.map(server =>
-                        <li key={server.id}> <a href={"/server/" + server.id}> {server.name} ({server.address}) </a></li>
+                        <li key={server.id} className={"serverline"}> <a href={"/server/" + server.id}> {server.name} ({server.address}) </a></li>
                     )}
                 </ul>
             </form>
