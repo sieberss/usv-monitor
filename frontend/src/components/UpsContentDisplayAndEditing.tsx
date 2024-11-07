@@ -11,7 +11,8 @@ import "./UpsContent.css";
 type EditProps = {
     ups: Ups,
     upsUpdate: () => void,
-    servers: Server[]
+    servers: Server[],
+    monitoring: boolean
 }
 
 
@@ -106,6 +107,14 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
     function submitEditForm(): void {
         if (!addressInput) {    // input error
             setMessage("Error: Address is mandatory")
+            return
+        }
+        if (props.monitoring && addressInput!==ups.address && ups.id!=="new") {
+            setMessage("Error: Address cannot be changed in monitoring mode")
+            return
+        }
+        if (props.monitoring && communityInput!==ups.community && ups.id!=="new") {
+            setMessage("Error: Address cannot be changed in monitoring mode")
             return
         }
         if (ups.id==="new") {
