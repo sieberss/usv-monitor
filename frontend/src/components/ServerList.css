@@ -5,6 +5,20 @@
     padding: 5px;
 }
 
+.servercard-poweroff {
+    border: solid 2px;
+    border-radius: 15px;
+    background-color: orange;
+    padding: 5px;
+}
+
+.servercard-shutdown {
+    border: solid 2px;
+    border-radius: 15px;
+    background-color: red;
+    padding: 5px;
+}
+
 .serverlist {
     background-color: white;
     display: flex;

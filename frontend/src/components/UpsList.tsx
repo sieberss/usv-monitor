@@ -12,13 +12,17 @@ type UpsListProps = {
 export default function UpsList(props: Readonly<UpsListProps>) {
     const serversToUps: Map<Ups, Server[]> = new Map()
     props.upses.forEach(ups => serversToUps.set(ups, props.servers.filter((s => s.upsId === ups.id))))
+    function getClass(ups: Ups): string {
+        return "upscard"
+    }
+
     return (
         <ul className={"upslist"}>
             {props.upses.map((ups) =>
-                <li className={"upscard"}>
+                <li className={getClass(ups)} key={ups.id}>
                     <UpsCard ups={ups}
                              servers={serversToUps.get(ups)}
-                             monitoring={props.monitoring} key={ups.id}/>
+                             monitoring={props.monitoring}/>
                 </li>
             )}
             {props.monitoring  // add a card for adding a new UPS only when not monitoring

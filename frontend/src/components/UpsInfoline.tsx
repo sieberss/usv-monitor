@@ -1,5 +1,5 @@
 import {Ups} from "../types/ups"
-
+import "./UpsInfoline.css"
 type Props = {
     selection: string,
     upsList: Ups[]
@@ -10,7 +10,7 @@ export default function UpsInfoLine(props: Readonly<Props>) {
     return (
         <>
         {ups
-            ? <p> <a href={"/ups/" + ups.id}> {ups.name} ({ups.address}) </a> </p>
+            ? <p className={"ups-infoline"}> <a href={"/ups/" + ups.id}> {ups.name} ({ups.address}) </a> </p>
             : <p> None selected </p>
         }
         </>

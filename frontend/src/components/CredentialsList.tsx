@@ -12,8 +12,8 @@ export default function CredentialsList(props: Readonly<CredentialsListProps>) {
             {props.credentialsList
                 .filter(credentials => credentials.global)  // List only lobal credentials, local ones are edited in server details
                 .map(credentials =>
-                    <li className={"credentialscard"}>
-                        <CredentialsCard credentials={credentials} key={credentials.id}/>
+                    <li key={credentials.id} className={"credentialscard"}>
+                        <CredentialsCard credentials={credentials}/>
                     </li>
                 )}
             <li className={"credentialscard"}>
