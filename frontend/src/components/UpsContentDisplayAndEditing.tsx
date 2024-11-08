@@ -6,13 +6,15 @@ import FormBottom from "./FormBottom.tsx";
 import NameAndAddressInputFields from "./NameAndAddressInputFields.tsx";
 import { Server } from "../types/server.ts";
 import "./UpsContent.css";
+import {Status} from "../types/status.ts";
+import StatusInfo from "./StatusInfo.tsx";
 
 type EditProps = {
     ups: Ups,
     upsUpdate: () => void,
     servers: Server[],
     monitoring: boolean,
-    getUpsClassName: (id: string) => string
+    getUpsStatus: (id: string) => Status | undefined
 }
 
 
@@ -28,7 +30,12 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
     const [message, setMessage] = useState<string>("")          // in case of errors and for warning before deletion
     const confirmationMessage: string = "Really delete? Reclick button to confirm."
     const navigate = useNavigate()
+    const status: Status|undefined = props.getUpsStatus(ups.id)
 
+    function getClassName (): string {
+        return props.monitoring && (status?.state === "POWER_OFF")
+            ? "ups-content-poweroff" : "ups-content"
+    }
     const switchEditMode = (state:boolean) => {
         setEditing(state)
         setChangedData(false)
@@ -150,7 +157,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                 </button>
             </h3>
             <form name={"edit"}>
-                <ul className={props.getUpsClassName(ups.id)}>
+                <ul className={getClassName()}>
                 <NameAndAddressInputFields editing={editing} name={ups.name} nameInput={nameInput}
                                                setNameInput={setNameInput}
                                                address={ups.address} addressInput={addressInput}
@@ -177,6 +184,10 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                         <li key={server.id} className={"serverline"}><a
                             href={"/server/" + server.id}> {server.name} ({server.address}) </a></li>
                     )}
+                    {props.monitoring && (ups.id!=="new")
+                        &&
+                        <li><StatusInfo status={status}/></li>
+                    }
                 </ul>
             </form>
         </>

@@ -1,16 +1,16 @@
-.upscard {
+.ups-card {
     border: solid 2px;
     border-radius: 15px;
     background-color: #DDEDEE;
     padding: 5px;
 }
-.upscard-poweroff {
+.ups-card-poweroff {
      border: solid 2px;
      border-radius: 15px;
      background-color: red;
      padding: 5px;
  }
-.upscard-shutdown {
+.ups-card-shutdown {
       border: solid 2px;
       border-radius: 15px;
       background-color: red;

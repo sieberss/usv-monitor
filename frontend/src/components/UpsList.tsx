@@ -2,12 +2,13 @@ import {Server} from "../types/server.ts";
 import {Ups} from "../types/ups.ts";
 import UpsCard from "./UpsCard.tsx";
 import './UpsList.css'
+import {Status} from "../types/status.ts";
 
 type UpsListProps = {
     upses: Ups[],
     servers: Server[],
     monitoring: boolean,
-    getUpsClassName: (id: string) => string
+    getUpsStatus: (id: string) => Status | undefined
 }
 
 export default function UpsList(props: Readonly<UpsListProps>) {
@@ -17,17 +18,11 @@ export default function UpsList(props: Readonly<UpsListProps>) {
     return (
         <ul className={"upslist"}>
             {props.upses.map((ups) =>
-                <li className={props.getUpsClassName(ups.id)} key={ups.id}>
-                    <UpsCard ups={ups}
-                             servers={serversToUps.get(ups)}
-                             monitoring={props.monitoring}/>
-                </li>
+                <UpsCard key={ups.id} ups={ups} servers={serversToUps.get(ups)}
+                         monitoring={props.monitoring} getUpsStatus={props.getUpsStatus}/>
             )}
-            {props.monitoring  // add a card for adding a new UPS only when not monitoring
-                ||
-                <li className={"upscard"}>
-                    <UpsCard ups={{id: "new", name: "", community: "", address: ""}} servers={[]} monitoring={false}/>
-                </li>}
+            <UpsCard ups={{id: "new", name: "", community: "", address: ""}} servers={[]}
+                     monitoring={props.monitoring} getUpsStatus={props.getUpsStatus}/>
         </ul>
     )
 }

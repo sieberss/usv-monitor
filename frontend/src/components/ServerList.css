@@ -1,18 +1,18 @@
-.servercard {
+.server-card {
     border: solid 2px;
     border-radius: 15px;
     background-color: #E7E1F3;
     padding: 5px;
 }
 
-.servercard-poweroff {
+.server-card-poweroff {
     border: solid 2px;
     border-radius: 15px;
     background-color: orange;
     padding: 5px;
 }
 
-.servercard-shutdown {
+.server-card-shutdown {
     border: solid 2px;
     border-radius: 15px;
     background-color: red;

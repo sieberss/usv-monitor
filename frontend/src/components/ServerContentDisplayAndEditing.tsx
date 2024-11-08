@@ -11,13 +11,15 @@ import NameAndAddressInputFields from "./NameAndAddressInputFields.tsx";
 import CredentialsInfoline from "./CredentialsInfoline.tsx";
 import UpsInfoline from "./UpsInfoline.tsx";
 import "./ServerContent.css"
+import {Status} from "../types/status.ts";
 
 type EditProps = {
     server: Server,
     upses: Ups[],
     credentialsList: Credentials[],
     serverUpdate: () => void,
-    getServerClassName: (server: Server) => string
+    monitoring: boolean,
+    getUpsStatus: (id: string) => Status | undefined
 }
 
 
@@ -44,6 +46,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
     const [shutdownSecondsInput, setShutdownSecondsInput] = useState<number>(3)
     const [message, setMessage] = useState<string>("")          // in case of errors and for warning before deletion
     const confirmationMessage: string = "Really delete? Reclick button to confirm."
+    const upsStatus = props.getUpsStatus(server.upsId)
     const navigate = useNavigate()
 
     function switchEditMode(state: boolean): void {
@@ -59,6 +62,14 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         navigate("/server")
     }
 
+    function getClassName(): string {
+        if (!props.monitoring || upsStatus?.state === "OK" || server.id === "new")
+            return "server-content"
+        else if (upsStatus?.remaining && upsStatus.remaining > server.shutdownTime)
+            return "server-content-poweroff"
+        else return "server-content-shutdown"
+    }
+
     /** initialize data from props */
     useEffect(() => {
         setServer(props.server)
@@ -67,7 +78,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         setAddressInput(props.server.address)
         if (!props.server.credentials || props.server.credentials.global) {
             setLocalSelected(false)
-            setGlobalCredentialsSelection(props.server.credentials ?  props.server.credentials.id : "")
+            setGlobalCredentialsSelection(props.server.credentials ? props.server.credentials.id : "")
             setUserInput("")
             setPasswordInput("")
         } else {
@@ -86,7 +97,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         setAddressInput(server.address)
         if (!server.credentials || server.credentials.global) {
             setLocalSelected(false)
-            setGlobalCredentialsSelection(server.credentials ?  server.credentials.id : "")
+            setGlobalCredentialsSelection(server.credentials ? server.credentials.id : "")
             setUserInput("")
             setPasswordInput("")
         } else {
@@ -126,7 +137,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
             });
     }
 
-    function postToLocalEndpoint() : void {
+    function postToLocalEndpoint(): void {
         axios.post('/api/server/localcredentials', {
             name: nameInput,
             address: addressInput,
@@ -145,7 +156,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
             });
     }
 
-    function postToGlobalEndpoint(){
+    function postToGlobalEndpoint() {
         axios.post('/api/server', {
             name: nameInput,
             address: addressInput,
@@ -163,7 +174,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
             });
     }
 
-    function putToLocalEndpoint(){
+    function putToLocalEndpoint() {
         axios.put('/api/server/localcredentials/' + server.id, {
             name: nameInput,
             address: addressInput,
@@ -184,7 +195,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
             });
     }
 
-    function putToGlobalEndpoint(){
+    function putToGlobalEndpoint() {
         axios.put('/api/server/' + server.id, {
             name: nameInput,
             address: addressInput,
@@ -218,7 +229,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
             });
     }
 
-     function addServer(): void {
+    function addServer(): void {
         if (localSelected)
             postToLocalEndpoint()
         else
@@ -231,6 +242,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         else
             putToGlobalEndpoint()
     }
+
     /** end axios calls for server *************************************************************/
 
 
@@ -262,6 +274,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
     }
 
     const localCheckbox = <>
+        <label className={"description"} htmlFor={"local"}> use local credentials? (only on this server)</label>
         <input
             id={"local"}
             name={"local"}
@@ -272,7 +285,6 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                 setLocalSelected(event.target.checked)
             }}
         />
-        <label className={"description"} htmlFor={"local"}> use local credentials (only on this server)</label>
     </>;
 
     const userInputField = <input
@@ -319,9 +331,9 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
             <label className={"description"} htmlFor={"credentials"}>Global Credentials:</label>
             {editing
                 ? <CredentialsSelect disabled={!editing} selection={globalCredentialsSelection}
-                               setSelected={setGlobalCredentialsSelection}
-                               setChangedData={setChangedData} credentialsList={props.credentialsList}/>
-                : <CredentialsInfoline selection={globalCredentialsSelection} credentialsList={props.credentialsList} />
+                                     setSelected={setGlobalCredentialsSelection}
+                                     setChangedData={setChangedData} credentialsList={props.credentialsList}/>
+                : <CredentialsInfoline selection={globalCredentialsSelection} credentialsList={props.credentialsList}/>
             }
         </li>
 
@@ -346,9 +358,11 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
             </h3>
 
             <form name={"edit"}>
-                <ul className={props.getServerClassName(server)}>
-                    <NameAndAddressInputFields editing={editing} name={server.name} nameInput={nameInput} setNameInput={setNameInput}
-                                               address={server.address} addressInput={addressInput} setAddressInput={setAddressInput}
+                <ul className={getClassName()}>
+                    <NameAndAddressInputFields editing={editing} name={server.name} nameInput={nameInput}
+                                               setNameInput={setNameInput}
+                                               address={server.address} addressInput={addressInput}
+                                               setAddressInput={setAddressInput}
                                                setChangedData={setChangedData}/>
                     <li>
                         {editing && localCheckbox}
@@ -363,11 +377,12 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                             ? <UpsSelect disabled={!editing} selection={upsSelection}
                                          setSelected={setUpsSelection}
                                          setChangedData={setChangedData} upsList={props.upses}/>
-                            : <UpsInfoline selection={upsSelection} upsList={props.upses} />
+                            : <UpsInfoline selection={upsSelection} upsList={props.upses}/>
                         }
                     </li>
                     <li>
-                        <label className={"description"} htmlFor={'seconds'}>Shutdown Trigger (remaining battery time in seconds):</label>
+                        <label className={"description"} htmlFor={'seconds'}>Shutdown Trigger (remaining battery time in
+                            seconds):</label>
                         {editing
                             ? shutdownSecondsField
                             : <p className={"value"}> {server.shutdownTime} </p>
@@ -375,7 +390,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                     </li>
                     <FormBottom resetForm={resetForm} changedData={changedData} submitEditForm={submitEditForm}
                                 deleteClicked={deleteClicked} editing={editing} switchEditMode={switchEditMode}
-                                message={message} confirmationMessage={confirmationMessage} />
+                                message={message} confirmationMessage={confirmationMessage}/>
                 </ul>
             </form>
         </>

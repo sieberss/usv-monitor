@@ -12,14 +12,13 @@ type Props = {
 export default function UpsSelect(props: Readonly<Props>) {
     return (
 
-        <select name={"ups"} disabled={props.disabled} onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+        <select name={"ups"} value={props.selection} disabled={props.disabled} onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
             props.setChangedData(true)
             props.setSelected(event.target.value)
         }}>
             <option value={""}> ...</option>
             {props.upsList.map(ups =>
-                <option className={"ups-select"} key={ups.id} value={ups.id}
-                        selected={ups.id === props.selection}> {ups.name} ({ups.address}) </option>)}
+                <option className={"ups-select"} key={ups.id} value={ups.id}> {ups.name} ({ups.address}) </option>)}
         </select>
 
     )
