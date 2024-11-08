@@ -14,6 +14,9 @@ import java.util.Base64;
 
 @Service
 public class EncryptionService {
+
+    private EncryptionService(){}
+
     private static final String ALGORITHM = "AES";
 
     /** Class copied from external source, only my added code at the bottom to be tested
