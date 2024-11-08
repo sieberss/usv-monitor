@@ -5,6 +5,7 @@ import de.sieberss.backend.repo.CredentialsRepo;
 import de.sieberss.backend.repo.ServerRepo;
 import de.sieberss.backend.repo.UpsRepo;
 import de.sieberss.backend.utils.EncryptionService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -27,18 +28,21 @@ class ServerControllerTest {
     @Autowired
     private ServerRepo serverRepo;
     @Autowired
-    private EncryptionService encryptionService;
-    @Autowired
     private UpsRepo upsRepo;
     @Autowired
     private CredentialsRepo credentialsRepo;
+
+    @BeforeAll
+    static void setUp() throws Exception {
+        EncryptionService.setTestKey();
+    }
 
     @Test
     void getServerDTOList_shouldReturnListWithOneObject_whenOneObjectWasSavedInRepository() throws Exception {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
         upsRepo.save(ups);
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("u","user", "password", true);
-        Credentials encrypted = encryptionService.encryptCredentials(decrypted);
+        Credentials encrypted = EncryptionService.encryptCredentials(decrypted);
         credentialsRepo.save(encrypted);
         Server server = new Server("22", "Test-server", "1.1.1.1", encrypted, ups, 180);
         serverRepo.save(server);
@@ -83,7 +87,7 @@ class ServerControllerTest {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
         upsRepo.save(ups);
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("u","user", "password", true);
-        Credentials encrypted = encryptionService.encryptCredentials(decrypted);
+        Credentials encrypted = EncryptionService.encryptCredentials(decrypted);
         credentialsRepo.save(encrypted);
         Server server = new Server("22", "Test-server", "1.1.1.1", encrypted, ups, 180);
         serverRepo.save(server);
@@ -127,7 +131,7 @@ class ServerControllerTest {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
         upsRepo.save(ups);
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("u","user", "password", true);
-        Credentials encrypted = encryptionService.encryptCredentials(decrypted);
+        Credentials encrypted = EncryptionService.encryptCredentials(decrypted);
         credentialsRepo.save(encrypted);
         mvc.perform(MockMvcRequestBuilders.post("/api/server")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -169,7 +173,7 @@ class ServerControllerTest {
     @Test
     void createServer_shouldReturnSubmittedObjectWithNewId_andEmptyUpsIdW_whenUpsIdNotInDatabase() throws Exception {
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("u","user", "password", true);
-        Credentials encrypted = encryptionService.encryptCredentials(decrypted);
+        Credentials encrypted = EncryptionService.encryptCredentials(decrypted);
         credentialsRepo.save(encrypted);
         mvc.perform(MockMvcRequestBuilders.post("/api/server")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -213,7 +217,7 @@ class ServerControllerTest {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
         upsRepo.save(ups);
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("u","user", "password", true);
-        Credentials encrypted = encryptionService.encryptCredentials(decrypted);
+        Credentials encrypted = EncryptionService.encryptCredentials(decrypted);
         credentialsRepo.save(encrypted);
         serverRepo.save(new Server("22", "unnamed", "", null, null, 180));
         mvc.perform(MockMvcRequestBuilders.put("/api/server/22")
@@ -254,7 +258,7 @@ class ServerControllerTest {
     @Test
     void updateServer_shouldUpdateServer_withEmptyUpsId_whenIdExists_butUpsIdNotInDatabase() throws Exception {
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("u","user", "password", true);
-        Credentials encrypted = encryptionService.encryptCredentials(decrypted);
+        Credentials encrypted = EncryptionService.encryptCredentials(decrypted);
         credentialsRepo.save(encrypted);
         serverRepo.save(new Server("22", "unnamed", "", null, null, 180));
         mvc.perform(MockMvcRequestBuilders.put("/api/server/22")
@@ -324,7 +328,7 @@ class ServerControllerTest {
     @Test
     void deleteServer_shouldDeleteServer_whenIdExists() throws Exception {
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("u","user", "password", true);
-        Credentials encrypted = encryptionService.encryptCredentials(decrypted);
+        Credentials encrypted = EncryptionService.encryptCredentials(decrypted);
         credentialsRepo.save(encrypted);
         serverRepo.save(new Server("22", "Test-server", "1.1.1.1", encrypted, null, 180));
         serverRepo.save(new Server("33", "unnamed", "", null, null, 180));

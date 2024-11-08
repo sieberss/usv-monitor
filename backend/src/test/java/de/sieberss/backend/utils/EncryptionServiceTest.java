@@ -7,15 +7,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class EncryptionServiceTest {
-
-    private final EncryptionService encryptionService = new EncryptionService();
-
+    
     @Test
     void encryptPassword_shouldEncryptPassword_decryptPassword_shouldRestoreIt() throws Exception {
-        encryptionService.setTestKey();
+        EncryptionService.setTestKey();
         final String password = "password";
-        final String encryptedPassword = encryptionService.encryptPassword(password);
-        final String decryptedPassword = encryptionService.decryptPassword(encryptedPassword);
+        final String encryptedPassword = EncryptionService.encryptPassword(password);
+        final String decryptedPassword = EncryptionService.decryptPassword(encryptedPassword);
         assertEquals(password, decryptedPassword);
         assertNotEquals(password, encryptedPassword);
         assertNotEquals("", encryptedPassword);
@@ -23,10 +21,10 @@ class EncryptionServiceTest {
 
     @Test
     void encryptCredentials_shouldEncryptCredentials_decryptCredentials_shouldRestoreIt() throws Exception {
-        encryptionService.setTestKey();
+        EncryptionService.setTestKey();
         CredentialsWithoutEncryption credentialsWithoutEncryption = new CredentialsWithoutEncryption("1", "user", "password", true);
-        Credentials encryptedCredentials = encryptionService.encryptCredentials(credentialsWithoutEncryption);
-        CredentialsWithoutEncryption decryptedCredentials = encryptionService.decryptCredentials(encryptedCredentials);
+        Credentials encryptedCredentials = EncryptionService.encryptCredentials(credentialsWithoutEncryption);
+        CredentialsWithoutEncryption decryptedCredentials = EncryptionService.decryptCredentials(encryptedCredentials);
 
         assertEquals(credentialsWithoutEncryption, decryptedCredentials);
 
@@ -40,9 +38,9 @@ class EncryptionServiceTest {
 
     @Test
     void encryptCredentials_shouldEncryptandDecryptNullToNull() throws Exception {
-        encryptionService.setTestKey();
-        assertNull(encryptionService.encryptCredentials(null));
-        assertNull(encryptionService.decryptCredentials(null));
+        EncryptionService.setTestKey();
+        assertNull(EncryptionService.encryptCredentials(null));
+        assertNull(EncryptionService.decryptCredentials(null));
     }
 
 }

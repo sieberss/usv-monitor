@@ -3,6 +3,7 @@ package de.sieberss.backend.controller;
 import de.sieberss.backend.model.CredentialsWithoutEncryption;
 import de.sieberss.backend.repo.CredentialsRepo;
 import de.sieberss.backend.utils.EncryptionService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -24,14 +25,16 @@ class CredentialsControllerTest {
     private MockMvc mvc;
     @Autowired
     private CredentialsRepo repo;
-    @Autowired
-    private EncryptionService encryptionService;
 
+    @BeforeAll
+    static void setUp() throws Exception {
+        EncryptionService.setTestKey();
+    }
 
     @Test
     void getCredentialsList_shouldReturnListWithOneObject_whenOneObjectWasSavedInRepository() throws Exception {
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("1", "user", "password", true);
-        repo.save(encryptionService.encryptCredentials(decrypted));
+        repo.save(EncryptionService.encryptCredentials(decrypted));
         mvc.perform(MockMvcRequestBuilders.get("/api/credentials"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(
@@ -64,7 +67,7 @@ class CredentialsControllerTest {
     @Test
     void getCredentialsById_shouldReturnCredentials_whenIdExists() throws Exception {
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("1", "user", "password", true);
-        repo.save(encryptionService.encryptCredentials(decrypted));
+        repo.save(EncryptionService.encryptCredentials(decrypted));
         mvc.perform(MockMvcRequestBuilders.get("/api/credentials/1"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json("""
@@ -195,7 +198,7 @@ class CredentialsControllerTest {
     @Test
     void updateCredentials_shouldUpdateCredentials_whenIdExists() throws Exception {
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("1", "user", "password", true);
-        repo.save(encryptionService.encryptCredentials(decrypted));
+        repo.save(EncryptionService.encryptCredentials(decrypted));
         mvc.perform(MockMvcRequestBuilders.put("/api/credentials/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -245,8 +248,8 @@ class CredentialsControllerTest {
     void deleteCredentials_shouldDeleteUps_whenIdExists() throws Exception {
         CredentialsWithoutEncryption decrypted1 = new CredentialsWithoutEncryption("1", "user", "password", true);
         CredentialsWithoutEncryption decrypted2 = new CredentialsWithoutEncryption("2", "someone", "secret", false);
-        repo.save(encryptionService.encryptCredentials(decrypted1));
-        repo.save(encryptionService.encryptCredentials(decrypted2));
+        repo.save(EncryptionService.encryptCredentials(decrypted1));
+        repo.save(EncryptionService.encryptCredentials(decrypted2));
         mvc.perform(MockMvcRequestBuilders.delete("/api/credentials/2"))
             .andExpect(MockMvcResultMatchers.status().isOk());
         mvc.perform(MockMvcRequestBuilders.get("/api/credentials"))

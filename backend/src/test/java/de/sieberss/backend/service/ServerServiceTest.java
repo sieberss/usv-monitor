@@ -6,6 +6,7 @@ import de.sieberss.backend.repo.ServerRepo;
 import de.sieberss.backend.utils.DTOConverter;
 import de.sieberss.backend.utils.EncryptionService;
 import de.sieberss.backend.utils.IdService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -21,9 +22,13 @@ private final ServerRepo repo = mock(ServerRepo.class);
 private final IdService idService = mock(IdService.class);
 private final DTOConverter converter = mock (DTOConverter.class);
 private final CredentialsRepo credentialsRepo = mock(CredentialsRepo.class);
-private final EncryptionService encryptionService = mock(EncryptionService.class);
-private final CredentialsService credentialsService = new CredentialsService(credentialsRepo, idService, encryptionService);
+private final CredentialsService credentialsService = new CredentialsService(credentialsRepo, idService);
 private final ServerService service = new ServerService(repo, idService, converter, credentialsService);
+
+@BeforeAll
+static void setUp() throws Exception {
+    EncryptionService.setTestKey();
+}
 
     @Test
     void getServerDTOList_shouldReturnEmptyList_whenRepoIsEmpty() {
@@ -36,7 +41,7 @@ private final ServerService service = new ServerService(repo, idService, convert
     @Test
     void getServerDTOListShouldReturnList_whenRepoIsNotEmpty() {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
-        Credentials encrypted = new Credentials("8", "user", "UHJHJK", true);
+        Credentials encrypted = new Credentials("8", "user", EncryptionService.encryptPassword("pass"), true);
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", true);
         Server server
                 = new Server("22", "server", "1.1.1.1", encrypted, ups, 180);
@@ -79,7 +84,7 @@ private final ServerService service = new ServerService(repo, idService, convert
     @Test
     void createServer_shouldCreateServer_withSubmittedData() {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
-        Credentials encrypted = new Credentials("8", "user", "UHJHJK", true);
+        Credentials encrypted = new Credentials("8", "user", EncryptionService.encryptPassword("pass"), true);
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", true);
         ServerDTO submitted
                 = new ServerDTO(null, "server", "1.1.1.1", decrypted, "1", 180);
@@ -199,7 +204,7 @@ private final ServerService service = new ServerService(repo, idService, convert
     @Test
     void createServerWithNewLocalCredentials_shouldCreateServer_withSubmittedData() {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
-        Credentials encrypted = new Credentials("8", "user", "UHJHJK", false);
+        Credentials encrypted = new Credentials("8", "user", EncryptionService.encryptPassword("pass"), false);
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", false);
         ServerDTOWithoutCredentialsId submitted
                 = new ServerDTOWithoutCredentialsId(null, "server", "1.1.1.1", "user", "pass","1", 180);
@@ -208,7 +213,6 @@ private final ServerService service = new ServerService(repo, idService, convert
         ServerDTO expected
                 = new ServerDTO("22", "server", "1.1.1.1", decrypted, "1", 180);
         when(idService.generateId()).thenReturn("8","22");
-        when(encryptionService.encryptCredentials(decrypted)).thenReturn(encrypted);
         when(credentialsRepo.save(encrypted)).thenReturn(encrypted);
         when(converter.getServerFromDTO(expected)).thenReturn(server);
         when(converter.getDTOFromServer(server)).thenReturn(expected);
@@ -217,7 +221,6 @@ private final ServerService service = new ServerService(repo, idService, convert
         ServerDTO actual = service.createServerWithNewLocalCredentials(submitted);
         verify(repo).save(server);
         verify(idService, times(2)).generateId();
-        verify(encryptionService).encryptCredentials(decrypted);
         verify(credentialsRepo).save(encrypted);
         verify(converter).getServerFromDTO(expected);
         verify(converter).getDTOFromServer(server);
@@ -259,7 +262,7 @@ private final ServerService service = new ServerService(repo, idService, convert
     @Test
     void updateServerWithNewLocalCredentials_shouldUpdateData_WithNewLocalCredentials() {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
-        Credentials encrypted = new Credentials("8", "user", "UHJHJK", false);
+        Credentials encrypted = new Credentials("8", "user", EncryptionService.encryptPassword("pass"), false);
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", false);
         ServerDTOWithoutCredentialsId submitted
                 = new ServerDTOWithoutCredentialsId(null, "server", "1.1.1.1", "user", "pass","1", 180);
@@ -269,7 +272,6 @@ private final ServerService service = new ServerService(repo, idService, convert
                 = new ServerDTO("22", "server", "1.1.1.1", decrypted, "1", 180);
         when(repo.existsById("22")).thenReturn(true);
         when(idService.generateId()).thenReturn("8");
-        when(encryptionService.encryptCredentials(decrypted)).thenReturn(encrypted);
         when(credentialsRepo.save(encrypted)).thenReturn(encrypted);
         when(converter.getServerFromDTO(expected)).thenReturn(server);
         when(converter.getDTOFromServer(server)).thenReturn(expected);
@@ -279,7 +281,6 @@ private final ServerService service = new ServerService(repo, idService, convert
         verify(repo).existsById("22");
         verify(repo).save(server);
         verify(idService).generateId();
-        verify(encryptionService).encryptCredentials(decrypted);
         verify(credentialsRepo).save(encrypted);
         verify(converter).getServerFromDTO(expected);
         verify(converter).getDTOFromServer(server);

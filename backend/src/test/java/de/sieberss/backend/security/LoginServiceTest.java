@@ -7,6 +7,7 @@ import de.sieberss.backend.service.CredentialsService;
 import de.sieberss.backend.utils.EncryptionService;
 import de.sieberss.backend.utils.IdService;
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +16,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 
@@ -23,9 +25,13 @@ import static org.mockito.Mockito.*;
 class LoginServiceTest {
     private final CredentialsRepo repo = mock(CredentialsRepo.class);
     private final IdService idService = mock(IdService.class);
-    private final EncryptionService encryptionService = mock(EncryptionService.class);
-    private final CredentialsService credentialsService = new CredentialsService(repo, idService, encryptionService);
+    private final CredentialsService credentialsService = new CredentialsService(repo, idService);
     private final LoginService loginService = new LoginService(repo, credentialsService);
+
+    @BeforeAll
+    static void setUp() throws Exception {
+        EncryptionService.setTestKey();
+    }
 
     @Test
     void loadUserByUsername_shouldReturnUserObjectWhenNameIsInDatabase() {
@@ -50,17 +56,14 @@ class LoginServiceTest {
     void register_shouldAddNewUserToDatabase_ifNotAlreadyExists() {
         String username = "testuser";
         String password = "password";
-        String encryptedPassword = "zuerer34";
+        String encryptedPassword = EncryptionService.encryptPassword(password);
         CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("", username, password, false);
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("1", username, password, false);
         Credentials encrypted = new Credentials("1", username, encryptedPassword, false);
         when(idService.generateId()).thenReturn("1");
-        when(encryptionService.encryptCredentials(decrypted)).thenReturn(encrypted);
         when(repo.save(encrypted)).thenReturn(encrypted);
         // execute method
         loginService.register(submitted);
         verify(idService, times(1)).generateId();
-        verify(encryptionService, times(1)).encryptCredentials(decrypted);
         verify(repo, times(1)).save(encrypted);
     }
 
