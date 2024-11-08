@@ -6,10 +6,10 @@ import de.sieberss.backend.model.CredentialsWithoutEncryption;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
+import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 @Service
@@ -22,7 +22,7 @@ public class EncryptionService {
     /** Class copied from external source, only my added code at the bottom to be tested
      *
      */
-    public static String encrypt(String data, String key) throws Exception {
+    public static String encrypt(String data, String key) throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalStateException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), ALGORITHM);
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
@@ -30,7 +30,7 @@ public class EncryptionService {
         return Base64.getEncoder().encodeToString(encryptedBytes);
     }
 
-    public static String decrypt(String encryptedData, String key) throws Exception {
+    public static String decrypt(String encryptedData, String key) throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalStateException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), ALGORITHM);
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE, secretKey);
@@ -38,7 +38,7 @@ public class EncryptionService {
         return new String(decryptedBytes);
     }
 
-    public static String generateKey() throws Exception {
+    public static String generateKey() throws NoSuchAlgorithmException, IllegalStateException{
         KeyGenerator keyGen = KeyGenerator.getInstance(ALGORITHM);
         keyGen.init(128); // Schlüsselgröße
         SecretKey secretKey = keyGen.generateKey();
@@ -51,7 +51,7 @@ public class EncryptionService {
     @Value("${encryption.key}")
     private static String key;
 
-    public static void setTestKey() throws Exception {
+    public static void setTestKey() throws NoSuchAlgorithmException, IllegalStateException {
         key = generateKey();
     }
 
