@@ -1,5 +1,5 @@
 import {Link} from "react-router-dom";
-import './NavBar.css'
+import './Navbar.css'
 import axios from "axios";
 import { MdOutlinePublishedWithChanges } from "react-icons/md";
 
