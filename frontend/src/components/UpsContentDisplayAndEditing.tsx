@@ -178,7 +178,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                                 deleteClicked={deleteClicked} editing={editing} switchEditMode={switchEditMode}
                                 message={message} confirmationMessage={confirmationMessage}/>
                     <li>
-                        <label className={"description"}>Servers connected:</label>
+                        <p className={"description"}>Servers connected:</p>
                     </li>
                     {servers.map(server =>
                         <li key={server.id} className={"serverline"}><a
