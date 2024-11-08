@@ -6,6 +6,7 @@ import de.sieberss.backend.repo.ServerRepo;
 import de.sieberss.backend.utils.DTOConverter;
 import de.sieberss.backend.utils.EncryptionService;
 import de.sieberss.backend.utils.IdService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -23,6 +24,11 @@ private final DTOConverter converter = mock (DTOConverter.class);
 private final CredentialsRepo credentialsRepo = mock(CredentialsRepo.class);
 private final CredentialsService credentialsService = new CredentialsService(credentialsRepo, idService);
 private final ServerService service = new ServerService(repo, idService, converter, credentialsService);
+
+@BeforeAll
+static void setUp() throws Exception {
+    EncryptionService.setTestKey();
+}
 
     @Test
     void getServerDTOList_shouldReturnEmptyList_whenRepoIsEmpty() {

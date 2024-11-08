@@ -5,11 +5,15 @@ import de.sieberss.backend.model.CredentialsWithoutEncryption;
 import de.sieberss.backend.repo.CredentialsRepo;
 import de.sieberss.backend.utils.EncryptionService;
 import de.sieberss.backend.utils.IdService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class CredentialsServiceTest {
@@ -17,6 +21,11 @@ class CredentialsServiceTest {
     private final CredentialsRepo repo = mock(CredentialsRepo.class);
     private final IdService idService = mock(IdService.class);
     private final CredentialsService service = new CredentialsService(repo, idService);
+
+    @BeforeAll
+    static void setUp () throws Exception {
+        EncryptionService.setTestKey();
+    }
 
     @Test
     void getCredentialsList_shouldReturnEmptyList_whenDatabaseIsEmpty() {
