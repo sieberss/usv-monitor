@@ -2,21 +2,19 @@ import {Ups} from "../types/ups.ts";
 import {Server} from "../types/server.ts";
 import ServerList from "../components/ServerList.tsx";
 import { Credentials } from "../types/credentials.ts";
+import {Status} from "../types/status.ts";
 
 type OverviewProps = {
     servers: Server[],
     upses: Ups[],
     credentialsList: Credentials[],
     monitoring: boolean,
-    username: string
+    getUpsStatus: (id: string) => Status | undefined
 }
 
-export default function AllUpsesPage(props:Readonly<OverviewProps>){
+export default function AllServersPage(props:Readonly<OverviewProps>){
      return(
-        <>
-            {props.monitoring ? <h3> Monitoring mode </h3> : <h3> no Monitoring</h3>}
-            <h1>List of Servers</h1>
-            <ServerList servers={props.servers} upses={props.upses} credentialsList={props.credentialsList} monitoring={props.monitoring}/>
-        </>
-    )
+            <ServerList servers={props.servers} upses={props.upses} credentialsList={props.credentialsList}
+                        monitoring={props.monitoring} getUpsStatus={props.getUpsStatus}/>
+     )
 }

@@ -48,7 +48,8 @@ export default function LoginPage (props:Readonly<Props>){
             })
     }
 
-    function submitPassword() {
+    function submitPassword(e:React.FormEvent) {
+        e.preventDefault()
         if (props.appUserExists)
             checkLogin()
         else if (password.length < 8) {
@@ -60,12 +61,12 @@ export default function LoginPage (props:Readonly<Props>){
     }
 
     return(
-            <form name={"login"}>
+            <form name={"login"} onSubmit={submitPassword}>
                 <h2>Welcome to your UPS Monitor.</h2>
                 <p>Please enter your password</p>
                 <input type={"password"} id={"password"} name={"password"} value={password}
                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)} />
-                <button type={"button"} onClick={submitPassword}> Submit </button>
+                <button> Submit </button>
                 <p className={"message"}>{message}</p>
             </form>
 

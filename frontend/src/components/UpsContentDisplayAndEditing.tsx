@@ -5,11 +5,16 @@ import {useNavigate} from "react-router-dom";
 import FormBottom from "./FormBottom.tsx";
 import NameAndAddressInputFields from "./NameAndAddressInputFields.tsx";
 import { Server } from "../types/server.ts";
+import "./UpsContent.css";
+import {Status} from "../types/status.ts";
+import StatusInfo from "./StatusInfo.tsx";
 
 type EditProps = {
     ups: Ups,
     upsUpdate: () => void,
-    servers: Server[]
+    servers: Server[],
+    monitoring: boolean,
+    getUpsStatus: (id: string) => Status | undefined
 }
 
 
@@ -25,7 +30,12 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
     const [message, setMessage] = useState<string>("")          // in case of errors and for warning before deletion
     const confirmationMessage: string = "Really delete? Reclick button to confirm."
     const navigate = useNavigate()
+    const status: Status|undefined = props.getUpsStatus(ups.id)
 
+    function getClassName (): string {
+        return props.monitoring && (status?.state === "POWER_OFF")
+            ? "ups-content-poweroff" : "ups-content"
+    }
     const switchEditMode = (state:boolean) => {
         setEditing(state)
         setChangedData(false)
@@ -36,6 +46,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         switchEditMode(false)
         if (updated) props.upsUpdate()
         navigate("/")
+        //history.back()
     }
 
     /** initialize data from props */
@@ -105,6 +116,14 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
             setMessage("Error: Address is mandatory")
             return
         }
+        if (props.monitoring && addressInput!==ups.address && ups.id!=="new") {
+            setMessage("Error: Address cannot be changed in monitoring mode")
+            return
+        }
+        if (props.monitoring && communityInput!==ups.community && ups.id!=="new") {
+            setMessage("Error: Address cannot be changed in monitoring mode")
+            return
+        }
         if (ups.id==="new") {
             addUps()
         } else {
@@ -130,24 +149,25 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         }}
     />;
 
-
     return (
         <>
-            <h3>Details of UPS</h3>
-            <button onClick={() => backToList(false)} >
-                Show List
-            </button>
-
+            <h3>Details of {ups.name} &nbsp;
+                <button onClick={() => backToList(false)}>
+                    Back to List
+                </button>
+            </h3>
             <form name={"edit"}>
-                <ul>
-                    <NameAndAddressInputFields editing={editing} name={ups.name} nameInput={nameInput} setNameInput={setNameInput}
-                                               address={ups.address} addressInput={addressInput} setAddressInput={setAddressInput}
+                <ul className={getClassName()}>
+                <NameAndAddressInputFields editing={editing} name={ups.name} nameInput={nameInput}
+                                               setNameInput={setNameInput}
+                                               address={ups.address} addressInput={addressInput}
+                                               setAddressInput={setAddressInput}
                                                setChangedData={setChangedData}/>
                     <li>
-                        <label htmlFor={'community'}>Community String:</label>
+                        <label className={"description"} htmlFor={'community'}>Community String:</label>
                         {editing
                             ? communityInputField
-                            : <p>{ups.community}</p>}
+                            : <p className={"value"} >{ups.community}</p>}
                     </li>
                     <li>
                         <button id={"testbutton"} type={"button"} hidden={!editing} onClick={() => testConnection()}>
@@ -156,11 +176,18 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                     </li>
                     <FormBottom resetForm={resetForm} changedData={changedData} submitEditForm={submitEditForm}
                                 deleteClicked={deleteClicked} editing={editing} switchEditMode={switchEditMode}
-                                message={message} confirmationMessage={confirmationMessage} />
-                    <li>Servers connected:</li>
+                                message={message} confirmationMessage={confirmationMessage}/>
+                    <li>
+                        <p className={"description"}>Servers connected:</p>
+                    </li>
                     {servers.map(server =>
-                        <li key={server.id}> <a href={"/server/" + server.id}> {server.name} ({server.address}) </a></li>
+                        <li key={server.id} className={"serverline"}><a
+                            href={"/server/" + server.id}> {server.name} ({server.address}) </a></li>
                     )}
+                    {props.monitoring && (ups.id!=="new")
+                        &&
+                        <li><StatusInfo status={status}/></li>
+                    }
                 </ul>
             </form>
         </>

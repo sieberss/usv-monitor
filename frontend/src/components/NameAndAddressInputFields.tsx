@@ -36,16 +36,16 @@ export default function NameAndAddressInputFields(props: Readonly<Props>){
     return(
         <>
             <li>
-                <label htmlFor={'name'}>Name:</label>
+                <label className={"description"} htmlFor={'name'}>Name:</label>
                 {props.editing
                     ? nameInputField
-                    : <p>{props.name}</p>}
+                    : <p className={"value"}>{props.name}</p>}
             </li>
             <li>
-                <label htmlFor={'address'}>Address (IP or FQDN):</label>
+                <label className={"description"} htmlFor={'address'}>Address (IP or FQDN):</label>
                 {props.editing
                     ? addressInputField
-                    : <p>{props.address}</p>}
+                    : <p className={"value"}>{props.address}</p>}
             </li>
         </>
     )

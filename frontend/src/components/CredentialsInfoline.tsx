@@ -1,4 +1,5 @@
 import {Credentials} from "../types/credentials"
+import "./CredentialsInfoline.css"
 
 type Props = {
     selection: string,
@@ -10,7 +11,7 @@ export default function UpsInfoLine(props: Readonly<Props>) {
     return (
         <>
         {credentials
-            ? <p> <a href={"/credentials/" + credentials.id}> {credentials.user}  </a> </p>
+            ? <p className={"credentials-infoline"}> <a href={"/credentials/" + credentials.id}> {credentials.user}  </a> </p>
             : <p> None selected </p>
         }
         </>

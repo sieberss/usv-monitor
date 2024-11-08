@@ -1,0 +1,50 @@
+.navbar {
+    border-radius: 15px;
+    margin-bottom: 1em;
+}
+
+.logout {
+    background-color: bisque;
+}
+
+.monitoring {
+    background-color: darkblue;
+    color: white;
+}
+
+ul {
+    background-color: white;
+    flex-direction: row;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-weight: bold;
+}
+
+li {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    margin: 0;
+    padding: 0 1em;
+}
+
+.ups {
+    background-color: #DDEDEE;
+}
+
+.server {
+    background-color: #E7E1F3;
+}
+
+.credentials {
+    background-color: #E6D9AC;
+}
+
+.login-link {
+    color: inherit;
+    font-weight: bold;
+}

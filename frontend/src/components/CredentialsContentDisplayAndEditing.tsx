@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import FormBottom from "./FormBottom.tsx";
+import "./CredentialsContent.css"
 
 type EditProps = {
     credentials: Credentials
@@ -134,32 +135,32 @@ export default function CredentialsContentDisplayAndEditing(props: Readonly<Edit
 
 
         return (
-        <>
-            <h3>Details of credentials</h3>
-            <button onClick={() => backToList(false)} >
-                Show List
-            </button>
+            <>
+                <h3>Details of User</h3>
+                <button onClick={() => backToList(false)}>
+                    Show List
+                </button>
 
-            <form name={"edit"}>
-                <ul>
-                    <li>
-                        <label htmlFor={'user'}>User:</label>
-                        {editing
-                            ? userInputField
-                            : <p>{credentials.user}</p>}
-                    </li>
-                    <li>
-                        <label htmlFor={'password'}>Password:</label>
-                        {editing
-                            ? passwordInputField
-                            : <p>********</p>}
-                    </li>
-                    <FormBottom resetForm={resetForm} changedData={changedData} submitEditForm={submitEditForm}
-                                deleteClicked={deleteClicked} editing={editing} switchEditMode={switchEditMode}
-                                message={message} confirmationMessage={confirmationMessage} />
-                </ul>
-            </form>
-        </>
-    )
+                <form name={"edit"}>
+                    <ul className={"credentials-content"}>
+                        <li>
+                            <label className={"description"} htmlFor={'user'}>Username:</label>
+                            {editing
+                                ? userInputField
+                                : <p className={"value"}>{credentials.user}</p>}
+                        </li>
+                        <li>
+                            <label className={"description"} htmlFor={'password'}>Password:</label>
+                            {editing
+                                ? passwordInputField
+                                : <p className={"value"}>********</p>}
+                        </li>
+                        <FormBottom resetForm={resetForm} changedData={changedData} submitEditForm={submitEditForm}
+                                    deleteClicked={deleteClicked} editing={editing} switchEditMode={switchEditMode}
+                                    message={message} confirmationMessage={confirmationMessage}/>
+                    </ul>
+                </form>
+            </>
+        )
 }
 

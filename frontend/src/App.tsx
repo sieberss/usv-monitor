@@ -14,12 +14,13 @@ import CredentialsPage from "./pages/CredentialsPage.tsx";
 import ServerPage from './pages/ServerPage.tsx';
 import AllServersPage from './pages/AllServersPage.tsx';
 import Navbar from './components/Navbar.tsx';
+import {Status} from "./types/status.ts";
 
 function App() {
 
-    const [monitoring, _setMonitoring] = useState<boolean>(false)
-
+    const [monitoring, setMonitoring] = useState<boolean>(false)
     const [username, setUsername] = useState<string>("")
+    const [statusMap, _setStatusMap] = useState<Map<string, Status>>()
 
     useEffect(() => {
         axios.get("/api/login")
@@ -46,6 +47,12 @@ function App() {
     useEffect(() => {
         getAllUpses();
     }, [upsUpdates])
+
+    /** UPS status in monitoring mode *******/
+
+    const getUpsStatus = (id: string): Status|undefined => {
+        return statusMap?.get(id)
+    }
 
     /**  Credentials ***********************/
 
@@ -96,7 +103,7 @@ function App() {
     return (
 
         <>
-            <Navbar username={username} setUsername={setUsername}/>
+            <Navbar monitoring={monitoring} setMonitoring={setMonitoring} username={username} setUsername={setUsername}/>
             <Routes>
                {!username || username === "anonymousUser"
                     &&
@@ -105,12 +112,18 @@ function App() {
                                                            setUsername={setUsername} adminUser={adminUser}/>}/>
                 }
                 <Route element={<ProtectedRoute username={username}/>}>
-                    <Route path={"/"} element={<AllUpsesPage upses={upses} servers={servers} monitoring={monitoring} username={username}/>}/>
-                    <Route path={"/server"} element={<AllServersPage servers={servers} upses={upses} credentialsList={credentialsList} monitoring={monitoring} username={username}/>}/>
-                    <Route path={"/credentials"} element={<AllCredentialsPage credentialsList={credentialsList} monitoring={monitoring} username={username}/>}/>
-                    <Route path={"/ups/:id"} element={<UpsPage upsUpdate={upsUpdateOccured} servers={servers} username={username}/>}/>
-                    <Route path={"/server/:id"} element={<ServerPage upses={upses} credentialsList={credentialsList} serverUpdate={serverUpdateOccured} username={username}/>}/>
-                    <Route path={"/credentials/:id"} element={<CredentialsPage credentialsUpdate={credentialsUpdateOccured} username={username}/>} />
+                    <Route path={"/"} element={
+                        <AllUpsesPage upses={upses} servers={servers} monitoring={monitoring} getUpsStatus={getUpsStatus}/>}/>
+                    <Route path={"/server"} element={
+                        <AllServersPage servers={servers} upses={upses} credentialsList={credentialsList} monitoring={monitoring} getUpsStatus={getUpsStatus}/>}/>
+                    <Route path={"/credentials"} element={
+                        <AllCredentialsPage credentialsList={credentialsList}/>}/>
+                    <Route path={"/ups/:id"} element={
+                        <UpsPage upsUpdate={upsUpdateOccured} servers={servers} monitoring={monitoring} getUpsStatus={getUpsStatus}/>}/>
+                    <Route path={"/server/:id"} element={
+                        <ServerPage upses={upses} credentialsList={credentialsList} serverUpdate={serverUpdateOccured} monitoring={monitoring} getUpsStatus={getUpsStatus} />}/>
+                    <Route path={"/credentials/:id"} element={
+                        <CredentialsPage credentialsUpdate={credentialsUpdateOccured}/>} />
                 </Route>
             </Routes>
         </>

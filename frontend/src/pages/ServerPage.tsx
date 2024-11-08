@@ -5,12 +5,14 @@ import {useParams} from "react-router-dom";
 import ServerContentDisplayAndEditing from "../components/ServerContentDisplayAndEditing.tsx";
 import { Credentials } from "../types/credentials.ts";
 import { Ups } from "../types/ups.ts";
+import {Status} from "../types/status.ts";
 
 type Props = {
     upses: Ups[],
     credentialsList: Credentials[],
     serverUpdate : () => void,
-    username: string
+    monitoring: boolean,
+    getUpsStatus: (id: string) => Status | undefined
 }
 export default function ServerPage(props:Readonly<Props>) {
     const params = useParams()
@@ -30,7 +32,8 @@ export default function ServerPage(props:Readonly<Props>) {
     }, [id])
 
 return (
-    <ServerContentDisplayAndEditing server={server} serverUpdate={props.serverUpdate} upses={props.upses} credentialsList={props.credentialsList}/>
+    <ServerContentDisplayAndEditing server={server} serverUpdate={props.serverUpdate} upses={props.upses} credentialsList={props.credentialsList}
+                                    monitoring={props.monitoring} getUpsStatus={props.getUpsStatus}/>
 )
 
 }
