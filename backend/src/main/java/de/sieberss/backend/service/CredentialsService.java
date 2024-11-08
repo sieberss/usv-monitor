@@ -17,7 +17,6 @@ public class CredentialsService {
 
     private final CredentialsRepo repo;
     private final IdService idService;
-    private final EncryptionService encryptionService;
 
     private boolean missingData(CredentialsWithoutEncryption unencrypted) {
         return unencrypted == null || unencrypted.user() == null || unencrypted.password() == null
@@ -26,13 +25,13 @@ public class CredentialsService {
     public List<CredentialsWithoutEncryption> getCredentialsList() {
         return repo.findAll()
                 .stream()
-                .map(encryptionService::decryptCredentials)
+                .map(EncryptionService::decryptCredentials)
                 .toList();
     }
 
     public CredentialsWithoutEncryption getCredentialsById(String id) {
         Credentials dbObject = repo.findById(id).orElseThrow(()->new NoSuchElementException(id));
-        return encryptionService.decryptCredentials(dbObject);
+        return EncryptionService.decryptCredentials(dbObject);
     }
 
     public CredentialsWithoutEncryption createCredentials(CredentialsWithoutEncryption submitted) {
@@ -40,7 +39,7 @@ public class CredentialsService {
             throw new IllegalArgumentException("Missing username and/or password");
         CredentialsWithoutEncryption completed =
                 new CredentialsWithoutEncryption(idService.generateId(), submitted.user(), submitted.password(), submitted.global());
-        Credentials dbObject = encryptionService.encryptCredentials(completed);
+        Credentials dbObject = EncryptionService.encryptCredentials(completed);
         repo.save(dbObject);
         return completed;
     }
@@ -51,7 +50,7 @@ public class CredentialsService {
         if (missingData(submitted))
             throw new IllegalArgumentException("Missing username and/or password");
         CredentialsWithoutEncryption completed = new CredentialsWithoutEncryption(id, submitted.user(), submitted.password(), submitted.global());
-        Credentials dbObject = encryptionService.encryptCredentials(completed);
+        Credentials dbObject = EncryptionService.encryptCredentials(completed);
         repo.save(dbObject);
         return completed;
     }

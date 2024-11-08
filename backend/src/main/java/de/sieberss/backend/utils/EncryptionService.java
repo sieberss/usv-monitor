@@ -19,7 +19,7 @@ public class EncryptionService {
     /** Class copied from external source, only my added code at the bottom to be tested
      *
      */
-    public String encrypt(String data, String key) throws Exception {
+    public static String encrypt(String data, String key) throws Exception {
         SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), ALGORITHM);
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
@@ -27,7 +27,7 @@ public class EncryptionService {
         return Base64.getEncoder().encodeToString(encryptedBytes);
     }
 
-    public String decrypt(String encryptedData, String key) throws Exception {
+    public static String decrypt(String encryptedData, String key) throws Exception {
         SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), ALGORITHM);
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE, secretKey);
@@ -35,7 +35,7 @@ public class EncryptionService {
         return new String(decryptedBytes);
     }
 
-    public String generateKey() throws Exception {
+    public static String generateKey() throws Exception {
         KeyGenerator keyGen = KeyGenerator.getInstance(ALGORITHM);
         keyGen.init(128); // Schlüsselgröße
         SecretKey secretKey = keyGen.generateKey();
@@ -46,13 +46,13 @@ public class EncryptionService {
      *
      */
     @Value("${encryption.key}")
-    private  String key;
+    private static String key;
 
-    public void setTestKey() throws Exception {
+    public static void setTestKey() throws Exception {
         key = generateKey();
     }
 
-    public String encryptPassword(String value) {
+    public static String encryptPassword(String value) {
         try {
             return encrypt(value, key);
         } catch (Exception e) {
@@ -60,13 +60,13 @@ public class EncryptionService {
         }
     }
 
-    public Credentials encryptCredentials(CredentialsWithoutEncryption unencrypted) {
+    public static Credentials encryptCredentials(CredentialsWithoutEncryption unencrypted) {
         return unencrypted == null
                 ? null
                 : new Credentials(unencrypted.id(), unencrypted.user(), encryptPassword(unencrypted.password()), unencrypted.global());
     }
 
-    public String decryptPassword(String value) {
+    public static String decryptPassword(String value) {
         try {
             return decrypt(value, key);
         }
@@ -75,7 +75,7 @@ public class EncryptionService {
         }
     }
 
-    public CredentialsWithoutEncryption decryptCredentials(Credentials encrypted) {
+    public static CredentialsWithoutEncryption decryptCredentials(Credentials encrypted) {
         return encrypted == null
                 ? null
                 : new CredentialsWithoutEncryption(encrypted.id(), encrypted.user(), decryptPassword(encrypted.password()), encrypted.global());

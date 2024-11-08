@@ -16,8 +16,7 @@ class CredentialsServiceTest {
 
     private final CredentialsRepo repo = mock(CredentialsRepo.class);
     private final IdService idService = mock(IdService.class);
-    private final EncryptionService encryptionService = mock(EncryptionService.class);
-    private final CredentialsService service = new CredentialsService(repo, idService, encryptionService);
+    private final CredentialsService service = new CredentialsService(repo, idService);
 
     @Test
     void getCredentialsList_shouldReturnEmptyList_whenDatabaseIsEmpty() {
@@ -28,27 +27,25 @@ class CredentialsServiceTest {
 
     @Test
     void getCredentialsList_shouldReturnContent_whenRepoIsFilled() {
-        CredentialsWithoutEncryption unencrypted = new CredentialsWithoutEncryption("1", "user", "secret", true);
-        Credentials encrypted = new Credentials("1", "user", "*****", true);
-        when(encryptionService.decryptCredentials(encrypted)).thenReturn(unencrypted);
+        String password = "secret";
+        CredentialsWithoutEncryption unencrypted = new CredentialsWithoutEncryption("1", "user", password, true);
+        Credentials encrypted = new Credentials("1", "user", EncryptionService.encryptPassword(password), true);
         when(repo.findAll()).thenReturn(List.of(encrypted));
         // execute tested method
         assertEquals(List.of(unencrypted), service.getCredentialsList());
         verify(repo).findAll();
-        verify(encryptionService).decryptCredentials(encrypted);
     }
 
     @Test
     void getCredentialsById_shouldReturnObject_whenIdExists() {
-        CredentialsWithoutEncryption unencrypted = new CredentialsWithoutEncryption("1", "user", "secret", true);
-        Credentials encrypted = new Credentials("1", "user", "*****", true);
-        when(encryptionService.decryptCredentials(encrypted)).thenReturn(unencrypted);
+        String password = "secret";
+        CredentialsWithoutEncryption unencrypted = new CredentialsWithoutEncryption("1", "user", password, true);
+        Credentials encrypted = new Credentials("1", "user", EncryptionService.encryptPassword(password), true);
         when(repo.findById("1")).thenReturn(Optional.of(encrypted));
         // execute tested method
         CredentialsWithoutEncryption actual = service.getCredentialsById("1");
         assertEquals(unencrypted, actual);
         verify(repo).findById("1");
-        verify(encryptionService).decryptCredentials(encrypted);
     }
 
 
@@ -96,30 +93,26 @@ class CredentialsServiceTest {
         when(idService.generateId()).thenReturn("1");
         CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("", "user", "pass", true);
         CredentialsWithoutEncryption expected = new CredentialsWithoutEncryption("1", "user", "pass", true);
-        Credentials encrypted = new Credentials("1", "user", "*****", true);
-        when(encryptionService.encryptCredentials(expected)).thenReturn(encrypted);
+        Credentials encrypted = new Credentials("1", "user", EncryptionService.encryptPassword("pass"), true);
         when(repo.save(encrypted)).thenReturn(encrypted);
         // execute tested method
         CredentialsWithoutEncryption actual = service.createCredentials(submitted);
         assertEquals(expected, actual);
         verify(repo).save(encrypted);
         verify(idService).generateId();
-        verify(encryptionService).encryptCredentials(expected);
     }
 
     @Test
     void updateCredentials_shouldReturnUpdatedObject_whenIdExists() {
         CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("null", "user", "pass", true);
         CredentialsWithoutEncryption expected = new CredentialsWithoutEncryption("1", "user", "pass", true);
-        Credentials encrypted = new Credentials("1", "user", "*****", true);
+        Credentials encrypted = new Credentials("1", "user", EncryptionService.encryptPassword("pass"), true);
         when(repo.existsById("1")).thenReturn(true);
-        when(encryptionService.encryptCredentials(expected)).thenReturn(encrypted);
         when(repo.save(encrypted)).thenReturn(encrypted);
         // execute tested method
         CredentialsWithoutEncryption actual = service.updateCredentials("1", submitted);
         assertEquals(expected, actual);
         verify(repo).existsById("1");
-        verify(encryptionService).encryptCredentials(expected);
         verify(repo).save(encrypted);
     }
 

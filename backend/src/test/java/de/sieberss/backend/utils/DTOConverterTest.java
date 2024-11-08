@@ -12,8 +12,7 @@ import static org.mockito.Mockito.*;
 class DTOConverterTest {
 
     private final UpsRepo upsRepo = mock(UpsRepo.class);
-    private final EncryptionService encryptionService = mock(EncryptionService.class);
-    private final DTOConverter converter = new DTOConverter(upsRepo, encryptionService);
+    private final DTOConverter converter = new DTOConverter(upsRepo);
 
     @Test
     void getServerFromDTO_shouldReturnNull_whenDTOIsNull() {
@@ -27,20 +26,17 @@ class DTOConverterTest {
         CredentialsWithoutEncryption decrypted
                 = new CredentialsWithoutEncryption("1", "user", "secret", true);
         Credentials encrypted
-                = new Credentials("1", "user", "klkjterer", true);
+                = new Credentials("1", "user", EncryptionService.encryptPassword("secret"), true);
         ServerDTO dto
                 = new ServerDTO("44", "server", "1.1.1.1", decrypted, "2", 180);
         Server expected
                 = new Server("44", "server", "1.1.1.1", encrypted, ups, 180);
         when(upsRepo.findById("2"))
                 .thenReturn(Optional.of(ups));
-        when(encryptionService.encryptCredentials(decrypted))
-                .thenReturn(encrypted);
         // execute method
         Server actual = converter.getServerFromDTO(dto);
         assertEquals(actual, expected);
         verify(upsRepo).findById("2");
-        verify(encryptionService).encryptCredentials(decrypted);
     }
 
     @Test
@@ -48,20 +44,17 @@ class DTOConverterTest {
         CredentialsWithoutEncryption decrypted
                 = new CredentialsWithoutEncryption("1", "user", "secret", true);
         Credentials encrypted
-                = new Credentials("1", "user", "klkjterer", true);
+                = new Credentials("1", "user", EncryptionService.encryptPassword("secret"), true);
         ServerDTO dto
                 = new ServerDTO("44", "server", "1.1.1.1", decrypted, "2", 180);
         Server expected
                 = new Server("44", "server", "1.1.1.1", encrypted, null, 180);
         when(upsRepo.findById("2"))
                 .thenReturn(Optional.empty());
-        when(encryptionService.encryptCredentials(decrypted))
-                .thenReturn(encrypted);
         // execute method
         Server actual = converter.getServerFromDTO(dto);
         assertEquals(actual, expected);
         verify(upsRepo).findById("2");
-        verify(encryptionService).encryptCredentials(decrypted);
     }
 
     @Test
@@ -71,34 +64,29 @@ class DTOConverterTest {
         CredentialsWithoutEncryption decrypted
                 = new CredentialsWithoutEncryption("1", "user", "secret", true);
         Credentials encrypted
-                = new Credentials("1", "user", "klkjterer", true);
+                = new Credentials("1", "user", EncryptionService.encryptPassword("secret"), true);
         Server server
                 = new Server("44", "server", "1.1.1.1", encrypted, ups, 180);
         ServerDTO dto
                 = new ServerDTO("44", "server", "1.1.1.1", decrypted, "2", 180);
-        when(encryptionService.decryptCredentials(encrypted))
-                .thenReturn(decrypted);
         // execute method
         ServerDTO actual = converter.getDTOFromServer(server);
         assertEquals(actual, dto);
-        verify(encryptionService).decryptCredentials(encrypted);
     }
+
     @Test
     void getDTOFromServer_shouldDecryptCredentials_andSetUpsIdEmpty_whenUpsIsNull() {
         CredentialsWithoutEncryption decrypted
                 = new CredentialsWithoutEncryption("1", "user", "secret", true);
         Credentials encrypted
-                = new Credentials("1", "user", "klkjterer", true);
+                = new Credentials("1", "user", EncryptionService.encryptPassword("secret"), true);
         Server server
                 = new Server("44", "server", "1.1.1.1", encrypted, null, 180);
         ServerDTO dto
                 = new ServerDTO("44", "server", "1.1.1.1", decrypted, "", 180);
-        when(encryptionService.decryptCredentials(encrypted))
-                .thenReturn(decrypted);
         // execute method
         ServerDTO actual = converter.getDTOFromServer(server);
         assertEquals(actual, dto);
-        verify(encryptionService).decryptCredentials(encrypted);
     }
 
     @Test

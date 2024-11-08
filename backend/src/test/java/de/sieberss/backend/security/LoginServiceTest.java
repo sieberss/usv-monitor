@@ -23,8 +23,7 @@ import static org.mockito.Mockito.*;
 class LoginServiceTest {
     private final CredentialsRepo repo = mock(CredentialsRepo.class);
     private final IdService idService = mock(IdService.class);
-    private final EncryptionService encryptionService = mock(EncryptionService.class);
-    private final CredentialsService credentialsService = new CredentialsService(repo, idService, encryptionService);
+    private final CredentialsService credentialsService = new CredentialsService(repo, idService);
     private final LoginService loginService = new LoginService(repo, credentialsService);
 
     @Test
@@ -50,17 +49,14 @@ class LoginServiceTest {
     void register_shouldAddNewUserToDatabase_ifNotAlreadyExists() {
         String username = "testuser";
         String password = "password";
-        String encryptedPassword = "zuerer34";
+        String encryptedPassword = EncryptionService.encryptPassword(password);
         CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("", username, password, false);
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("1", username, password, false);
         Credentials encrypted = new Credentials("1", username, encryptedPassword, false);
         when(idService.generateId()).thenReturn("1");
-        when(encryptionService.encryptCredentials(decrypted)).thenReturn(encrypted);
         when(repo.save(encrypted)).thenReturn(encrypted);
         // execute method
         loginService.register(submitted);
         verify(idService, times(1)).generateId();
-        verify(encryptionService, times(1)).encryptCredentials(decrypted);
         verify(repo, times(1)).save(encrypted);
     }
 
