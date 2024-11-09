@@ -17,7 +17,7 @@ export default function ServerCard(props: Readonly<ServerCardProps>) {
     const server: Server = props.server
 
     function getClassName(): string {
-        if (!props.monitoring || upsStatus?.state === "OK" || server.id === "new")
+        if (!props.monitoring || upsStatus?.state === "POWER_ON" || server.id === "new")
             return "server-card"
         else if (upsStatus?.remaining && upsStatus.remaining > server.shutdownTime)
             return "server-card-poweroff"

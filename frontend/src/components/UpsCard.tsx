@@ -15,8 +15,13 @@ export default function UpsCard(props: Readonly<UpsCardProps>) {
     const ups: Ups = props.ups
     const status: Status|undefined = props.getUpsStatus(ups.id)
     function getClassName (): string {
-        return props.monitoring && (status?.state === "POWER_OFF")
-            ? "ups-card-poweroff" : "ups-card"
+        if (props.monitoring) {
+            if (status?.state === "POWER_OFF")
+                return "ups-card-poweroff"
+            if (status?.state === "POWER_OFF_LIMIT" || status?.state === "SHUTDOWN")
+                return "ups-card-shutdown"
+        }
+        return "ups-card"
     }
 
     return (

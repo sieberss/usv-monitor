@@ -33,9 +33,15 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
     const status: Status|undefined = props.getUpsStatus(ups.id)
 
     function getClassName (): string {
-        return props.monitoring && (status?.state === "POWER_OFF")
-            ? "ups-content-poweroff" : "ups-content"
+        if (props.monitoring) {
+            if (status?.state === "POWER_OFF")
+                return "ups-card-poweroff"
+            if (status?.state === "POWER_OFF_LIMIT" || status?.state === "SHUTDOWN")
+                return "ups-card-shutdown"
+        }
+        return "ups-card"
     }
+
     const switchEditMode = (state:boolean) => {
         setEditing(state)
         setChangedData(false)

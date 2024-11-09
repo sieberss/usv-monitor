@@ -63,7 +63,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
     }
 
     function getClassName(): string {
-        if (!props.monitoring || upsStatus?.state === "OK" || server.id === "new")
+        if (!props.monitoring || upsStatus?.state === "POWER_ON" || server.id === "new")
             return "server-content"
         else if (upsStatus?.remaining && upsStatus.remaining > server.shutdownTime)
             return "server-content-poweroff"
