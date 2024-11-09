@@ -15,7 +15,9 @@ import java.util.Base64;
 @Service
 public class EncryptionService {
 
+    private static final EncryptionService instance = new EncryptionService();
     private EncryptionService(){}
+
 
     private static final String ALGORITHM = "AES";
 
@@ -49,15 +51,15 @@ public class EncryptionService {
      *
      */
     @Value("${encryption.key}")
-    private static String key;
+    private String key;
 
     public static void setTestKey() throws NoSuchAlgorithmException, IllegalStateException {
-        key = generateKey();
+        instance.key = generateKey();
     }
 
     public static String encryptPassword(String value) {
         try {
-            return encrypt(value, key);
+            return encrypt(value, instance.key);
         } catch (Exception e) {
             throw new EncryptionException(e.getMessage());
         }
@@ -71,7 +73,7 @@ public class EncryptionService {
 
     public static String decryptPassword(String value) {
         try {
-            return decrypt(value, key);
+            return decrypt(value, instance.key);
         }
         catch (Exception e) {
             throw new EncryptionException(e.getMessage());
