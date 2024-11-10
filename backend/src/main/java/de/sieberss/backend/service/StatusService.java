@@ -5,6 +5,7 @@ import de.sieberss.backend.model.ServerDTO;
 import de.sieberss.backend.model.Status;
 import de.sieberss.backend.model.Ups;
 import de.sieberss.backend.utils.UpsStatusSimulator;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ public class StatusService {
     private final ServerService serverService;
     private final UpsStatusSimulator simulator;
 
+    @Getter
     private boolean monitoring = false;
     private final Map<String, Status> statusMap = new HashMap<>();
     private List<Ups> upsList = new ArrayList<>();
