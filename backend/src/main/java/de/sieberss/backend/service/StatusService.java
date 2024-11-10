@@ -5,9 +5,7 @@ import de.sieberss.backend.model.ServerDTO;
 import de.sieberss.backend.model.Status;
 import de.sieberss.backend.model.Ups;
 import de.sieberss.backend.utils.UpsStatusSimulator;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -17,8 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@Getter
-@Setter
 @RequiredArgsConstructor
 public class StatusService {
     private final UpsService upsService;
@@ -26,8 +22,7 @@ public class StatusService {
     private final UpsStatusSimulator simulator;
 
     private boolean monitoring = false;
-    private Map<String, Status> statusMap = new HashMap<>();
-    private Instant startTime;
+    private final Map<String, Status> statusMap = new HashMap<>();
     private List<Ups> upsList = new ArrayList<>();
     private List<ServerDTO> serverList = new ArrayList<>();
 
@@ -42,17 +37,16 @@ public class StatusService {
     }
 
     public void startMonitoring() {
-        if (isMonitoring()) return;
-        setServerList(serverService.getServerDTOList());
-        setUpsList(upsService.getUpsList());
-        setStartTime(Instant.now());
-        simulator.simulatePowerOff(startTime, upsList);
+        if (monitoring) return;
+        serverList = serverService.getServerDTOList();
+        upsList = upsService.getUpsList();
+        simulator.simulatePowerOff(Instant.now(), upsList);
         monitoring = true;
     }
 
     public void stopMonitoring() {
-        serverList.clear();
-        upsList.clear();
+        serverList = new ArrayList<>();
+        upsList = new ArrayList<>();
         statusMap.clear();
         monitoring = false;
     }
