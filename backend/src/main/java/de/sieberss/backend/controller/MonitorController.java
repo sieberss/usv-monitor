@@ -3,10 +3,7 @@ package de.sieberss.backend.controller;
 import de.sieberss.backend.model.StatusResponse;
 import de.sieberss.backend.service.MonitorService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/monitor")
@@ -21,7 +18,7 @@ public class MonitorController {
     }
 
     @PostMapping
-    public boolean changeMode(boolean monitoring){
+    public boolean changeMode(@RequestBody boolean monitoring){
         return monitorService.changeMode(monitoring);
     }
 }

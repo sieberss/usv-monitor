@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -28,8 +27,8 @@ class StatusServiceTest {
         Ups ups1 = new Ups("1", "UPS", "localhost", "c");
         Ups ups2 = new Ups("2", "USV", "192.168.1.1", "c");
         when(upsService.getUpsList()).thenReturn(List.of(ups1, ups2));
-        when(statusSimulator.getUpsStatus(ups1)).thenReturn(new Status (ups1.id(), PowerState.POWER_ON, null, 0 ));
-        when(statusSimulator.getUpsStatus(ups2)).thenReturn(new Status(ups2.id(), PowerState.POWER_OFF, null, 0 ));
+        when(statusSimulator.getUpsStatus(ups1)).thenReturn(new Status (ups1.id(), PowerState.POWER_ON, null, 300 ));
+        when(statusSimulator.getUpsStatus(ups2)).thenReturn(new Status(ups2.id(), PowerState.POWER_ON, null, 300 ));
         ServerDTO server1 = new ServerDTO("11", "SERVER 1", "192.168.1.11", null, "1", 180);
         ServerDTO server2 = new ServerDTO("12", "SERVER 2", "192.168.1.12", null, "2", 180);
         ServerDTO server3 = new ServerDTO("13", "SERVER 3", "192.168.1.13", null, "2", 180);
@@ -38,7 +37,11 @@ class StatusServiceTest {
         statusService.startMonitoring();
         Map<String,Status> statuses = statusService.getAllStatuses();
         assertEquals(5, statuses.size());
-        for (Status element: statuses.values()) assertNotNull(element);
+        for (Map.Entry<String,Status> entry: statuses.entrySet()){
+            assertEquals(entry.getKey(), entry.getValue().upsOrServerId());
+            assertEquals(300, entry.getValue().remaining());
+            assertEquals(PowerState.POWER_ON, entry.getValue().state());
+        }
     }
 
     @Test

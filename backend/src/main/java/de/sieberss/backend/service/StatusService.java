@@ -47,12 +47,14 @@ public class StatusService {
         setUpsList(upsService.getUpsList());
         setStartTime(Instant.now());
         simulator.simulatePowerOff(startTime, upsList);
+        monitoring = true;
     }
 
     public void stopMonitoring() {
         serverList.clear();
         upsList.clear();
         statusMap.clear();
+        monitoring = false;
     }
 
         /** change state of UPS from POWER_OFF to POWER_OFF_LIMIT when shutdownTime for server is reached */
@@ -69,11 +71,11 @@ public class StatusService {
         Status upsStatus = statusMap.get(server.upsId());
         /* change status to POWER_OFF_LIMIT when limit is reached, trigger shutdown*/
         if ((upsStatus.state() == PowerState.POWER_OFF) && (upsStatus.remaining() <= server.shutdownTime())) {
-            statusMap.put(server.id(), upsStatus.withState(PowerState.POWER_OFF_LIMIT));
+            statusMap.put(server.id(), new Status(server.id(), PowerState.POWER_OFF_LIMIT, Instant.now(), upsStatus.remaining()));
             // to be replaced by call of another service
             shutdownServer(server);
         }
-        else statusMap.put(server.id(), upsStatus);
+        else statusMap.put(server.id(), new Status(server.id(), upsStatus.state(), upsStatus.timestamp(), upsStatus.remaining()));
     }
 
     private void shutdownServer(ServerDTO server) {
