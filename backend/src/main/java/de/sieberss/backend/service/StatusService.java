@@ -31,14 +31,14 @@ public class StatusService {
     private List<Ups> upsList = new ArrayList<>();
     private List<ServerDTO> serverList = new ArrayList<>();
 
-    public List<Status> getAllStatuses() {
+    public Map<String,Status> getAllStatuses() {
         for (Ups ups : upsList) {
             statusMap.put(ups.id(), simulator.getUpsStatus(ups));
         }
         for (ServerDTO server : serverList) {
             setServerStatus(server);
         }
-        return new ArrayList<>(statusMap.values());
+        return new HashMap<>(statusMap);
     }
 
     public void startMonitoring() {

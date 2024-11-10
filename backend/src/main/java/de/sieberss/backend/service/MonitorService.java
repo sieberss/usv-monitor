@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +23,7 @@ public class MonitorService {
             return new StatusResponse(true, statusService.getAllStatuses());
         }
         /* empty list when not monitoring */
-        else return new StatusResponse(false, new ArrayList<>());
+        else return new StatusResponse(false, new HashMap<>());
     }
 
     public boolean changeMode(boolean monitoring) {

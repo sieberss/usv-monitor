@@ -8,7 +8,7 @@ type BottomProps = {
     editing: boolean,
     switchEditMode: (on: boolean) => void,
     message: string,
-    confirmationMessage: string
+    confirmationMessage: string,
 }
 
 export default function FormBottom(props: Readonly<BottomProps>) {

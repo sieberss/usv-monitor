@@ -180,9 +180,10 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                             Connection Test
                         </button>
                     </li>
-                    <FormBottom resetForm={resetForm} changedData={changedData} submitEditForm={submitEditForm}
+                    { props.monitoring // don't allow editing in monitoring mode
+                        || <FormBottom resetForm={resetForm} changedData={changedData} submitEditForm={submitEditForm}
                                 deleteClicked={deleteClicked} editing={editing} switchEditMode={switchEditMode}
-                                message={message} confirmationMessage={confirmationMessage}/>
+                                message={message} confirmationMessage={confirmationMessage}/>}
                     <li>
                         <p className={"description"}>Servers connected:</p>
                     </li>

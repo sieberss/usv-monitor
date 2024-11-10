@@ -6,7 +6,7 @@ import de.sieberss.backend.model.StatusResponse;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
-import java.util.List;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -24,8 +24,12 @@ class MonitorServiceTest {
         Status status2 = new Status("2", PowerState.POWER_OFF, instant2, 200);
         Status status3 = new Status("3", PowerState.POWER_OFF, instant2, 200);
         when(statusService.isMonitoring()).thenReturn(true);
-        when(statusService.getAllStatuses()).thenReturn(List.of(status1, status2, status3));
-        StatusResponse expected = new StatusResponse(true, List.of(status1, status2, status3));
+        HashMap<String, Status> statuses = new HashMap<>();
+        statuses.put("1", status1);
+        statuses.put("2", status2);
+        statuses.put("3", status3);
+        when(statusService.getAllStatuses()).thenReturn(statuses);
+        StatusResponse expected = new StatusResponse(true, statuses);
         //  execute method
         StatusResponse actual = monitorService.getAllStatuses();
         assertEquals(expected, actual);
@@ -36,7 +40,7 @@ class MonitorServiceTest {
     @Test
     void getAllStatuses_shouldReturnResponse_withFalseAndEmptyList_whenNotMonitoring() {
         when(statusService.isMonitoring()).thenReturn(false);
-        StatusResponse expected = new StatusResponse(false, List.of());
+        StatusResponse expected = new StatusResponse(false, new HashMap<>());
         StatusResponse actual = monitorService.getAllStatuses();
         assertEquals(expected, actual);
         verify(statusService).isMonitoring();

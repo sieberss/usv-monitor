@@ -19,7 +19,7 @@ type EditProps = {
     credentialsList: Credentials[],
     serverUpdate: () => void,
     monitoring: boolean,
-    getUpsStatus: (id: string) => Status | undefined
+    getServerStatus: (id: string) => Status | undefined
 }
 
 
@@ -46,7 +46,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
     const [shutdownSecondsInput, setShutdownSecondsInput] = useState<number>(3)
     const [message, setMessage] = useState<string>("")          // in case of errors and for warning before deletion
     const confirmationMessage: string = "Really delete? Reclick button to confirm."
-    const upsStatus = props.getUpsStatus(server.upsId)
+    const status = props.getServerStatus(server.id)
     const navigate = useNavigate()
 
     function switchEditMode(state: boolean): void {
@@ -63,11 +63,17 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
     }
 
     function getClassName(): string {
-        if (!props.monitoring || upsStatus?.state === "POWER_ON" || server.id === "new")
-            return "server-content"
-        else if (upsStatus?.remaining && upsStatus.remaining > server.shutdownTime)
-            return "server-content-poweroff"
-        else return "server-content-shutdown"
+        if (!props.monitoring)
+            return "server-card"
+        switch (status?.state) {
+            case "POWER_OFF":
+                return "server-card-poweroff";
+            case "POWER_OFF_LIMIT":
+            case "SHUTDOWN":
+                return "server-card-shutdown";
+            default:
+                return "server-card";
+        }
     }
 
     /** initialize data from props */
@@ -388,9 +394,10 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                             : <p className={"value"}> {server.shutdownTime} </p>
                         }
                     </li>
-                    <FormBottom resetForm={resetForm} changedData={changedData} submitEditForm={submitEditForm}
+                    { props.monitoring // don't allow editing in monitoring mode
+                    || <FormBottom resetForm={resetForm} changedData={changedData} submitEditForm={submitEditForm}
                                 deleteClicked={deleteClicked} editing={editing} switchEditMode={switchEditMode}
-                                message={message} confirmationMessage={confirmationMessage}/>
+                                message={message} confirmationMessage={confirmationMessage}/>}
                 </ul>
             </form>
         </>

@@ -9,19 +9,24 @@ type ServerCardProps = {
     upses: Ups[],
     credentialsList: Credentials[],
     monitoring: boolean,
-    getUpsStatus: (id: string) => Status|undefined
+    getServerStatus: (id: string) => Status | undefined
 }
 
 export default function ServerCard(props: Readonly<ServerCardProps>) {
-    const upsStatus: Status | undefined = props.getUpsStatus(props.server.upsId)
-    const server: Server = props.server
+    const status: Status | undefined = props.getServerStatus(props.server.id)
 
     function getClassName(): string {
-        if (!props.monitoring || upsStatus?.state === "POWER_ON" || server.id === "new")
+        if (!props.monitoring)
             return "server-card"
-        else if (upsStatus?.remaining && upsStatus.remaining > server.shutdownTime)
-            return "server-card-poweroff"
-        else return "server-card-shutdown"
+        switch (status?.state) {
+            case "POWER_OFF":
+                return "server-card-poweroff";
+            case "POWER_OFF_LIMIT":
+            case "SHUTDOWN":
+                return "server-card-shutdown";
+            default:
+                return "server-card";
+        }
     }
 
     return (

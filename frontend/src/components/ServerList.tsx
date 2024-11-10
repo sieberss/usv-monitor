@@ -10,7 +10,7 @@ type ServerListProps = {
     upses: Ups[],
     credentialsList: Credentials[]
     monitoring: boolean,
-    getUpsStatus: (id: string) => Status | undefined
+    getServerStatus: (id: string) => Status | undefined
 }
 
 export default function ServerList(props:Readonly<ServerListProps>){
@@ -20,10 +20,11 @@ export default function ServerList(props:Readonly<ServerListProps>){
         <ul className={"serverlist"}>
             {props.servers.map(server =>
                 <ServerCard key={server.id} server={server} upses={props.upses} credentialsList={props.credentialsList}
-                                monitoring={props.monitoring} getUpsStatus={props.getUpsStatus}/>
+                                monitoring={props.monitoring} getServerStatus={props.getServerStatus}/>
             )}
-            <ServerCard server={{id:"new", name:"", address:"", credentials: {id:"", user:"", password:"", global:true}, upsId:"", shutdownTime:180}}
-                               upses={props.upses} credentialsList={props.credentialsList} monitoring={props.monitoring} getUpsStatus={props.getUpsStatus}/>
+            {props.monitoring // don't show add button in monitoring mode
+                || <ServerCard server={{id:"new", name:"", address:"", credentials: {id:"", user:"", password:"", global:true}, upsId:"", shutdownTime:180}}
+                               upses={props.upses} credentialsList={props.credentialsList} monitoring={props.monitoring} getServerStatus={props.getServerStatus}/>}
         </ul>
     )
 }

@@ -12,7 +12,7 @@ type Props = {
     credentialsList: Credentials[],
     serverUpdate : () => void,
     monitoring: boolean,
-    getUpsStatus: (id: string) => Status | undefined
+    getServerStatus: (id: string) => Status | undefined
 }
 export default function ServerPage(props:Readonly<Props>) {
     const params = useParams()
@@ -33,7 +33,7 @@ export default function ServerPage(props:Readonly<Props>) {
 
 return (
     <ServerContentDisplayAndEditing server={server} serverUpdate={props.serverUpdate} upses={props.upses} credentialsList={props.credentialsList}
-                                    monitoring={props.monitoring} getUpsStatus={props.getUpsStatus}/>
+                                    monitoring={props.monitoring} getServerStatus={props.getServerStatus}/>
 )
 
 }

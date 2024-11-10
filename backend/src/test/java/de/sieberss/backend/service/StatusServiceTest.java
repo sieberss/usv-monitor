@@ -8,6 +8,7 @@ import de.sieberss.backend.utils.UpsStatusSimulator;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -23,7 +24,7 @@ class StatusServiceTest {
 
 
     @Test
-    void getAllStatuses_shouldReturnListOfStatuses_OfAllUpsesAndServers_whenMonitoring() {
+    void getAllStatuses_shouldReturnMapOfStatuses_OfAllUpsesAndServers_whenMonitoring() {
         Ups ups1 = new Ups("1", "UPS", "localhost", "c");
         Ups ups2 = new Ups("2", "USV", "192.168.1.1", "c");
         when(upsService.getUpsList()).thenReturn(List.of(ups1, ups2));
@@ -35,9 +36,9 @@ class StatusServiceTest {
         when(serverService.getServerDTOList()).thenReturn(List.of(server1, server2, server3));
         // start monitoring and execute method
         statusService.startMonitoring();
-        List<Status> statusList = statusService.getAllStatuses();
-        assertEquals(5, statusList.size());
-        for (Status element: statusList) assertNotNull(element);
+        Map<String,Status> statuses = statusService.getAllStatuses();
+        assertEquals(5, statuses.size());
+        for (Status element: statuses.values()) assertNotNull(element);
     }
 
     @Test
@@ -50,7 +51,7 @@ class StatusServiceTest {
         ServerDTO server3 = new ServerDTO("13", "SERVER 3", "192.168.1.13", null, "2", 180);
         when(serverService.getServerDTOList()).thenReturn(List.of(server1, server2, server3));
         // execute method
-        List<Status> statusList = statusService.getAllStatuses();
-        assertEquals(0, statusList.size());
+        Map<String,Status> statuses = statusService.getAllStatuses();
+        assertEquals(0, statuses.size());
     }
 }
