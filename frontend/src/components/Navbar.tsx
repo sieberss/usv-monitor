@@ -12,6 +12,7 @@ type Props = {
 
 export default function NavBar(props:Readonly<Props>) {
     const loggedIn: boolean = props.username !== "anonymousUser"
+
     function logout(): void {
         axios.get("/api/login/logout")
             .then(r => {
@@ -20,9 +21,15 @@ export default function NavBar(props:Readonly<Props>) {
             })
             .catch(error => console.error(error))
     }
+
     function switchMonitoringMode(on: boolean): void {
         if (loggedIn) {
-            props.setMonitoring(on)
+            axios.post('/api/monitor', on)
+                .then(r => {
+                    console.log(r.data);
+                    props.setMonitoring(r.data);
+                })
+                .catch(error => console.error(error))
         }
     }
 
