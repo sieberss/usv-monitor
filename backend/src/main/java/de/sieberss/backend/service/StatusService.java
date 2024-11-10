@@ -4,12 +4,12 @@ import de.sieberss.backend.model.PowerState;
 import de.sieberss.backend.model.ServerDTO;
 import de.sieberss.backend.model.Status;
 import de.sieberss.backend.model.Ups;
+import de.sieberss.backend.utils.UpsStatusSimulator;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +23,7 @@ import java.util.Map;
 public class StatusService {
     private final UpsService upsService;
     private final ServerService serverService;
+    private final UpsStatusSimulator simulator;
 
     private boolean monitoring = false;
     private Map<String, Status> statusMap = new HashMap<>();
@@ -30,14 +31,9 @@ public class StatusService {
     private List<Ups> upsList = new ArrayList<>();
     private List<ServerDTO> serverList = new ArrayList<>();
 
-    // simulated times of PowerOff event
-    private String powerOff1Id;
-    private String powerOff2Id;
-    private Instant begin1, end1, begin2, end2;
-
     public List<Status> getAllStatuses() {
         for (Ups ups : upsList) {
-            statusMap.put(ups.id(), getUpsStatus(ups));
+            statusMap.put(ups.id(), simulator.getUpsStatus(ups));
         }
         for (ServerDTO server : serverList) {
             setServerStatus(server);
@@ -50,7 +46,7 @@ public class StatusService {
         setServerList(serverService.getServerDTOList());
         setUpsList(upsService.getUpsList());
         setStartTime(Instant.now());
-        simulatePowerOff();
+        simulator.simulatePowerOff(startTime, upsList);
     }
 
     public void stopMonitoring() {
@@ -59,48 +55,7 @@ public class StatusService {
         statusMap.clear();
     }
 
-    private Status getUpsStatus(final Ups ups) {
-        // in real application to be replaced by call of another service
-        return getSimulatedUpsStatus(ups);
-    }
-
-    private Status getSimulatedUpsStatus(final Ups ups) {
-        Instant now = Instant.now();
-        if (ups.id().equals(powerOff1Id)) {
-            if (now.isBefore(begin1)) {
-                return new Status(ups.id(), PowerState.POWER_ON, startTime, 600);
-            }
-            if (now.isAfter(end1)) {
-                long remaining = 600 - Duration.between(begin1, end1).toSeconds() + Duration.between(end1, now).toSeconds();
-                return new Status(ups.id(), PowerState.POWER_ON, end1, remaining > 600 ? 600 : remaining);
-            }
-            return new Status(ups.id(), PowerState.POWER_OFF, begin1, 600 - Duration.between(now, begin1).toSeconds());
-        }
-        if (ups.id().equals(powerOff2Id)) {
-            if (now.isBefore(begin2)) {
-                return new Status(ups.id(), PowerState.POWER_ON, startTime, 600);
-            }
-            if (now.isAfter(end2)) {
-                long remaining = 600 - Duration.between(begin2, end2).toSeconds() + Duration.between(end2, now).toSeconds();
-                return new Status(ups.id(), PowerState.POWER_ON, end2, remaining > 600 ? 600 : remaining);}
-            return new Status(ups.id(), PowerState.POWER_OFF, begin2, 600 - Duration.between(now, begin2).toSeconds());
-        }
-        return new Status(ups.id(), PowerState.POWER_ON, startTime, 600);
-    }
-
-    private void simulatePowerOff() {
-        int first = (int) (Math.random() * upsList.size());
-        int second = (int) (Math.random() * upsList.size());
-        if (first == second) {second = (second + 1) % upsList.size();}
-        setPowerOff1Id(upsList.get(first).id());
-        setPowerOff2Id(upsList.get(second).id());
-        setBegin1(startTime.plus(Duration.ofSeconds(10)));
-        setEnd1(begin1.plus(Duration.ofSeconds(120)));
-        setBegin2(startTime.plus(Duration.ofSeconds(20)));
-        setEnd2(begin2.plus(Duration.ofSeconds(30)));
-    }
-
-    /** change state of UPS from POWER_OFF to POWER_OFF_LIMIT when shutdownTime for server is reached */
+        /** change state of UPS from POWER_OFF to POWER_OFF_LIMIT when shutdownTime for server is reached */
     private void setServerStatus(ServerDTO server){
         Status serverStatus = statusMap.get(server.id());
         /* when server is shut down or not connected to a UPS, this status persists */
