@@ -3,6 +3,7 @@ import {FaPlus} from "react-icons/fa";
 import {Credentials} from "../types/credentials.ts";
 import {Server} from "../types/server.ts";
 import {Status} from "../types/status.ts";
+import StatusInfo from "./StatusInfo.tsx";
 
 type ServerCardProps = {
     server: Server,
@@ -36,6 +37,8 @@ export default function ServerCard(props: Readonly<ServerCardProps>) {
                     ? <>
                         <h3>{props.server?.name}</h3>
                         <p>{props.server?.address}</p>
+                        {props.monitoring
+                            && <StatusInfo status={status}/>}
                     </>
                     : // plus-button for adding
                     <h2><FaPlus/></h2>

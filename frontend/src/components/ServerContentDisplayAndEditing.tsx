@@ -12,6 +12,7 @@ import CredentialsInfoline from "./CredentialsInfoline.tsx";
 import UpsInfoline from "./UpsInfoline.tsx";
 import "./ServerContent.css"
 import {Status} from "../types/status.ts";
+import StatusInfo from "./StatusInfo.tsx";
 
 type EditProps = {
     server: Server,
@@ -64,7 +65,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
 
     function getClassName(): string {
         if (!props.monitoring)
-            return "server-card"
+            return "server-content"
         switch (status?.state) {
             case "POWER_OFF":
                 return "server-content-poweroff";
@@ -398,6 +399,10 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
                     || <FormBottom resetForm={resetForm} changedData={changedData} submitEditForm={submitEditForm}
                                 deleteClicked={deleteClicked} editing={editing} switchEditMode={switchEditMode}
                                 message={message} confirmationMessage={confirmationMessage}/>}
+                    {props.monitoring && (server.id!=="new")
+                        &&
+                        <li><StatusInfo status={status}/></li>
+                    }
                 </ul>
             </form>
         </>

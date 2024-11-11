@@ -39,7 +39,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
             if (status?.state === "POWER_OFF_LIMIT" || status?.state === "SHUTDOWN")
                 return "ups-content-shutdown"
         }
-        return "ups-card"
+        return "ups-content"
     }
 
     const switchEditMode = (state:boolean) => {

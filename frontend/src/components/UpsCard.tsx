@@ -31,7 +31,7 @@ export default function UpsCard(props: Readonly<UpsCardProps>) {
                     ? <>
                         <h3>{props.ups?.name}</h3>
                         <p>{props.ups?.address}</p>
-                        {props.monitoring && (ups.id !== "new")
+                        {props.monitoring
                             && <StatusInfo status={status}/>}
                     </>
                     : // plus-button for adding
