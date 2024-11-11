@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -26,31 +27,30 @@ public class UpsStatusSimulator {
     public Status getUpsStatus(final Ups ups) {
         Instant now = Instant.now();
         if (ups.id().equals(powerOff1Id)) {
-            if (now.isBefore(begin1)) {
-                return new Status(ups.id(), PowerState.POWER_ON, startTime, 600);
-            }
-            if (now.isAfter(end1)) {
-                long remaining = 600 - Duration.between(begin1, end1).toSeconds() + Duration.between(end1, now).toSeconds();
-                return new Status(ups.id(), PowerState.POWER_ON, end1, remaining > 600 ? 600 : remaining);
-            }
-            return new Status(ups.id(), PowerState.POWER_OFF, begin1, 600 - Duration.between(begin1, now).toSeconds());
+            return statusOfPowerOffUps(now, begin1, ups, end1);
         }
         if (ups.id().equals(powerOff2Id)) {
-            if (now.isBefore(begin2)) {
-                return new Status(ups.id(), PowerState.POWER_ON, startTime, 600);
-            }
-            if (now.isAfter(end2)) {
-                long remaining = 600 - Duration.between(begin2, end2).toSeconds() + Duration.between(end2, now).toSeconds();
-                return new Status(ups.id(), PowerState.POWER_ON, end2, remaining > 600 ? 600 : remaining);}
-            return new Status(ups.id(), PowerState.POWER_OFF, begin2, 600 - Duration.between(begin2, now).toSeconds());
+            return statusOfPowerOffUps(now, begin2, ups, end2);
         }
         return new Status(ups.id(), PowerState.POWER_ON, startTime, 600);
     }
 
+    private Status statusOfPowerOffUps(Instant now, Instant begin1, Ups ups, Instant end1) {
+        if (now.isBefore(begin1)) {
+            return new Status(ups.id(), PowerState.POWER_ON, startTime, 600);
+        }
+        if (now.isAfter(end1)) {
+            long remaining = 600 - Duration.between(begin1, end1).toSeconds() + Duration.between(end1, now).toSeconds();
+            return new Status(ups.id(), PowerState.POWER_ON, end1, remaining > 600 ? 600 : remaining);
+        }
+        return new Status(ups.id(), PowerState.POWER_OFF, begin1, 600 - Duration.between(begin1, now).toSeconds());
+    }
+
     public void simulatePowerOff(Instant startTime, List<Ups> upsList) {
         this.startTime = startTime;
-        int first = (int) (Math.random() * upsList.size());
-        int second = (int) (Math.random() * upsList.size());
+        Random random = new Random();
+        int first = random.nextInt(upsList.size());
+        int second = random.nextInt(upsList.size());
         if (first == second) {second = (second + 1) % upsList.size();}
         setPowerOff1Id(upsList.get(first).id());
         setPowerOff2Id(upsList.get(second).id());
