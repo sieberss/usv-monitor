@@ -3,25 +3,31 @@ import {FaPlus} from "react-icons/fa";
 import {Credentials} from "../types/credentials.ts";
 import {Server} from "../types/server.ts";
 import {Status} from "../types/status.ts";
+import StatusInfo from "./StatusInfo.tsx";
 
 type ServerCardProps = {
     server: Server,
     upses: Ups[],
     credentialsList: Credentials[],
     monitoring: boolean,
-    getUpsStatus: (id: string) => Status|undefined
+    getServerStatus: (id: string) => Status | undefined
 }
 
 export default function ServerCard(props: Readonly<ServerCardProps>) {
-    const upsStatus: Status | undefined = props.getUpsStatus(props.server.upsId)
-    const server: Server = props.server
+    const status: Status | undefined = props.getServerStatus(props.server.id)
 
     function getClassName(): string {
-        if (!props.monitoring || upsStatus?.state === "OK" || server.id === "new")
+        if (!props.monitoring)
             return "server-card"
-        else if (upsStatus?.remaining && upsStatus.remaining > server.shutdownTime)
-            return "server-card-poweroff"
-        else return "server-card-shutdown"
+        switch (status?.state) {
+            case "POWER_OFF":
+                return "server-card-poweroff";
+            case "POWER_OFF_LIMIT":
+            case "SHUTDOWN":
+                return "server-card-shutdown";
+            default:
+                return "server-card";
+        }
     }
 
     return (
@@ -31,6 +37,8 @@ export default function ServerCard(props: Readonly<ServerCardProps>) {
                     ? <>
                         <h3>{props.server?.name}</h3>
                         <p>{props.server?.address}</p>
+                        {props.monitoring
+                            && <StatusInfo status={status}/>}
                     </>
                     : // plus-button for adding
                     <h2><FaPlus/></h2>

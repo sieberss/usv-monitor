@@ -20,7 +20,7 @@ function App() {
 
     const [monitoring, setMonitoring] = useState<boolean>(false)
     const [username, setUsername] = useState<string>("")
-    const [statusMap, _setStatusMap] = useState<Map<string, Status>>()
+    const [statusMap, setStatusMap] = useState<Map<string, Status>>(new Map<string, Status>)
 
     useEffect(() => {
         axios.get("/api/login")
@@ -48,11 +48,39 @@ function App() {
         getAllUpses();
     }, [upsUpdates])
 
-    /** UPS status in monitoring mode *******/
+    /** Status in monitoring mode *******/
 
-    const getUpsStatus = (id: string): Status|undefined => {
+    const getAllStatuses = () => {
+        axios.get('/api/monitor')
+            .then(response => {
+                console.log("StatusMap / getAllStatuses: ", response.data.statusMap)
+                setMonitoring(response.data.monitoring);
+                const mapData = new Map<string,Status>(Object.entries(response.data.statusMap));
+                setStatusMap(mapData);
+            })
+            .catch(error => console.error('getAllStatusFailed:', error))
+    }
+
+    const getUpsOrServerStatus = (id: string|undefined): Status|undefined => {
+        console.log ("getUpsorServerStatus ID:" + id + " Map:" + statusMap)
+        if (id === undefined) return undefined
         return statusMap?.get(id)
     }
+
+    // ask for monitoring mode once
+    useEffect(() => {
+        getAllStatuses()
+    }, []);
+
+    // in monitoring mode get statuses every 5 seconds
+    useEffect(() => {
+        if (monitoring) {
+            const timer = setInterval(() => {
+                getAllStatuses();
+            }, 5000)
+            return () => clearInterval(timer)
+        }
+    }, [monitoring]);
 
     /**  Credentials ***********************/
 
@@ -113,17 +141,17 @@ function App() {
                 }
                 <Route element={<ProtectedRoute username={username}/>}>
                     <Route path={"/"} element={
-                        <AllUpsesPage upses={upses} servers={servers} monitoring={monitoring} getUpsStatus={getUpsStatus}/>}/>
+                        <AllUpsesPage upses={upses} servers={servers} monitoring={monitoring} getUpsStatus={getUpsOrServerStatus}/>}/>
                     <Route path={"/server"} element={
-                        <AllServersPage servers={servers} upses={upses} credentialsList={credentialsList} monitoring={monitoring} getUpsStatus={getUpsStatus}/>}/>
+                        <AllServersPage servers={servers} upses={upses} credentialsList={credentialsList} monitoring={monitoring} getServerStatus={getUpsOrServerStatus}/>}/>
                     <Route path={"/credentials"} element={
-                        <AllCredentialsPage credentialsList={credentialsList}/>}/>
+                        <AllCredentialsPage credentialsList={credentialsList} monitoring={monitoring}/>}/>
                     <Route path={"/ups/:id"} element={
-                        <UpsPage upsUpdate={upsUpdateOccured} servers={servers} monitoring={monitoring} getUpsStatus={getUpsStatus}/>}/>
+                        <UpsPage upsUpdate={upsUpdateOccured} servers={servers} monitoring={monitoring} getUpsStatus={getUpsOrServerStatus}/>}/>
                     <Route path={"/server/:id"} element={
-                        <ServerPage upses={upses} credentialsList={credentialsList} serverUpdate={serverUpdateOccured} monitoring={monitoring} getUpsStatus={getUpsStatus} />}/>
+                        <ServerPage upses={upses} credentialsList={credentialsList} serverUpdate={serverUpdateOccured} monitoring={monitoring} getServerStatus={getUpsOrServerStatus} />}/>
                     <Route path={"/credentials/:id"} element={
-                        <CredentialsPage credentialsUpdate={credentialsUpdateOccured}/>} />
+                        <CredentialsPage credentialsUpdate={credentialsUpdateOccured} monitoring={monitoring}/>} />
                 </Route>
             </Routes>
         </>

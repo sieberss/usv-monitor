@@ -7,7 +7,8 @@ import "./CredentialsContent.css"
 
 type EditProps = {
     credentials: Credentials
-    credentialsUpdate: () => void
+    credentialsUpdate: () => void,
+    monitoring: boolean
 }
 
 
@@ -155,9 +156,10 @@ export default function CredentialsContentDisplayAndEditing(props: Readonly<Edit
                                 ? passwordInputField
                                 : <p className={"value"}>********</p>}
                         </li>
-                        <FormBottom resetForm={resetForm} changedData={changedData} submitEditForm={submitEditForm}
+                        {props.monitoring // don't allow editing in monitoring mode
+                            || <FormBottom resetForm={resetForm} changedData={changedData} submitEditForm={submitEditForm}
                                     deleteClicked={deleteClicked} editing={editing} switchEditMode={switchEditMode}
-                                    message={message} confirmationMessage={confirmationMessage}/>
+                                    message={message} confirmationMessage={confirmationMessage}/>}
                     </ul>
                 </form>
             </>

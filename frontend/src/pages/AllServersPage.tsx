@@ -9,12 +9,12 @@ type OverviewProps = {
     upses: Ups[],
     credentialsList: Credentials[],
     monitoring: boolean,
-    getUpsStatus: (id: string) => Status | undefined
+    getServerStatus: (id: string) => Status | undefined
 }
 
 export default function AllServersPage(props:Readonly<OverviewProps>){
      return(
             <ServerList servers={props.servers} upses={props.upses} credentialsList={props.credentialsList}
-                        monitoring={props.monitoring} getUpsStatus={props.getUpsStatus}/>
+                        monitoring={props.monitoring} getServerStatus={props.getServerStatus}/>
      )
 }

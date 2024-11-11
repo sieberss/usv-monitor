@@ -13,10 +13,15 @@ type UpsCardProps = {
 
 export default function UpsCard(props: Readonly<UpsCardProps>) {
     const ups: Ups = props.ups
-    const status: Status|undefined = props.getUpsStatus(ups.id)
+    const status: Status|undefined = props.getUpsStatus(ups?.id)
     function getClassName (): string {
-        return props.monitoring && (status?.state === "POWER_OFF")
-            ? "ups-card-poweroff" : "ups-card"
+        if (props.monitoring) {
+            if (status?.state === "POWER_OFF")
+                return "ups-card-poweroff"
+            if (status?.state === "POWER_OFF_LIMIT" || status?.state === "SHUTDOWN")
+                return "ups-card-shutdown"
+        }
+        return "ups-card"
     }
 
     return (
@@ -26,7 +31,7 @@ export default function UpsCard(props: Readonly<UpsCardProps>) {
                     ? <>
                         <h3>{props.ups?.name}</h3>
                         <p>{props.ups?.address}</p>
-                        {props.monitoring && (ups.id !== "new")
+                        {props.monitoring
                             && <StatusInfo status={status}/>}
                     </>
                     : // plus-button for adding

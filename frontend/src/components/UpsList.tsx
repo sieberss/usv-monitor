@@ -21,8 +21,9 @@ export default function UpsList(props: Readonly<UpsListProps>) {
                 <UpsCard key={ups.id} ups={ups} servers={serversToUps.get(ups)}
                          monitoring={props.monitoring} getUpsStatus={props.getUpsStatus}/>
             )}
-            <UpsCard ups={{id: "new", name: "", community: "", address: ""}} servers={[]}
-                     monitoring={props.monitoring} getUpsStatus={props.getUpsStatus}/>
+            {props.monitoring // don't show add button in monitoring mode
+                || <UpsCard ups={{id: "new", name: "", community: "", address: ""}} servers={[]}
+                     monitoring={props.monitoring} getUpsStatus={props.getUpsStatus}/>}
         </ul>
     )
 }

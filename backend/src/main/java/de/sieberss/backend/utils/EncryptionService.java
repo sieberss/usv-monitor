@@ -3,7 +3,6 @@ package de.sieberss.backend.utils;
 import de.sieberss.backend.exception.EncryptionException;
 import de.sieberss.backend.model.Credentials;
 import de.sieberss.backend.model.CredentialsWithoutEncryption;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.*;
@@ -50,8 +49,7 @@ public class EncryptionService {
     /** start of my added code
      *
      */
-    @Value("${encryption.key}")
-    private String key;
+    private String key = System.getenv("ENCRYPT_KEY");
 
     public static void setTestKey() throws NoSuchAlgorithmException, IllegalStateException {
         instance.key = generateKey();

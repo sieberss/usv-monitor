@@ -3,7 +3,8 @@ import {Credentials} from "../types/credentials.ts";
 import './CredentialsList.css';
 
 type CredentialsListProps = {
-    credentialsList: Credentials[]
+    credentialsList: Credentials[],
+    monitoring: boolean
 }
 
 export default function CredentialsList(props: Readonly<CredentialsListProps>) {
@@ -14,7 +15,8 @@ export default function CredentialsList(props: Readonly<CredentialsListProps>) {
                 .map(credentials =>
                     <CredentialsCard key={credentials.id} credentials={credentials}/>
                 )}
-            <CredentialsCard credentials={{id: "new", user: "", password: "", global: true}}/>
+            {props.monitoring // don't show add button in monitoring mode
+                || <CredentialsCard credentials={{id: "new", user: "", password: "", global: true}}/>}
         </ul>
     )
 }

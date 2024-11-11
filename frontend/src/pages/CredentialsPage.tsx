@@ -5,7 +5,8 @@ import CredentialsContentDisplayAndEditing from "../components/CredentialsConten
 import {Credentials} from "../types/credentials.ts";
 
 type Props = {
-    credentialsUpdate : () => void
+    credentialsUpdate : () => void,
+    monitoring:boolean
 }
 
 export default function CredentialsPage(props:Readonly<Props>) {
@@ -25,7 +26,7 @@ export default function CredentialsPage(props:Readonly<Props>) {
     }, [id])
 
 return (
-    <CredentialsContentDisplayAndEditing credentials={credentials} credentialsUpdate={props.credentialsUpdate}/>
+    <CredentialsContentDisplayAndEditing credentials={credentials} credentialsUpdate={props.credentialsUpdate} monitoring={props.monitoring}/>
 )
 
 }

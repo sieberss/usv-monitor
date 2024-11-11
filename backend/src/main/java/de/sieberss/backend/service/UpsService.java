@@ -1,7 +1,6 @@
 package de.sieberss.backend.service;
 
 import de.sieberss.backend.model.Ups;
-import de.sieberss.backend.model.UpsListResponse;
 import de.sieberss.backend.repo.UpsRepo;
 import de.sieberss.backend.utils.IdService;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +16,7 @@ public class UpsService {
     private final IdService idService;
 
     public List<Ups> getUpsList() {
-        List<Ups> ups = repo.findAll();
-        UpsListResponse response = new UpsListResponse(false, ups);
-        System.out.println(response);
-        return ups;
+        return repo.findAll();
     }
 
     public Ups getUpsById(String id) {
