@@ -55,14 +55,15 @@ function App() {
             .then(response => {
                 console.log("StatusMap / getAllStatuses: ", response.data.statusMap)
                 setMonitoring(response.data.monitoring);
-                setStatusMap(response.data.statusMap);
+                const mapData = new Map<string,Status>(Object.entries(response.data.statusMap));
+                setStatusMap(mapData);
             })
             .catch(error => console.error('getAllStatusFailed:', error))
     }
 
     const getUpsOrServerStatus = (id: string|undefined): Status|undefined => {
         console.log ("getUpsorServerStatus ID:" + id + " Map:" + statusMap)
-        if (!id) return undefined
+        if (id === undefined) return undefined
         return statusMap?.get(id)
     }
 

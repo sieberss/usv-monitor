@@ -1,5 +1,5 @@
 export type Status = {
     state: string,
-    since: string,
+    timestamp: string,
     remaining: number
 }
