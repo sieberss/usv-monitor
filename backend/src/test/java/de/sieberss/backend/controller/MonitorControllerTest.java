@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
@@ -40,9 +39,7 @@ class MonitorControllerTest {
         serverRepo.save(new Server("22", "Server2", "192.168.1.22", null, ups2, 120));
         serverRepo.save(new Server("33", "Server3", "192.168.1.33", null, ups1, 120));
         //set monitoring true before calling getAllStatuses
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/monitor")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("true"))
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/monitor?monitoring=true"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("true"));
         mockMvc.perform(MockMvcRequestBuilders.get("/api/monitor"))
@@ -73,9 +70,7 @@ class MonitorControllerTest {
         serverRepo.save(new Server("22", "Server2", "192.168.1.22", null, ups2, 120));
         serverRepo.save(new Server("33", "Server3", "192.168.1.33", null, ups1, 120));
         //set monitoring true before calling getAllStatuses
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/monitor")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("false"))
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/monitor?monitoring=false"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("false"));
         mockMvc.perform(MockMvcRequestBuilders.get("/api/monitor"))
@@ -100,18 +95,14 @@ class MonitorControllerTest {
         serverRepo.save(new Server("11", "Server1", "192.168.1.11", null, ups1, 120));
         serverRepo.save(new Server("22", "Server2", "192.168.1.22", null, ups2, 120));
         serverRepo.save(new Server("33", "Server3", "192.168.1.33", null, ups1, 120));
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/monitor")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("true"))
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/monitor?monitoring=true"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("true"));
     }
 
     @Test
     void changeMode_shouldReturnFalseWhenFalseIsSubmitted() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/monitor")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("false"))
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/monitor?monitoring=false"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("false"));
     }
