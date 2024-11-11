@@ -3,27 +3,23 @@ package de.sieberss.backend.utils;
 import de.sieberss.backend.exception.EncryptionException;
 import de.sieberss.backend.model.Credentials;
 import de.sieberss.backend.model.CredentialsWithoutEncryption;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.*;
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 @Service
 public class EncryptionService {
-
-    private static final EncryptionService instance = new EncryptionService();
-    private EncryptionService(){}
-
-
     private static final String ALGORITHM = "AES";
 
     /** Class copied from external source, only my added code at the bottom to be tested
      *
      */
-    public static String encrypt(String data, String key) throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalStateException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+    public String encrypt(String data, String key) throws Exception {
         SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), ALGORITHM);
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
@@ -31,7 +27,7 @@ public class EncryptionService {
         return Base64.getEncoder().encodeToString(encryptedBytes);
     }
 
-    public static String decrypt(String encryptedData, String key) throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalStateException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+    public String decrypt(String encryptedData, String key) throws Exception {
         SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), ALGORITHM);
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE, secretKey);
@@ -39,7 +35,7 @@ public class EncryptionService {
         return new String(decryptedBytes);
     }
 
-    public static String generateKey() throws NoSuchAlgorithmException, IllegalStateException{
+    public String generateKey() throws Exception {
         KeyGenerator keyGen = KeyGenerator.getInstance(ALGORITHM);
         keyGen.init(128); // Schlüsselgröße
         SecretKey secretKey = keyGen.generateKey();
@@ -49,36 +45,37 @@ public class EncryptionService {
     /** start of my added code
      *
      */
-    private String key = System.getenv("ENCRYPT_KEY");
+    @Value("${encryption.key}")
+    private  String key;
 
-    public static void setTestKey() throws NoSuchAlgorithmException, IllegalStateException {
-        instance.key = generateKey();
+    public void setTestKey() throws Exception {
+        key = generateKey();
     }
 
-    public static String encryptPassword(String value) {
+    public String encryptPassword(String value) {
         try {
-            return encrypt(value, instance.key);
+            return encrypt(value, key);
         } catch (Exception e) {
             throw new EncryptionException(e.getMessage());
         }
     }
 
-    public static Credentials encryptCredentials(CredentialsWithoutEncryption unencrypted) {
+    public Credentials encryptCredentials(CredentialsWithoutEncryption unencrypted) {
         return unencrypted == null
                 ? null
                 : new Credentials(unencrypted.id(), unencrypted.user(), encryptPassword(unencrypted.password()), unencrypted.global());
     }
 
-    public static String decryptPassword(String value) {
+    public String decryptPassword(String value) {
         try {
-            return decrypt(value, instance.key);
+            return decrypt(value, key);
         }
         catch (Exception e) {
             throw new EncryptionException(e.getMessage());
         }
     }
 
-    public static CredentialsWithoutEncryption decryptCredentials(Credentials encrypted) {
+    public CredentialsWithoutEncryption decryptCredentials(Credentials encrypted) {
         return encrypted == null
                 ? null
                 : new CredentialsWithoutEncryption(encrypted.id(), encrypted.user(), decryptPassword(encrypted.password()), encrypted.global());

@@ -7,7 +7,6 @@ import de.sieberss.backend.service.CredentialsService;
 import de.sieberss.backend.utils.EncryptionService;
 import de.sieberss.backend.utils.IdService;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,13 +24,10 @@ import static org.mockito.Mockito.*;
 class LoginServiceTest {
     private final CredentialsRepo repo = mock(CredentialsRepo.class);
     private final IdService idService = mock(IdService.class);
-    private final CredentialsService credentialsService = new CredentialsService(repo, idService);
+    private final EncryptionService encryptionService = mock(EncryptionService.class);
+    private final CredentialsService credentialsService = new CredentialsService(repo, idService, encryptionService);
     private final LoginService loginService = new LoginService(repo, credentialsService);
 
-    @BeforeAll
-    static void setUp() throws Exception {
-        EncryptionService.setTestKey();
-    }
 
     @Test
     void loadUserByUsername_shouldReturnUserObjectWhenNameIsInDatabase() {
@@ -56,7 +52,7 @@ class LoginServiceTest {
     void register_shouldAddNewUserToDatabase_ifNotAlreadyExists() {
         String username = "testuser";
         String password = "password";
-        String encryptedPassword = EncryptionService.encryptPassword(password);
+        String encryptedPassword = encryptionService.encryptPassword(password);
         CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("", username, password, false);
         Credentials encrypted = new Credentials("1", username, encryptedPassword, false);
         when(idService.generateId()).thenReturn("1");

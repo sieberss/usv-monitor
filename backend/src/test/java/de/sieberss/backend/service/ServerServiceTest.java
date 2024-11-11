@@ -22,13 +22,10 @@ private final ServerRepo repo = mock(ServerRepo.class);
 private final IdService idService = mock(IdService.class);
 private final DTOConverter converter = mock (DTOConverter.class);
 private final CredentialsRepo credentialsRepo = mock(CredentialsRepo.class);
-private final CredentialsService credentialsService = new CredentialsService(credentialsRepo, idService);
+private final EncryptionService encryptionService = mock(EncryptionService.class);
+private final CredentialsService credentialsService = new CredentialsService(credentialsRepo, idService, encryptionService);
 private final ServerService service = new ServerService(repo, idService, converter, credentialsService);
 
-@BeforeAll
-static void setUp() throws Exception {
-    EncryptionService.setTestKey();
-}
 
     @Test
     void getServerDTOList_shouldReturnEmptyList_whenRepoIsEmpty() {
@@ -41,7 +38,7 @@ static void setUp() throws Exception {
     @Test
     void getServerDTOListShouldReturnList_whenRepoIsNotEmpty() {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
-        Credentials encrypted = new Credentials("8", "user", EncryptionService.encryptPassword("pass"), true);
+        Credentials encrypted = new Credentials("8", "user", "UHJHJK", true);
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", true);
         Server server
                 = new Server("22", "server", "1.1.1.1", encrypted, ups, 180);

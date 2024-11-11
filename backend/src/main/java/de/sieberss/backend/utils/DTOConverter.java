@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 public class DTOConverter {
 
     private final UpsRepo upsRepo;
+    private final EncryptionService encryptionService;
 
     public Server getServerFromDTO(ServerDTO dto) {
         Ups ups;
@@ -19,7 +20,7 @@ public class DTOConverter {
             ups = null;
         else
             ups = upsRepo.findById(dto.upsId()).orElse(null);
-        Credentials credentials = EncryptionService.encryptCredentials(dto.credentials());
+        Credentials credentials = encryptionService.encryptCredentials(dto.credentials());
         return new Server(dto.id(), dto.name(), dto.address(), credentials, ups, dto.shutdownTime());
     }
 
@@ -28,7 +29,7 @@ public class DTOConverter {
             return null;
         String upsId =
                 server.ups() == null ? "" : server.ups().id();
-        CredentialsWithoutEncryption decryptedCredentials = EncryptionService.decryptCredentials(server.credentials());
+        CredentialsWithoutEncryption decryptedCredentials = encryptionService.decryptCredentials(server.credentials());
         return new ServerDTO(server.id(), server.name(), server.address(), decryptedCredentials, upsId, server.shutdownTime());
     }
 }

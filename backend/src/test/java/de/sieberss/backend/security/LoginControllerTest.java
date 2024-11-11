@@ -5,6 +5,7 @@ import de.sieberss.backend.model.CredentialsWithoutEncryption;
 import de.sieberss.backend.repo.CredentialsRepo;
 import de.sieberss.backend.utils.EncryptionService;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,10 +33,12 @@ class LoginControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private CredentialsRepo credentialsRepo;
+    @Autowired
+    private EncryptionService encryptionService;
 
-    @BeforeAll
-    static void setUp() throws Exception {
-        EncryptionService.setTestKey();
+    @BeforeEach
+    void setUp() throws Exception {
+        encryptionService.setTestKey();
     }
 
     @WithMockUser
@@ -56,7 +59,7 @@ class LoginControllerTest {
     @Test
     void login_shouldReturnUserName_whenCredentialsAreCorrect() throws Exception {
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("1", "testuser", "testpassword", false);
-        Credentials encrypted = EncryptionService.encryptCredentials(decrypted);
+        Credentials encrypted = encryptionService.encryptCredentials(decrypted);
         credentialsRepo.save(encrypted);
         String auth = "testuser:testpassword";
         String encoded =  Base64.getEncoder().encodeToString(auth.getBytes());
@@ -72,7 +75,7 @@ class LoginControllerTest {
     @Test
     void login_shouldReturnStatus401_whenPasswordIsWrong() throws Exception {
         CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("1", "testuser", "testpassword", false);
-        Credentials encrypted = EncryptionService.encryptCredentials(decrypted);
+        Credentials encrypted = encryptionService.encryptCredentials(decrypted);
         credentialsRepo.save(encrypted);
         String auth = "testuser:testpass";
         String basicAuthHeader =  Base64.getEncoder().encodeToString(auth.getBytes());

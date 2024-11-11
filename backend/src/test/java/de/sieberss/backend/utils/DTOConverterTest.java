@@ -12,7 +12,8 @@ import static org.mockito.Mockito.*;
 class DTOConverterTest {
 
     private final UpsRepo upsRepo = mock(UpsRepo.class);
-    private final DTOConverter converter = new DTOConverter(upsRepo);
+    private final EncryptionService encryptionService = mock(EncryptionService.class);
+    private final DTOConverter converter = new DTOConverter(upsRepo, encryptionService);
 
     @Test
     void getServerFromDTO_shouldReturnNull_whenDTOIsNull() {
@@ -26,7 +27,9 @@ class DTOConverterTest {
         CredentialsWithoutEncryption decrypted
                 = new CredentialsWithoutEncryption("1", "user", "secret", true);
         Credentials encrypted
-                = new Credentials("1", "user", EncryptionService.encryptPassword("secret"), true);
+                = new Credentials("1", "user", "klkjterer", true);
+        when(encryptionService.encryptCredentials(decrypted))
+                .thenReturn(encrypted);
         ServerDTO dto
                 = new ServerDTO("44", "server", "1.1.1.1", decrypted, "2", 180);
         Server expected
