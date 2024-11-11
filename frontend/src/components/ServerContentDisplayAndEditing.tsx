@@ -67,12 +67,12 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
             return "server-card"
         switch (status?.state) {
             case "POWER_OFF":
-                return "server-card-poweroff";
+                return "server-content-poweroff";
             case "POWER_OFF_LIMIT":
             case "SHUTDOWN":
-                return "server-card-shutdown";
+                return "server-content-shutdown";
             default:
-                return "server-card";
+                return "server-content";
         }
     }
 

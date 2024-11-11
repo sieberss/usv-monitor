@@ -35,9 +35,9 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
     function getClassName (): string {
         if (props.monitoring) {
             if (status?.state === "POWER_OFF")
-                return "ups-card-poweroff"
+                return "ups-content-poweroff"
             if (status?.state === "POWER_OFF_LIMIT" || status?.state === "SHUTDOWN")
-                return "ups-card-shutdown"
+                return "ups-content-shutdown"
         }
         return "ups-card"
     }

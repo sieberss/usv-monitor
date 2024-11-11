@@ -20,7 +20,7 @@ function App() {
 
     const [monitoring, setMonitoring] = useState<boolean>(false)
     const [username, setUsername] = useState<string>("")
-    const [statusMap, setStatusMap] = useState<Map<string, Status>>()
+    const [statusMap, setStatusMap] = useState<Map<string, Status>>(new Map<string, Status>)
 
     useEffect(() => {
         axios.get("/api/login")
@@ -51,15 +51,18 @@ function App() {
     /** Status in monitoring mode *******/
 
     const getAllStatuses = () => {
-        axios.get('api/monitor')
+        axios.get('/api/monitor')
             .then(response => {
+                console.log("StatusMap / getAllStatuses: ", response.data.statusMap)
                 setMonitoring(response.data.monitoring);
                 setStatusMap(response.data.statusMap);
             })
             .catch(error => console.error('getAllStatusFailed:', error))
     }
 
-    const getUpsOrServerStatus = (id: string): Status|undefined => {
+    const getUpsOrServerStatus = (id: string|undefined): Status|undefined => {
+        console.log ("getUpsorServerStatus ID:" + id + " Map:" + statusMap)
+        if (!id) return undefined
         return statusMap?.get(id)
     }
 

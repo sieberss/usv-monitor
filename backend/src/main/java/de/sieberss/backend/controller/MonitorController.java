@@ -18,7 +18,8 @@ public class MonitorController {
     }
 
     @PostMapping
-    public boolean changeMode(@RequestBody boolean monitoring){
+    public boolean changeMode(@RequestParam boolean monitoring){
+        System.out.println(monitoring);
         return monitorService.changeMode(monitoring);
     }
 }

@@ -13,7 +13,7 @@ type UpsCardProps = {
 
 export default function UpsCard(props: Readonly<UpsCardProps>) {
     const ups: Ups = props.ups
-    const status: Status|undefined = props.getUpsStatus(ups.id)
+    const status: Status|undefined = props.getUpsStatus(ups?.id)
     function getClassName (): string {
         if (props.monitoring) {
             if (status?.state === "POWER_OFF")

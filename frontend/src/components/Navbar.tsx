@@ -24,7 +24,7 @@ export default function NavBar(props:Readonly<Props>) {
 
     function switchMonitoringMode(on: boolean): void {
         if (loggedIn) {
-            axios.post('/api/monitor', on)
+            axios.post('/api/monitor?monitoring=' + on)
                 .then(r => {
                     console.log(r.data);
                     props.setMonitoring(r.data);
