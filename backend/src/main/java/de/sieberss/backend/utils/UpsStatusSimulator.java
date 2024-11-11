@@ -19,10 +19,15 @@ import java.util.Random;
 @Setter
 public class UpsStatusSimulator {
 
+    Random random = new Random();
     // simulated times of PowerOff event
     private String powerOff1Id;
     private String powerOff2Id;
-    private Instant begin1, end1, begin2, end2, startTime;
+    private Instant begin1;
+    private Instant end1;
+    private Instant begin2;
+    private Instant end2;
+    private Instant startTime;
 
     public Status getUpsStatus(final Ups ups) {
         Instant now = Instant.now();
@@ -48,7 +53,6 @@ public class UpsStatusSimulator {
 
     public void simulatePowerOff(Instant startTime, List<Ups> upsList) {
         this.startTime = startTime;
-        Random random = new Random();
         int first = random.nextInt(upsList.size());
         int second = random.nextInt(upsList.size());
         if (first == second) {second = (second + 1) % upsList.size();}
