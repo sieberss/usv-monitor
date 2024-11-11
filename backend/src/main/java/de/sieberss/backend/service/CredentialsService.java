@@ -5,8 +5,11 @@ import de.sieberss.backend.model.CredentialsWithoutEncryption;
 import de.sieberss.backend.repo.CredentialsRepo;
 import de.sieberss.backend.utils.EncryptionService;
 import de.sieberss.backend.utils.IdService;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -18,6 +21,13 @@ public class CredentialsService {
     private final CredentialsRepo repo;
     private final IdService idService;
 
+    @Value("${encryption.key}")
+    private String encryptionKey;
+
+    @PostConstruct
+    public void init() {
+        EncryptionService.setApplicationKey(encryptionKey);
+    }
     private boolean missingData(CredentialsWithoutEncryption unencrypted) {
         return unencrypted == null || unencrypted.user() == null || unencrypted.password() == null
                 || unencrypted.user().isEmpty() || unencrypted.password().isEmpty();
