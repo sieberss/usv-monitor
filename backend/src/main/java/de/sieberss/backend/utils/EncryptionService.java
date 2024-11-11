@@ -49,7 +49,11 @@ public class EncryptionService {
     /** start of my added code
      *
      */
-    private String key = System.getenv("ENCRYPT_KEY");
+    private String key;
+
+    public static void setApplicationKey(String key){
+        instance.key = key;
+    }
 
     public static void setTestKey() throws NoSuchAlgorithmException, IllegalStateException {
         instance.key = generateKey();
