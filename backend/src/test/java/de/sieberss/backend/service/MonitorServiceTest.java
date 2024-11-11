@@ -66,18 +66,20 @@ class MonitorServiceTest {
     @Test
     void changeMode_shouldStartMonitoring_WhenNotMonitoringAndChanged() {
         when(statusService.isMonitoring()).thenReturn(false);
+        when(statusService.toggleMonitoring()).thenReturn(true);
         boolean actual = monitorService.changeMode(true);
         assertTrue(actual);
         verify(statusService).isMonitoring();
-        verify(statusService).startMonitoring();
+        verify(statusService).toggleMonitoring();
     }
 
     @Test
     void changeMode_shouldStopMonitoring_WhenMonitoringAndChanged() {
         when(statusService.isMonitoring()).thenReturn(true);
+        when(statusService.toggleMonitoring()).thenReturn(false);
         boolean actual = monitorService.changeMode(false);
         assertFalse(actual);
         verify(statusService).isMonitoring();
-        verify(statusService).stopMonitoring();
+        verify(statusService).toggleMonitoring();
     }
 }
