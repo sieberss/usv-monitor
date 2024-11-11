@@ -29,16 +29,21 @@ public class StatusService {
     private List<ServerDTO> serverList = new ArrayList<>();
 
     public Map<String,Status> getAllStatuses() {
-        for (Ups ups : upsList) {
-            statusMap.put(ups.id(), simulator.getUpsStatus(ups));
-        }
-        for (ServerDTO server : serverList) {
-            setServerStatus(server);
-        }
+        upsList.forEach( ups -> statusMap.put(ups.id(), simulator.getUpsStatus(ups)));
+        serverList.forEach(this::setServerStatus);
         return new HashMap<>(statusMap);
     }
 
-    public void startMonitoring() {
+    public boolean toggleMonitoring() {
+        if (!monitoring) {
+            startMonitoring();
+            return true;
+        }
+        stopMonitoring();
+        return false;
+    }
+
+     void startMonitoring() {
         if (monitoring) return;
         serverList = serverService.getServerDTOList();
         upsList = upsService.getUpsList();
@@ -46,7 +51,7 @@ public class StatusService {
         monitoring = true;
     }
 
-    public void stopMonitoring() {
+     void stopMonitoring() {
         serverList = new ArrayList<>();
         upsList = new ArrayList<>();
         statusMap.clear();

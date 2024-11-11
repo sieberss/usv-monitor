@@ -1,7 +1,5 @@
 package de.sieberss.backend.service;
 
-import de.sieberss.backend.exception.MonitoringStartFailedException;
-import de.sieberss.backend.exception.MonitoringStopFailedException;
 import de.sieberss.backend.model.StatusResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -31,25 +29,7 @@ public class MonitorService {
         if (monitoring == statusService.isMonitoring()) {
             return monitoring;
         }
-        if (monitoring) {
-            try {
-                statusService.startMonitoring();
-                return true;
-            }
-            catch (MonitoringStartFailedException e) {
-                // now exception yet in simulation
-            }
-        }
-        else {
-            try {
-                statusService.stopMonitoring();
-                return false;
-            }
-            catch (MonitoringStopFailedException e){
-                // now exception yet in simulation
-            }
-        }
-        return monitoring;
+        return statusService.toggleMonitoring();
     }
 
 }
