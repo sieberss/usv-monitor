@@ -82,7 +82,7 @@ jobs:
     needs: push-to-docker-hub
     environment:
       name: USV Monitor # Capstone Project name
-      url: https://usv-monitor.onrender.com # Link to deployment
+      url: https://usv-monitor-latest.onrender.com # Link to deployment
     steps:
       - name: Trigger Render.com Deployment
         run: |
