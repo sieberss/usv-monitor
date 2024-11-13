@@ -4,7 +4,6 @@ import de.sieberss.backend.model.Credentials;
 import de.sieberss.backend.model.CredentialsWithoutEncryption;
 import de.sieberss.backend.repo.CredentialsRepo;
 import de.sieberss.backend.utils.EncryptionService;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,11 +31,6 @@ class LoginControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private CredentialsRepo credentialsRepo;
-
-    @BeforeAll
-    static void setUp() throws Exception {
-        EncryptionService.setTestKey();
-    }
 
     @WithMockUser
     @Test
@@ -71,10 +65,17 @@ class LoginControllerTest {
 
     @Test
     void login_shouldReturnStatus401_whenPasswordIsWrong() throws Exception {
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("1", "testuser", "testpassword", false);
-        Credentials encrypted = EncryptionService.encryptCredentials(decrypted);
-        credentialsRepo.save(encrypted);
-        String auth = "testuser:testpass";
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/login/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                        {
+                            "user": "testuser",
+                            "password": "testpassword",
+                            "global" : false
+                        }
+                        """))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+        String auth = "testuser:testpassword";
         String basicAuthHeader =  Base64.getEncoder().encodeToString(auth.getBytes());
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/api/login")

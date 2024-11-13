@@ -36,7 +36,12 @@ public class LoginService implements UserDetailsService {
             throw new IllegalArgumentException(submitted.user() + " already exists");
         }
         catch (UsernameNotFoundException e) {
-            Credentials newCredentials = new Credentials(idService.generateId(), submitted.user(), encoder.encode(submitted.password()), false);
+            Credentials newCredentials = Credentials.builder()
+                    .id(idService.generateId())
+                    .user(submitted.user())
+                    .password(encoder.encode(submitted.password()))
+                    .global(false)
+                    .build();
             repo.save(newCredentials);
         }
     }
