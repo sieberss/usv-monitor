@@ -32,10 +32,17 @@ public class CredentialsService {
         return unencrypted == null || unencrypted.user() == null || unencrypted.password() == null
                 || unencrypted.user().isEmpty() || unencrypted.password().isEmpty();
     }
+
+    private CredentialsWithoutEncryption decryptAllExceptAppUsers(Credentials credentials) {
+        return credentials.user().startsWith("APP/")
+                ? new CredentialsWithoutEncryption(credentials.id(), credentials.user(), credentials.password(), credentials.global())
+                : EncryptionService.decryptCredentials(credentials);
+    }
+
     public List<CredentialsWithoutEncryption> getCredentialsList() {
         return repo.findAll()
                 .stream()
-                .map(EncryptionService::decryptCredentials)
+                .map(this::decryptAllExceptAppUsers)
                 .toList();
     }
 
