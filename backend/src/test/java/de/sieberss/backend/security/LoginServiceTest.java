@@ -3,7 +3,6 @@ package de.sieberss.backend.security;
 import de.sieberss.backend.model.Credentials;
 import de.sieberss.backend.model.CredentialsWithoutEncryption;
 import de.sieberss.backend.repo.CredentialsRepo;
-import de.sieberss.backend.service.CredentialsService;
 import de.sieberss.backend.utils.EncryptionService;
 import de.sieberss.backend.utils.IdService;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +24,7 @@ import static org.mockito.Mockito.*;
 class LoginServiceTest {
     private final CredentialsRepo repo = mock(CredentialsRepo.class);
     private final IdService idService = mock(IdService.class);
-    private final CredentialsService credentialsService = new CredentialsService(repo, idService);
-    private final LoginService loginService = new LoginService(repo, credentialsService);
+    private final LoginService loginService = new LoginService(repo, idService);
 
     @BeforeAll
     static void setUp() throws Exception {
