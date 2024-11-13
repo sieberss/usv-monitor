@@ -38,7 +38,7 @@ class LoginControllerTest {
     }
 
     @Test
-    void login_shouldReturnUserName_whenCredentialsAreCorrect() throws Exception {
+    void registerAndThenLoginWithSameData_shouldReturnUserName_whenDatabaseIsEmptyBefore() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/login/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -92,29 +92,6 @@ class LoginControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized());
-    }
-
-    @Test
-    void register_shouldAddUser_whenNotExists() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/login/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                        {
-                            "user": "testuser",
-                            "password": "testpassword",
-                            "global" : false
-                        }
-                        """))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-        String auth = "testuser:testpassword";
-        String basicAuthHeader =  Base64.getEncoder().encodeToString(auth.getBytes());
-        mockMvc.perform(
-                        MockMvcRequestBuilders.post("/api/login")
-                                .header(HttpHeaders.AUTHORIZATION, "Basic " + basicAuthHeader)
-                                .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("testuser"));
     }
 
     @Test
