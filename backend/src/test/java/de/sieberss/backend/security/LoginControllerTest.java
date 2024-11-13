@@ -1,20 +1,11 @@
 package de.sieberss.backend.security;
 
-import de.sieberss.backend.model.Credentials;
-import de.sieberss.backend.model.CredentialsWithoutEncryption;
-import de.sieberss.backend.repo.CredentialsRepo;
-import de.sieberss.backend.utils.EncryptionService;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,13 +21,6 @@ class LoginControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private CredentialsRepo credentialsRepo;
-
-    @BeforeAll
-    static void setUp() throws Exception {
-        EncryptionService.setTestKey();
-    }
 
     @WithMockUser
     @Test
@@ -54,15 +38,22 @@ class LoginControllerTest {
     }
 
     @Test
-    void login_shouldReturnUserName_whenCredentialsAreCorrect() throws Exception {
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("1", "testuser", "testpassword", false);
-        Credentials encrypted = EncryptionService.encryptCredentials(decrypted);
-        credentialsRepo.save(encrypted);
+    void registerAndThenLoginWithSameData_shouldReturnUserName_whenDatabaseIsEmptyBefore() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/login/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                        {
+                            "user": "testuser",
+                            "password": "testpassword",
+                            "global" : false
+                        }
+                        """))
+                .andExpect(MockMvcResultMatchers.status().isOk());
         String auth = "testuser:testpassword";
-        String encoded =  Base64.getEncoder().encodeToString(auth.getBytes());
+        String basicAuthHeader =  Base64.getEncoder().encodeToString(auth.getBytes());
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/api/login")
-                                .header(HttpHeaders.AUTHORIZATION, "Basic " + encoded)
+                                .header(HttpHeaders.AUTHORIZATION, "Basic " + basicAuthHeader)
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -71,10 +62,17 @@ class LoginControllerTest {
 
     @Test
     void login_shouldReturnStatus401_whenPasswordIsWrong() throws Exception {
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("1", "testuser", "testpassword", false);
-        Credentials encrypted = EncryptionService.encryptCredentials(decrypted);
-        credentialsRepo.save(encrypted);
-        String auth = "testuser:testpass";
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/login/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                        {
+                            "user": "testuser",
+                            "password": "testpassword",
+                            "global" : false
+                        }
+                        """))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+        String auth = "testuser:testpasswordwrong";
         String basicAuthHeader =  Base64.getEncoder().encodeToString(auth.getBytes());
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/api/login")
@@ -94,38 +92,6 @@ class LoginControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized());
-    }
-
-    @Test
-    void register_shouldAddUser_whenNotExists() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/login/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                        {
-                            "user": "testuser",
-                            "password": "testpassword",
-                            "global" : false
-                        }
-                        """))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-        UserDetails user = User.withUsername("testuser")
-                .password("testpassword")
-                .roles("USER")
-                .build();
-        UsernamePasswordAuthenticationToken auth =
-                new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(auth);
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/credentials"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json("""
-                        [{
-                            "user": "testuser",
-                            "password": "testpassword",
-                            "global" : false
-                        }]
-                        """))
-                        .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").isNotEmpty());
-        SecurityContextHolder.clearContext();
     }
 
     @Test

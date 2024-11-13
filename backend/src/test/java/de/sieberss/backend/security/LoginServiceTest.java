@@ -3,7 +3,6 @@ package de.sieberss.backend.security;
 import de.sieberss.backend.model.Credentials;
 import de.sieberss.backend.model.CredentialsWithoutEncryption;
 import de.sieberss.backend.repo.CredentialsRepo;
-import de.sieberss.backend.service.CredentialsService;
 import de.sieberss.backend.utils.EncryptionService;
 import de.sieberss.backend.utils.IdService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,8 +25,7 @@ import static org.mockito.Mockito.*;
 class LoginServiceTest {
     private final CredentialsRepo repo = mock(CredentialsRepo.class);
     private final IdService idService = mock(IdService.class);
-    private final CredentialsService credentialsService = new CredentialsService(repo, idService);
-    private final LoginService loginService = new LoginService(repo, credentialsService);
+    private final LoginService loginService = new LoginService(repo, idService);
 
     @BeforeAll
     static void setUp() throws Exception {
@@ -56,15 +55,18 @@ class LoginServiceTest {
     void register_shouldAddNewUserToDatabase_ifNotAlreadyExists() {
         String username = "testuser";
         String password = "password";
-        String encryptedPassword = EncryptionService.encryptPassword(password);
+        Argon2PasswordEncoder encoder = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
+        String encryptedPassword = encoder.encode(password);
         CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("", username, password, false);
         Credentials encrypted = new Credentials("1", username, encryptedPassword, false);
+        when(repo.findByUser(username)).thenReturn(Optional.empty());
         when(idService.generateId()).thenReturn("1");
         when(repo.save(encrypted)).thenReturn(encrypted);
         // execute method
         loginService.register(submitted);
+        verify(repo, times(1)).findByUser(username);
         verify(idService, times(1)).generateId();
-        verify(repo, times(1)).save(encrypted);
+        verify(repo, times(1)).save(any());
     }
 
     @Test
