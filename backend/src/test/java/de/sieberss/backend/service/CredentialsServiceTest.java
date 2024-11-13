@@ -4,8 +4,11 @@ import de.sieberss.backend.model.Credentials;
 import de.sieberss.backend.model.CredentialsDTO;
 import de.sieberss.backend.repo.CredentialsRepo;
 import de.sieberss.backend.utils.IdService;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.encrypt.Encryptors;
+import org.springframework.security.crypto.encrypt.TextEncryptor;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -15,15 +18,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
 class CredentialsServiceTest {
 
     private final CredentialsRepo repo = mock(CredentialsRepo.class);
     private final IdService idService = mock(IdService.class);
     private final CredentialsService service = new CredentialsService(repo, idService);
+    private final String salt = "1234567890123456";
 
-    @BeforeAll
-    static void setUp () throws Exception {
-        EncryptionService.setTestKey();
+    @BeforeEach
+    void setUp() {
+        service.setTestSalt(salt);
     }
 
     @Test
@@ -35,9 +40,12 @@ class CredentialsServiceTest {
 
     @Test
     void getCredentialsList_shouldReturnContent_whenRepoIsFilled() {
+        String encryptionKey = "encryptionKey";
+        TextEncryptor encryptor = Encryptors.text(encryptionKey, salt);
         String password = "secret";
+        String encryptedPassword = encryptor.encrypt(password);
         CredentialsDTO unencrypted = new CredentialsDTO("1", "user", password, true);
-        Credentials encrypted = new Credentials("1", "user", EncryptionService.encryptPassword(password), true);
+        Credentials encrypted = new Credentials("1", "user", encryptedPassword, encryptionKey, true);
         when(repo.findAll()).thenReturn(List.of(encrypted));
         // execute tested method
         assertEquals(List.of(unencrypted), service.getCredentialsList());
@@ -46,9 +54,12 @@ class CredentialsServiceTest {
 
     @Test
     void getCredentialsById_shouldReturnObject_whenIdExists() {
+        String encryptionKey = "encryptionKey";
+        TextEncryptor encryptor = Encryptors.text(encryptionKey, salt);
         String password = "secret";
+        String encryptedPassword = encryptor.encrypt(password);
         CredentialsDTO unencrypted = new CredentialsDTO("1", "user", password, true);
-        Credentials encrypted = new Credentials("1", "user", EncryptionService.encryptPassword(password), true);
+        Credentials encrypted = new Credentials("1", "user", encryptedPassword,encryptionKey, true);
         when(repo.findById("1")).thenReturn(Optional.of(encrypted));
         // execute tested method
         CredentialsDTO actual = service.getCredentialsById("1");
@@ -98,10 +109,15 @@ class CredentialsServiceTest {
 
     @Test
     void createCredentials_shouldReturn_ObjectWithNewIdAndSubmittedData_whenUserAndPasswordProvided() {
-        when(idService.generateId()).thenReturn("1");
-        CredentialsDTO submitted = new CredentialsDTO("", "user", "pass", true);
-        CredentialsDTO expected = new CredentialsDTO("1", "user", "pass", true);
-        Credentials encrypted = new Credentials("1", "user", EncryptionService.encryptPassword("pass"), true);
+        String salt = "1111111111111111";
+        String encryptionKey = "encryptionKey";
+        TextEncryptor encryptor = Encryptors.text(encryptionKey, salt);
+        String password = "secret";
+        String encryptedPassword = encryptor.encrypt(password);
+        when(idService.generateId()).thenReturn("1", encryptionKey);
+        CredentialsDTO submitted = new CredentialsDTO("", "user", password, true);
+        CredentialsDTO expected = new CredentialsDTO("1", "user", password, true);
+        Credentials encrypted = service.createEncryptedCredentialsFromDTO(submitted);
         when(repo.save(encrypted)).thenReturn(encrypted);
         // execute tested method
         CredentialsDTO actual = service.createCredentials(submitted);
@@ -112,15 +128,20 @@ class CredentialsServiceTest {
 
     @Test
     void updateCredentials_shouldReturnUpdatedObject_whenIdExists() {
-        CredentialsDTO submitted = new CredentialsDTO("null", "user", "pass", true);
-        CredentialsDTO expected = new CredentialsDTO("1", "user", "pass", true);
-        Credentials encrypted = new Credentials("1", "user", EncryptionService.encryptPassword("pass"), true);
-        when(repo.existsById("1")).thenReturn(true);
+        String encryptionKey = "encryptionKey";
+        TextEncryptor encryptor = Encryptors.text(encryptionKey, salt);
+        String password = "secret";
+        String encryptedPassword = encryptor.encrypt(password);
+        CredentialsDTO submitted = new CredentialsDTO("null", "user", password, true);
+        CredentialsDTO expected = new CredentialsDTO("1", "user", password, true);
+        Credentials encrypted = new Credentials("1", "user", encryptedPassword, encryptionKey, true);
+        Credentials oldValue = new Credentials("1", "userx", "JKJJKK", encryptionKey, true);
+        when(repo.findById("1")).thenReturn(Optional.of(oldValue));
         when(repo.save(encrypted)).thenReturn(encrypted);
         // execute tested method
         CredentialsDTO actual = service.updateCredentials("1", submitted);
         assertEquals(expected, actual);
-        verify(repo).existsById("1");
+        verify(repo).findById("1");
         verify(repo).save(encrypted);
     }
 

@@ -22,7 +22,8 @@ public class SecurityConfig {
                     c.requestMatchers("/api/login").permitAll();
                     c.requestMatchers("/api/login/*").permitAll();
                     c.requestMatchers(HttpMethod.GET).permitAll();
-                    c.anyRequest().authenticated();
+                    c.anyRequest().permitAll();
+                    //c.anyRequest().authenticated();
                 })
                 .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .httpBasic(Customizer.withDefaults())

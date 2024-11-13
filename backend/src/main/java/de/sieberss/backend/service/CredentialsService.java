@@ -24,6 +24,9 @@ public class CredentialsService {
     @Value("${encryption.salt}")
     private String salt;
 
+    void setTestSalt(String salt){
+        this.salt = salt;
+    }
     private boolean missingData(CredentialsDTO unencrypted) {
         return unencrypted == null || unencrypted.user() == null || unencrypted.password() == null
                 || unencrypted.user().isEmpty() || unencrypted.password().isEmpty();
