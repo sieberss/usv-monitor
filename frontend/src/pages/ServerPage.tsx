@@ -17,7 +17,7 @@ type Props = {
 export default function ServerPage(props:Readonly<Props>) {
     const params = useParams()
     const id: string | undefined = params.id
-    const [server, setServer] = useState<Server>({id: "new", name: "", address: "", upsId: "", shutdownTime: 180, credentials:{id:"", user:"", password:"", global:false}})
+    const [server, setServer] = useState<Server>({id: "new", name: "", address: "", upsId: "", shutdownTime: 180, credentials:{id:"", user:"", password:"", global:true}})
 
     useEffect(() => {
         if (id!=="new") {

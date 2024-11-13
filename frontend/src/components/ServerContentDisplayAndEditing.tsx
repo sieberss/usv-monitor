@@ -32,7 +32,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
         address: "",
         upsId: "",
         shutdownTime: 180,
-        credentials: {id: "", user: "", password: "", global: false}
+        credentials: {id: "", user: "", password: "", global: true}
     })
     const [editing, setEditing] = useState<boolean>(false)
     const [changedData, setChangedData] = useState<boolean>(false)
@@ -40,7 +40,7 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
     const [addressInput, setAddressInput] = useState<string>("")
     const [upsSelection, setUpsSelection] = useState<string>("")
     const [changedCredentialsInput, setChangedCredentialsInput] = useState<boolean>(false)
-    const [localSelected, setLocalSelected] = useState<boolean>(true)
+    const [localSelected, setLocalSelected] = useState<boolean>(false)
     const [userInput, setUserInput] = useState<string>("")
     const [passwordInput, setPasswordInput] = useState<string>("")
     const [globalCredentialsSelection, setGlobalCredentialsSelection] = useState<string>("")
@@ -59,7 +59,8 @@ export default function UpsContentDisplayAndEditing(props: Readonly<EditProps>) 
 
     function backToList(updated: boolean): void {
         switchEditMode(false)
-        if (updated) props.serverUpdate()
+        if (updated)
+            props.serverUpdate()
         navigate("/server")
     }
 
