@@ -1,13 +1,13 @@
 package de.sieberss.backend.service;
 
 import de.sieberss.backend.model.Credentials;
-import de.sieberss.backend.model.CredentialsWithoutEncryption;
+import de.sieberss.backend.model.CredentialsDTO;
 import de.sieberss.backend.repo.CredentialsRepo;
-import de.sieberss.backend.utils.EncryptionService;
 import de.sieberss.backend.utils.IdService;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.encrypt.Encryptors;
+import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,48 +21,65 @@ public class CredentialsService {
     private final CredentialsRepo repo;
     private final IdService idService;
 
-    @Value("${encryption.key}")
-    private String encryptionKey;
+    @Value("${encryption.salt}")
+    private String salt;
 
-    @PostConstruct
-    public void init() {
-        EncryptionService.setApplicationKey(encryptionKey);
-    }
-    private boolean missingData(CredentialsWithoutEncryption unencrypted) {
+    private boolean missingData(CredentialsDTO unencrypted) {
         return unencrypted == null || unencrypted.user() == null || unencrypted.password() == null
                 || unencrypted.user().isEmpty() || unencrypted.password().isEmpty();
     }
-    public List<CredentialsWithoutEncryption> getCredentialsList() {
+
+    CredentialsDTO decryptCredentials(Credentials credentials) {
+        TextEncryptor encryptor = Encryptors.text(credentials.encryptionKey(), salt);
+        String decryptedPassword = encryptor.decrypt(credentials.password());
+        return new CredentialsDTO(credentials.id(), credentials.user(), decryptedPassword, credentials.global());
+    }
+
+    Credentials getEncryptedCredentials(CredentialsDTO credentials) {
+        return repo.findById(credentials.id()).orElseThrow(NoSuchElementException::new);
+    }
+
+    Credentials createEncryptedCredentialsFromDTO(CredentialsDTO dto) {
+        String id = idService.generateId();
+        String encryptionKey = idService.generateId();
+        TextEncryptor encryptor = Encryptors.text(encryptionKey, salt);
+        String encryptedPassword = encryptor.encrypt(dto.password());
+        return new Credentials(id, dto.user(), encryptedPassword, encryptionKey, dto.global());
+    }
+
+    Credentials updateEncryptedCredentialsFromDTO(Credentials dbObject, CredentialsDTO dto) {
+        TextEncryptor encryptor = Encryptors.text(dbObject.encryptionKey(), salt);
+        String encryptedPassword = encryptor.encrypt(dto.password());
+        return new Credentials(dbObject.id(), dto.user(), encryptedPassword, dbObject.encryptionKey(), dto.global());
+    }
+
+    public List<CredentialsDTO> getCredentialsList() {
         return repo.findAll()
                 .stream()
-                .map(EncryptionService::decryptCredentials)
+                .map(this::decryptCredentials)
                 .toList();
     }
 
-    public CredentialsWithoutEncryption getCredentialsById(String id) {
+    public CredentialsDTO getCredentialsById(String id) {
         Credentials dbObject = repo.findById(id).orElseThrow(()->new NoSuchElementException(id));
-        return EncryptionService.decryptCredentials(dbObject);
+        return decryptCredentials(dbObject);
     }
 
-    public CredentialsWithoutEncryption createCredentials(CredentialsWithoutEncryption submitted) {
+    public CredentialsDTO createCredentials(CredentialsDTO submitted) {
         if (missingData(submitted))
             throw new IllegalArgumentException("Missing username and/or password");
-        CredentialsWithoutEncryption completed =
-                new CredentialsWithoutEncryption(idService.generateId(), submitted.user(), submitted.password(), submitted.global());
-        Credentials dbObject = EncryptionService.encryptCredentials(completed);
+        Credentials dbObject = createEncryptedCredentialsFromDTO(submitted);
         repo.save(dbObject);
-        return completed;
+        return decryptCredentials(dbObject);
     }
 
-    public CredentialsWithoutEncryption updateCredentials(String id, CredentialsWithoutEncryption submitted) {
-        if (!repo.existsById(id))
-            throw new NoSuchElementException(id);
+    public CredentialsDTO updateCredentials(String id, CredentialsDTO submitted) {
+        Credentials dbObject = repo.findById(id).orElseThrow(() -> new NoSuchElementException(id));
         if (missingData(submitted))
             throw new IllegalArgumentException("Missing username and/or password");
-        CredentialsWithoutEncryption completed = new CredentialsWithoutEncryption(id, submitted.user(), submitted.password(), submitted.global());
-        Credentials dbObject = EncryptionService.encryptCredentials(completed);
+        dbObject = updateEncryptedCredentialsFromDTO(dbObject, submitted);
         repo.save(dbObject);
-        return completed;
+        return decryptCredentials(dbObject);
     }
 
     public void deleteCredentials(String id) {

@@ -1,10 +1,9 @@
 package de.sieberss.backend.security;
 
 import de.sieberss.backend.model.Credentials;
-import de.sieberss.backend.model.CredentialsWithoutEncryption;
+import de.sieberss.backend.model.CredentialsDTO;
 import de.sieberss.backend.repo.CredentialsRepo;
 import de.sieberss.backend.service.CredentialsService;
-import de.sieberss.backend.utils.EncryptionService;
 import de.sieberss.backend.utils.IdService;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeAll;
@@ -57,7 +56,7 @@ class LoginServiceTest {
         String username = "testuser";
         String password = "password";
         String encryptedPassword = EncryptionService.encryptPassword(password);
-        CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("", username, password, false);
+        CredentialsDTO submitted = new CredentialsDTO("", username, password, false);
         Credentials encrypted = new Credentials("1", username, encryptedPassword, false);
         when(idService.generateId()).thenReturn("1");
         when(repo.save(encrypted)).thenReturn(encrypted);
@@ -69,7 +68,7 @@ class LoginServiceTest {
 
     @Test
     void register_shouldThrowIllegalArgumentException_whenAlreadyExists() {
-        CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("", "testuser", "password", false);
+        CredentialsDTO submitted = new CredentialsDTO("", "testuser", "password", false);
         when(repo.findByUser("testuser")).thenReturn(Optional.of(
                 new Credentials("1", "testuser", "gjklrjeir34", false)));
         // execute method

@@ -1,6 +1,6 @@
 package de.sieberss.backend.model;
 
-public record CredentialsWithoutEncryption(
+public record CredentialsDTO(
         String id,
         String user,
         String password,

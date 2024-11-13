@@ -12,7 +12,7 @@ import static org.mockito.Mockito.*;
 class DTOConverterTest {
 
     private final UpsRepo upsRepo = mock(UpsRepo.class);
-    private final DTOConverter converter = new DTOConverter(upsRepo);
+    private final ServerDTOConverter converter = new ServerDTOConverter(upsRepo);
 
     @Test
     void getServerFromDTO_shouldReturnNull_whenDTOIsNull() {
@@ -23,8 +23,8 @@ class DTOConverterTest {
     void getServerFromDTO_shouldEncryptCredentials_andGetUpsFromDatabase_whenIdExists() {
         Ups ups
                 = new Ups("2", "ups", "localhost", "c");
-        CredentialsWithoutEncryption decrypted
-                = new CredentialsWithoutEncryption("1", "user", "secret", true);
+        CredentialsDTO decrypted
+                = new CredentialsDTO("1", "user", "secret", true);
         Credentials encrypted
                 = new Credentials("1", "user", EncryptionService.encryptPassword("secret"), true);
         ServerDTO dto
@@ -41,8 +41,8 @@ class DTOConverterTest {
 
     @Test
     void getServerFromDTO_shouldEncryptCredentials_andSetUpsNull_whenIdDoesNotExist() {
-        CredentialsWithoutEncryption decrypted
-                = new CredentialsWithoutEncryption("1", "user", "secret", true);
+        CredentialsDTO decrypted
+                = new CredentialsDTO("1", "user", "secret", true);
         Credentials encrypted
                 = new Credentials("1", "user", EncryptionService.encryptPassword("secret"), true);
         ServerDTO dto
@@ -61,8 +61,8 @@ class DTOConverterTest {
     void getDTOFromServer_shouldDecryptCredentials_andSetUpsId_whenUpsIsNotNull() {
         Ups ups
                 = new Ups("2", "ups", "localhost", "c");
-        CredentialsWithoutEncryption decrypted
-                = new CredentialsWithoutEncryption("1", "user", "secret", true);
+        CredentialsDTO decrypted
+                = new CredentialsDTO("1", "user", "secret", true);
         Credentials encrypted
                 = new Credentials("1", "user", EncryptionService.encryptPassword("secret"), true);
         Server server
@@ -76,8 +76,8 @@ class DTOConverterTest {
 
     @Test
     void getDTOFromServer_shouldDecryptCredentials_andSetUpsIdEmpty_whenUpsIsNull() {
-        CredentialsWithoutEncryption decrypted
-                = new CredentialsWithoutEncryption("1", "user", "secret", true);
+        CredentialsDTO decrypted
+                = new CredentialsDTO("1", "user", "secret", true);
         Credentials encrypted
                 = new Credentials("1", "user", EncryptionService.encryptPassword("secret"), true);
         Server server

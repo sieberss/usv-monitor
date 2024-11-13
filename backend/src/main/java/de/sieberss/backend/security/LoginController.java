@@ -1,6 +1,6 @@
 package de.sieberss.backend.security;
 
-import de.sieberss.backend.model.CredentialsWithoutEncryption;
+import de.sieberss.backend.model.CredentialsDTO;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,7 +30,7 @@ public class LoginController {
     }
 
     @PostMapping("/register")
-    public void register(@RequestBody CredentialsWithoutEncryption credentials){
+    public void register(@RequestBody CredentialsDTO credentials){
         loginService.register(credentials);
     }
 

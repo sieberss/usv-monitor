@@ -4,7 +4,7 @@ public record ServerDTO(
         String id,
         String name,
         String address,
-        CredentialsWithoutEncryption credentials,
+        CredentialsDTO credentials,
         String upsId,
         int shutdownTime) {
 }

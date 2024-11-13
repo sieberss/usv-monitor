@@ -1,11 +1,8 @@
 package de.sieberss.backend.service;
 
-import de.sieberss.backend.model.CredentialsWithoutEncryption;
-import de.sieberss.backend.model.Server;
-import de.sieberss.backend.model.ServerDTO;
-import de.sieberss.backend.model.ServerDTOWithoutCredentialsId;
+import de.sieberss.backend.model.*;
 import de.sieberss.backend.repo.ServerRepo;
-import de.sieberss.backend.utils.DTOConverter;
+import de.sieberss.backend.repo.UpsRepo;
 import de.sieberss.backend.utils.IdService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,12 +15,33 @@ import java.util.NoSuchElementException;
 public class ServerService {
     private final ServerRepo repo;
     private final IdService idService;
-    private final DTOConverter converter;
     private final CredentialsService credentialsService;
+    private final UpsRepo upsRepo;
+
+    Server getServerFromDTO(ServerDTO dto) {
+        Ups ups;
+        if (dto == null)
+            return null;
+        if (dto.upsId() == null || dto.upsId().isEmpty())
+            ups = null;
+        else
+            ups = upsRepo.findById(dto.upsId()).orElse(null);
+        Credentials credentials = credentialsService.getEncryptedCredentials(dto.credentials());
+        return new Server(dto.id(), dto.name(), dto.address(), credentials, ups, dto.shutdownTime());
+    }
+
+    ServerDTO getDTOFromServer(Server server) {
+        if (server == null)
+            return null;
+        String upsId =
+                server.ups() == null ? "" : server.ups().id();
+        CredentialsDTO decryptedCredentials = credentialsService.decryptCredentials(server.credentials());
+        return new ServerDTO(server.id(), server.name(), server.address(), decryptedCredentials, upsId, server.shutdownTime());
+    }
 
     public List<ServerDTO> getServerDTOList() {
         return repo.findAll().stream()
-                .map(converter::getDTOFromServer).toList();
+                .map(this::getDTOFromServer).toList();
     }
 
     /**
@@ -34,7 +52,7 @@ public class ServerService {
      */
     public ServerDTO getServerDTOById(String id) {
          Server found = repo.findById(id).orElseThrow(()-> new NoSuchElementException(id));
-         return converter.getDTOFromServer(found);
+         return getDTOFromServer(found);
     }
 
     /**
@@ -44,9 +62,9 @@ public class ServerService {
      */
     public ServerDTO createServer(ServerDTO serverDTO) {
          ServerDTO completed = new ServerDTO(idService.generateId(), serverDTO.name(), serverDTO.address(), serverDTO.credentials(), serverDTO.upsId(), serverDTO.shutdownTime());
-         Server toStore = converter.getServerFromDTO(completed);
+         Server toStore = getServerFromDTO(completed);
          repo.save(toStore);
-         return converter.getDTOFromServer(toStore);
+         return getDTOFromServer(toStore);
     }
 
     /**
@@ -59,9 +77,9 @@ public class ServerService {
         if (!repo.existsById(id))
             throw new NoSuchElementException(id);
         ServerDTO completed = new ServerDTO(id, submitted.name(), submitted.address(), submitted.credentials(), submitted.upsId(), submitted.shutdownTime());
-        Server toStore = converter.getServerFromDTO(completed);
+        Server toStore = getServerFromDTO(completed);
         repo.save(toStore);
-        return converter.getDTOFromServer(toStore);
+        return getDTOFromServer(toStore);
     }
 
     /**
@@ -77,15 +95,15 @@ public class ServerService {
 
 
     public ServerDTO createServerWithNewLocalCredentials(ServerDTOWithoutCredentialsId dto) {
-        CredentialsWithoutEncryption credentials
-                = credentialsService.createCredentials(new CredentialsWithoutEncryption("", dto.user(), dto.password(), false));
+        CredentialsDTO credentials
+                = credentialsService.createCredentials(new CredentialsDTO("", dto.user(), dto.password(), false));
         return createServer(new ServerDTO("", dto.name(), dto.address(), credentials, dto.upsId(), dto.shutdownTime()));
     }
 
 
     public ServerDTO updateServerWithNewLocalCredentials(String id, ServerDTOWithoutCredentialsId dto) {
-        CredentialsWithoutEncryption credentials
-                = credentialsService.createCredentials(new CredentialsWithoutEncryption("", dto.user(), dto.password(), false));
+        CredentialsDTO credentials
+                = credentialsService.createCredentials(new CredentialsDTO("", dto.user(), dto.password(), false));
         return updateServer(id,
                 new ServerDTO("", dto.name(), dto.address(), credentials, dto.upsId(), dto.shutdownTime()));
     }

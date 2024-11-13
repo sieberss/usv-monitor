@@ -4,6 +4,7 @@ public record Credentials(
         String id,
         String user,
         String password,
+        String encryptionKey,
         boolean global
 ) {
 }

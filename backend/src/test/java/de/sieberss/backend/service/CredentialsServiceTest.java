@@ -1,9 +1,8 @@
 package de.sieberss.backend.service;
 
 import de.sieberss.backend.model.Credentials;
-import de.sieberss.backend.model.CredentialsWithoutEncryption;
+import de.sieberss.backend.model.CredentialsDTO;
 import de.sieberss.backend.repo.CredentialsRepo;
-import de.sieberss.backend.utils.EncryptionService;
 import de.sieberss.backend.utils.IdService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -37,7 +36,7 @@ class CredentialsServiceTest {
     @Test
     void getCredentialsList_shouldReturnContent_whenRepoIsFilled() {
         String password = "secret";
-        CredentialsWithoutEncryption unencrypted = new CredentialsWithoutEncryption("1", "user", password, true);
+        CredentialsDTO unencrypted = new CredentialsDTO("1", "user", password, true);
         Credentials encrypted = new Credentials("1", "user", EncryptionService.encryptPassword(password), true);
         when(repo.findAll()).thenReturn(List.of(encrypted));
         // execute tested method
@@ -48,11 +47,11 @@ class CredentialsServiceTest {
     @Test
     void getCredentialsById_shouldReturnObject_whenIdExists() {
         String password = "secret";
-        CredentialsWithoutEncryption unencrypted = new CredentialsWithoutEncryption("1", "user", password, true);
+        CredentialsDTO unencrypted = new CredentialsDTO("1", "user", password, true);
         Credentials encrypted = new Credentials("1", "user", EncryptionService.encryptPassword(password), true);
         when(repo.findById("1")).thenReturn(Optional.of(encrypted));
         // execute tested method
-        CredentialsWithoutEncryption actual = service.getCredentialsById("1");
+        CredentialsDTO actual = service.getCredentialsById("1");
         assertEquals(unencrypted, actual);
         verify(repo).findById("1");
     }
@@ -68,7 +67,7 @@ class CredentialsServiceTest {
     @Test
     void createCredentials_shouldThrowIllegalArgumentException_whenUsernameEmpty() {
         when(idService.generateId()).thenReturn("1");
-        CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("", "", "pass", true);
+        CredentialsDTO submitted = new CredentialsDTO("", "", "pass", true);
         // execute tested method
         assertThrows(IllegalArgumentException.class, () -> service.createCredentials(submitted));
     }
@@ -76,7 +75,7 @@ class CredentialsServiceTest {
     @Test
     void createCredentials_shouldThrowIllegalArgumentException_whenUsernameNull() {
         when(idService.generateId()).thenReturn("1");
-        CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("", null, "pass", true);
+        CredentialsDTO submitted = new CredentialsDTO("", null, "pass", true);
         // execute tested method
         assertThrows(IllegalArgumentException.class, () -> service.createCredentials(submitted));
     }
@@ -84,7 +83,7 @@ class CredentialsServiceTest {
     @Test
     void createCredentials_shouldThrowIllegalArgumentException_whenPasswordEmpty() {
         when(idService.generateId()).thenReturn("1");
-        CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("", "user", "", true);
+        CredentialsDTO submitted = new CredentialsDTO("", "user", "", true);
         // execute tested method
         assertThrows(IllegalArgumentException.class, () -> service.createCredentials(submitted));
     }
@@ -92,7 +91,7 @@ class CredentialsServiceTest {
     @Test
     void createCredentials_shouldThrowIllegalArgumentException_whenPasswordNull() {
         when(idService.generateId()).thenReturn("1");
-        CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("", "user", null, true);
+        CredentialsDTO submitted = new CredentialsDTO("", "user", null, true);
         // execute tested method
         assertThrows(IllegalArgumentException.class, () -> service.createCredentials(submitted));
     }
@@ -100,12 +99,12 @@ class CredentialsServiceTest {
     @Test
     void createCredentials_shouldReturn_ObjectWithNewIdAndSubmittedData_whenUserAndPasswordProvided() {
         when(idService.generateId()).thenReturn("1");
-        CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("", "user", "pass", true);
-        CredentialsWithoutEncryption expected = new CredentialsWithoutEncryption("1", "user", "pass", true);
+        CredentialsDTO submitted = new CredentialsDTO("", "user", "pass", true);
+        CredentialsDTO expected = new CredentialsDTO("1", "user", "pass", true);
         Credentials encrypted = new Credentials("1", "user", EncryptionService.encryptPassword("pass"), true);
         when(repo.save(encrypted)).thenReturn(encrypted);
         // execute tested method
-        CredentialsWithoutEncryption actual = service.createCredentials(submitted);
+        CredentialsDTO actual = service.createCredentials(submitted);
         assertEquals(expected, actual);
         verify(repo).save(encrypted);
         verify(idService).generateId();
@@ -113,13 +112,13 @@ class CredentialsServiceTest {
 
     @Test
     void updateCredentials_shouldReturnUpdatedObject_whenIdExists() {
-        CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("null", "user", "pass", true);
-        CredentialsWithoutEncryption expected = new CredentialsWithoutEncryption("1", "user", "pass", true);
+        CredentialsDTO submitted = new CredentialsDTO("null", "user", "pass", true);
+        CredentialsDTO expected = new CredentialsDTO("1", "user", "pass", true);
         Credentials encrypted = new Credentials("1", "user", EncryptionService.encryptPassword("pass"), true);
         when(repo.existsById("1")).thenReturn(true);
         when(repo.save(encrypted)).thenReturn(encrypted);
         // execute tested method
-        CredentialsWithoutEncryption actual = service.updateCredentials("1", submitted);
+        CredentialsDTO actual = service.updateCredentials("1", submitted);
         assertEquals(expected, actual);
         verify(repo).existsById("1");
         verify(repo).save(encrypted);
@@ -127,7 +126,7 @@ class CredentialsServiceTest {
 
     @Test
     void updateCredentials_shouldThrowNoSuchElementException_whenIdDoesNotExist() {
-        CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("null", "user", "pass", true);
+        CredentialsDTO submitted = new CredentialsDTO("null", "user", "pass", true);
         assertThrows(NoSuchElementException.class, () -> service.updateCredentials("1", submitted));
         verify(repo).existsById("1");
     }

@@ -1,7 +1,7 @@
 package de.sieberss.backend.utils;
 
 import de.sieberss.backend.model.Credentials;
-import de.sieberss.backend.model.CredentialsWithoutEncryption;
+import de.sieberss.backend.model.CredentialsDTO;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,17 +22,17 @@ class EncryptionServiceTest {
     @Test
     void encryptCredentials_shouldEncryptCredentials_decryptCredentials_shouldRestoreIt() throws Exception {
         EncryptionService.setTestKey();
-        CredentialsWithoutEncryption credentialsWithoutEncryption = new CredentialsWithoutEncryption("1", "user", "password", true);
-        Credentials encryptedCredentials = EncryptionService.encryptCredentials(credentialsWithoutEncryption);
-        CredentialsWithoutEncryption decryptedCredentials = EncryptionService.decryptCredentials(encryptedCredentials);
+        CredentialsDTO credentialsDTO = new CredentialsDTO("1", "user", "password", true);
+        Credentials encryptedCredentials = EncryptionService.encryptCredentials(credentialsDTO);
+        CredentialsDTO decryptedCredentials = EncryptionService.decryptCredentials(encryptedCredentials);
 
-        assertEquals(credentialsWithoutEncryption, decryptedCredentials);
+        assertEquals(credentialsDTO, decryptedCredentials);
 
         // fields after encryption must be equal, except password (different and not empty)
-        assertEquals(credentialsWithoutEncryption.id(), encryptedCredentials.id());
-        assertEquals(credentialsWithoutEncryption.user(), encryptedCredentials.user());
-        assertEquals(credentialsWithoutEncryption.global(), encryptedCredentials.global());
-        assertNotEquals(credentialsWithoutEncryption.password(), encryptedCredentials.password());
+        assertEquals(credentialsDTO.id(), encryptedCredentials.id());
+        assertEquals(credentialsDTO.user(), encryptedCredentials.user());
+        assertEquals(credentialsDTO.global(), encryptedCredentials.global());
+        assertNotEquals(credentialsDTO.password(), encryptedCredentials.password());
         assertNotEquals("", encryptedCredentials.password());
     }
 

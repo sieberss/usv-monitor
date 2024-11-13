@@ -1,9 +1,8 @@
 package de.sieberss.backend.security;
 
 import de.sieberss.backend.model.Credentials;
-import de.sieberss.backend.model.CredentialsWithoutEncryption;
+import de.sieberss.backend.model.CredentialsDTO;
 import de.sieberss.backend.repo.CredentialsRepo;
-import de.sieberss.backend.utils.EncryptionService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +54,7 @@ class LoginControllerTest {
 
     @Test
     void login_shouldReturnUserName_whenCredentialsAreCorrect() throws Exception {
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("1", "testuser", "testpassword", false);
+        CredentialsDTO decrypted = new CredentialsDTO("1", "testuser", "testpassword", false);
         Credentials encrypted = EncryptionService.encryptCredentials(decrypted);
         credentialsRepo.save(encrypted);
         String auth = "testuser:testpassword";
@@ -71,7 +70,7 @@ class LoginControllerTest {
 
     @Test
     void login_shouldReturnStatus401_whenPasswordIsWrong() throws Exception {
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("1", "testuser", "testpassword", false);
+        CredentialsDTO decrypted = new CredentialsDTO("1", "testuser", "testpassword", false);
         Credentials encrypted = EncryptionService.encryptCredentials(decrypted);
         credentialsRepo.save(encrypted);
         String auth = "testuser:testpass";
