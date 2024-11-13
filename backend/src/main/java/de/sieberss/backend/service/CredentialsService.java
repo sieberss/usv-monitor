@@ -35,6 +35,8 @@ public class CredentialsService {
     public List<CredentialsWithoutEncryption> getCredentialsList() {
         return repo.findAll()
                 .stream()
+                //filter out app users: username starts with APP/
+                .filter(c -> ! c.user().startsWith("APP/"))
                 .map(EncryptionService::decryptCredentials)
                 .toList();
     }
