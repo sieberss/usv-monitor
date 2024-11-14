@@ -28,7 +28,7 @@ public class DTOConverter {
             return null;
         String upsId =
                 server.ups() == null ? "" : server.ups().id();
-        CredentialsWithoutEncryption decryptedCredentials = EncryptionService.decryptCredentials(server.credentials());
+        CredentialsDTO decryptedCredentials = EncryptionService.decryptCredentials(server.credentials());
         return new ServerDTO(server.id(), server.name(), server.address(), decryptedCredentials, upsId, server.shutdownTime());
     }
 }

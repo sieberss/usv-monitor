@@ -1,6 +1,6 @@
 package de.sieberss.backend.controller;
 
-import de.sieberss.backend.model.CredentialsWithoutEncryption;
+import de.sieberss.backend.model.CredentialsDTO;
 import de.sieberss.backend.repo.CredentialsRepo;
 import de.sieberss.backend.utils.EncryptionService;
 import org.junit.jupiter.api.BeforeAll;
@@ -33,7 +33,7 @@ class CredentialsControllerTest {
 
     @Test
     void getCredentialsList_shouldReturnListWithOneObject_whenOneObjectWasSavedInRepository() throws Exception {
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("1", "user", "password", true);
+        CredentialsDTO decrypted = new CredentialsDTO("1", "user", "password", true);
         repo.save(EncryptionService.encryptCredentials(decrypted));
         mvc.perform(MockMvcRequestBuilders.get("/api/credentials"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -66,7 +66,7 @@ class CredentialsControllerTest {
 
     @Test
     void getCredentialsById_shouldReturnCredentials_whenIdExists() throws Exception {
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("1", "user", "password", true);
+        CredentialsDTO decrypted = new CredentialsDTO("1", "user", "password", true);
         repo.save(EncryptionService.encryptCredentials(decrypted));
         mvc.perform(MockMvcRequestBuilders.get("/api/credentials/1"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -197,7 +197,7 @@ class CredentialsControllerTest {
 
     @Test
     void updateCredentials_shouldUpdateCredentials_whenIdExists() throws Exception {
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("1", "user", "password", true);
+        CredentialsDTO decrypted = new CredentialsDTO("1", "user", "password", true);
         repo.save(EncryptionService.encryptCredentials(decrypted));
         mvc.perform(MockMvcRequestBuilders.put("/api/credentials/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -246,8 +246,8 @@ class CredentialsControllerTest {
 
     @Test
     void deleteCredentials_shouldDeleteUps_whenIdExists() throws Exception {
-        CredentialsWithoutEncryption decrypted1 = new CredentialsWithoutEncryption("1", "user", "password", true);
-        CredentialsWithoutEncryption decrypted2 = new CredentialsWithoutEncryption("2", "someone", "secret", false);
+        CredentialsDTO decrypted1 = new CredentialsDTO("1", "user", "password", true);
+        CredentialsDTO decrypted2 = new CredentialsDTO("2", "someone", "secret", false);
         repo.save(EncryptionService.encryptCredentials(decrypted1));
         repo.save(EncryptionService.encryptCredentials(decrypted2));
         mvc.perform(MockMvcRequestBuilders.delete("/api/credentials/2"))

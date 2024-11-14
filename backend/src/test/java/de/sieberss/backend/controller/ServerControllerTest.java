@@ -41,7 +41,7 @@ class ServerControllerTest {
     void getServerDTOList_shouldReturnListWithOneObject_whenOneObjectWasSavedInRepository() throws Exception {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
         upsRepo.save(ups);
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("u","user", "password", true);
+        CredentialsDTO decrypted = new CredentialsDTO("u","user", "password", true);
         Credentials encrypted = EncryptionService.encryptCredentials(decrypted);
         credentialsRepo.save(encrypted);
         Server server = new Server("22", "Test-server", "1.1.1.1", encrypted, ups, 180);
@@ -86,7 +86,7 @@ class ServerControllerTest {
     void getServerDTOById_shouldReturnServerDTO_whenIdExists() throws Exception {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
         upsRepo.save(ups);
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("u","user", "password", true);
+        CredentialsDTO decrypted = new CredentialsDTO("u","user", "password", true);
         Credentials encrypted = EncryptionService.encryptCredentials(decrypted);
         credentialsRepo.save(encrypted);
         Server server = new Server("22", "Test-server", "1.1.1.1", encrypted, ups, 180);
@@ -130,7 +130,7 @@ class ServerControllerTest {
     void createServer_shouldReturnSubmittedObjectWithNewId() throws Exception {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
         upsRepo.save(ups);
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("u","user", "password", true);
+        CredentialsDTO decrypted = new CredentialsDTO("u","user", "password", true);
         Credentials encrypted = EncryptionService.encryptCredentials(decrypted);
         credentialsRepo.save(encrypted);
         mvc.perform(MockMvcRequestBuilders.post("/api/server")
@@ -172,7 +172,7 @@ class ServerControllerTest {
 
     @Test
     void createServer_shouldReturnSubmittedObjectWithNewId_andEmptyUpsIdW_whenUpsIdNotInDatabase() throws Exception {
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("u","user", "password", true);
+        CredentialsDTO decrypted = new CredentialsDTO("u","user", "password", true);
         Credentials encrypted = EncryptionService.encryptCredentials(decrypted);
         credentialsRepo.save(encrypted);
         mvc.perform(MockMvcRequestBuilders.post("/api/server")
@@ -216,7 +216,7 @@ class ServerControllerTest {
     void updateServer_shouldUpdateServer_whenIdExists() throws Exception {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
         upsRepo.save(ups);
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("u","user", "password", true);
+        CredentialsDTO decrypted = new CredentialsDTO("u","user", "password", true);
         Credentials encrypted = EncryptionService.encryptCredentials(decrypted);
         credentialsRepo.save(encrypted);
         serverRepo.save(new Server("22", "unnamed", "", null, null, 180));
@@ -257,7 +257,7 @@ class ServerControllerTest {
 
     @Test
     void updateServer_shouldUpdateServer_withEmptyUpsId_whenIdExists_butUpsIdNotInDatabase() throws Exception {
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("u","user", "password", true);
+        CredentialsDTO decrypted = new CredentialsDTO("u","user", "password", true);
         Credentials encrypted = EncryptionService.encryptCredentials(decrypted);
         credentialsRepo.save(encrypted);
         serverRepo.save(new Server("22", "unnamed", "", null, null, 180));
@@ -327,7 +327,7 @@ class ServerControllerTest {
 
     @Test
     void deleteServer_shouldDeleteServer_whenIdExists() throws Exception {
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("u","user", "password", true);
+        CredentialsDTO decrypted = new CredentialsDTO("u","user", "password", true);
         Credentials encrypted = EncryptionService.encryptCredentials(decrypted);
         credentialsRepo.save(encrypted);
         serverRepo.save(new Server("22", "Test-server", "1.1.1.1", encrypted, null, 180));

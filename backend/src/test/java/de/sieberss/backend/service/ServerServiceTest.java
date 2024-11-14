@@ -42,7 +42,7 @@ static void setUp() throws Exception {
     void getServerDTOListShouldReturnList_whenRepoIsNotEmpty() {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
         Credentials encrypted = new Credentials("8", "user", EncryptionService.encryptPassword("pass"), true);
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", true);
+        CredentialsDTO decrypted = new CredentialsDTO("8", "user", "pass", true);
         Server server
                 = new Server("22", "server", "1.1.1.1", encrypted, ups, 180);
         ServerDTO dto
@@ -60,7 +60,7 @@ static void setUp() throws Exception {
     void getServerDTOById_shouldReturnServerDTO_whenIdExists() {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
         Credentials encrypted = new Credentials("8", "user", "UHJHJK", true);
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", true);
+        CredentialsDTO decrypted = new CredentialsDTO("8", "user", "pass", true);
         Server server
                 = new Server("22", "server", "1.1.1.1", encrypted, ups, 180);
         ServerDTO expected
@@ -85,7 +85,7 @@ static void setUp() throws Exception {
     void createServer_shouldCreateServer_withSubmittedData() {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
         Credentials encrypted = new Credentials("8", "user", EncryptionService.encryptPassword("pass"), true);
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", true);
+        CredentialsDTO decrypted = new CredentialsDTO("8", "user", "pass", true);
         ServerDTO submitted
                 = new ServerDTO(null, "server", "1.1.1.1", decrypted, "1", 180);
         Server server
@@ -107,7 +107,7 @@ static void setUp() throws Exception {
     @Test
     void createServer_shouldCreateServerwithSubmittedData_butEmptyUpsId_whenUpsIdNotInDatabase() {
         Credentials encrypted = new Credentials("8", "user", "UHJHJK", true);
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", true);
+        CredentialsDTO decrypted = new CredentialsDTO("8", "user", "pass", true);
         ServerDTO submitted
                 = new ServerDTO(null, "server", "1.1.1.1", decrypted, "1", 180);
         ServerDTO completed
@@ -132,7 +132,7 @@ static void setUp() throws Exception {
     void updateServer_shouldUpdateServerWithSubmittedData_ifIdExists() {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
         Credentials encrypted = new Credentials("8", "user", "UHJHJK", true);
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", true);
+        CredentialsDTO decrypted = new CredentialsDTO("8", "user", "pass", true);
         ServerDTO submitted
                 = new ServerDTO(null, "server", "1.1.1.1", decrypted, "1", 180);
         Server updatedServer
@@ -155,7 +155,7 @@ static void setUp() throws Exception {
     @Test
     void updateServer_shouldUpdateServerWithSubmittedData_butEmptyUpsId_ifIdExists_butNotUpsId() {
         Credentials encrypted = new Credentials("8", "user", "UHJHJK", true);
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", true);
+        CredentialsDTO decrypted = new CredentialsDTO("8", "user", "pass", true);
         ServerDTO submitted
                 = new ServerDTO(null, "server", "1.1.1.1", decrypted, "1", 180);
         ServerDTO completed
@@ -179,7 +179,7 @@ static void setUp() throws Exception {
 
     @Test
     void updateServer_shouldThrowNoSuchElementException_whenIdDoesNotExist() {
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", true);
+        CredentialsDTO decrypted = new CredentialsDTO("8", "user", "pass", true);
         ServerDTO submitted
                 = new ServerDTO("", "server", "1.1.1.1", decrypted, "1", 180);
         // execute method
@@ -205,7 +205,7 @@ static void setUp() throws Exception {
     void createServerWithNewLocalCredentials_shouldCreateServer_withSubmittedData() {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
         Credentials encrypted = new Credentials("8", "user", EncryptionService.encryptPassword("pass"), false);
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", false);
+        CredentialsDTO decrypted = new CredentialsDTO("8", "user", "pass", false);
         ServerDTOWithoutCredentialsId submitted
                 = new ServerDTOWithoutCredentialsId(null, "server", "1.1.1.1", "user", "pass","1", 180);
         Server server
@@ -263,7 +263,7 @@ static void setUp() throws Exception {
     void updateServerWithNewLocalCredentials_shouldUpdateData_WithNewLocalCredentials() {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
         Credentials encrypted = new Credentials("8", "user", EncryptionService.encryptPassword("pass"), false);
-        CredentialsWithoutEncryption decrypted = new CredentialsWithoutEncryption("8", "user", "pass", false);
+        CredentialsDTO decrypted = new CredentialsDTO("8", "user", "pass", false);
         ServerDTOWithoutCredentialsId submitted
                 = new ServerDTOWithoutCredentialsId(null, "server", "1.1.1.1", "user", "pass","1", 180);
         Server server

@@ -2,7 +2,7 @@ package de.sieberss.backend.utils;
 
 import de.sieberss.backend.exception.EncryptionException;
 import de.sieberss.backend.model.Credentials;
-import de.sieberss.backend.model.CredentialsWithoutEncryption;
+import de.sieberss.backend.model.CredentialsDTO;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.*;
@@ -63,7 +63,7 @@ public class EncryptionService {
         }
     }
 
-    public static Credentials encryptCredentials(CredentialsWithoutEncryption unencrypted) {
+    public static Credentials encryptCredentials(CredentialsDTO unencrypted) {
         return unencrypted == null
                 ? null
                 : new Credentials(unencrypted.id(), unencrypted.user(), encryptPassword(unencrypted.password()), unencrypted.global());
@@ -78,10 +78,10 @@ public class EncryptionService {
         }
     }
 
-    public static CredentialsWithoutEncryption decryptCredentials(Credentials encrypted) {
+    public static CredentialsDTO decryptCredentials(Credentials encrypted) {
         return encrypted == null
                 ? null
-                : new CredentialsWithoutEncryption(encrypted.id(), encrypted.user(), decryptPassword(encrypted.password()), encrypted.global());
+                : new CredentialsDTO(encrypted.id(), encrypted.user(), decryptPassword(encrypted.password()), encrypted.global());
     }
 
 

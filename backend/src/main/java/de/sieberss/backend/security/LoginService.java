@@ -1,7 +1,7 @@
 package de.sieberss.backend.security;
 
 import de.sieberss.backend.model.Credentials;
-import de.sieberss.backend.model.CredentialsWithoutEncryption;
+import de.sieberss.backend.model.CredentialsDTO;
 import de.sieberss.backend.repo.CredentialsRepo;
 import de.sieberss.backend.utils.IdService;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class LoginService implements UserDetailsService {
         return new User(user.user(), user.password(), Collections.emptyList());
     }
 
-    public void register(CredentialsWithoutEncryption submitted) {
+    public void register(CredentialsDTO submitted) {
         try {
             loadUserByUsername(submitted.user());
             throw new IllegalArgumentException(submitted.user() + " already exists");

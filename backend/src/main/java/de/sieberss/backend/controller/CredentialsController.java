@@ -1,7 +1,7 @@
 package de.sieberss.backend.controller;
 
 import de.sieberss.backend.exception.ErrorMessage;
-import de.sieberss.backend.model.CredentialsWithoutEncryption;
+import de.sieberss.backend.model.CredentialsDTO;
 import de.sieberss.backend.service.CredentialsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,22 +18,22 @@ public class CredentialsController {
     private final CredentialsService service;
 
     @GetMapping()
-    public List<CredentialsWithoutEncryption> getCredentialsList() {
+    public List<CredentialsDTO> getCredentialsList() {
         return service.getCredentialsList();
     }
 
     @GetMapping("/{id}")
-    public CredentialsWithoutEncryption getCredentialsById(@PathVariable String id) {
+    public CredentialsDTO getCredentialsById(@PathVariable String id) {
         return service.getCredentialsById(id);
     }
 
     @PostMapping()
-    public CredentialsWithoutEncryption createCredentials(@RequestBody CredentialsWithoutEncryption credentials) {
+    public CredentialsDTO createCredentials(@RequestBody CredentialsDTO credentials) {
         return service.createCredentials(credentials);
     }
 
     @PutMapping("/{id}")
-    public CredentialsWithoutEncryption updateCredentials(@PathVariable String id, @RequestBody CredentialsWithoutEncryption credentials) {
+    public CredentialsDTO updateCredentials(@PathVariable String id, @RequestBody CredentialsDTO credentials) {
         return service.updateCredentials(id, credentials);
     }
     @DeleteMapping("/{id}")
