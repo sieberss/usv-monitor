@@ -1,12 +1,17 @@
 package de.sieberss.backend.controller;
 
-import de.sieberss.backend.model.*;
+import de.sieberss.backend.model.Credentials;
+import de.sieberss.backend.model.CredentialsWithoutEncryption;
+import de.sieberss.backend.model.Server;
+import de.sieberss.backend.model.Ups;
 import de.sieberss.backend.repo.CredentialsRepo;
 import de.sieberss.backend.repo.ServerRepo;
 import de.sieberss.backend.repo.UpsRepo;
 import de.sieberss.backend.utils.EncryptionService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +21,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.util.stream.Stream;
 
 @SpringBootTest
 @WithMockUser
@@ -37,6 +44,90 @@ class ServerControllerTest {
         EncryptionService.setTestKey();
     }
 
+    static Stream<String> missingUserNameOrPasswordJson(){
+        return Stream.of(
+                """
+                                 {
+                                     "name": "Test-server",
+                                     "address": "1.1.1.1",
+                                     "user": "",
+                                     "password": "password",
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
+                                 }
+                                """,
+                """
+                                 {
+                                     "name": "Test-server",
+                                     "address": "1.1.1.1",
+                                     "user": "",
+                                     "password": "",
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
+                                 }
+                                """,
+                """
+                                 {
+                                     "name": "Test-server",
+                                     "address": "1.1.1.1",
+                                     "user": "",
+                                     "password": null,
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
+                                 }
+                                """,
+                """
+                                 {
+                                     "name": "Test-server",
+                                     "address": "1.1.1.1",
+                                     "user": null,
+                                     "password": "password",
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
+                                 }
+                                """,
+                """
+                                 {
+                                     "name": "Test-server",
+                                     "address": "1.1.1.1",
+                                     "user": null,
+                                     "password": "",
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
+                                 }
+                                """,
+                """
+                                 {
+                                     "name": "Test-server",
+                                     "address": "1.1.1.1",
+                                     "user": null,
+                                     "password": null,
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
+                                 }
+                                """,
+                """
+                                 {
+                                     "name": "Test-server",
+                                     "address": "1.1.1.1",
+                                     "user": "user",
+                                     "password": "",
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
+                                 }
+                                """,
+                """
+                                 {
+                                     "name": "Test-server",
+                                     "address": "1.1.1.1",
+                                     "user": "user",
+                                     "password": null,
+                                     "upsId": "1",
+                                     "shutdownTime" : 180
+                                 }
+                                """
+        );
+    }
     @Test
     void getServerDTOList_shouldReturnListWithOneObject_whenOneObjectWasSavedInRepository() throws Exception {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
@@ -408,111 +499,14 @@ class ServerControllerTest {
                 ));
     }
 
-    @Test
-    void createServerWithNewLocalCredentials_shouldTriggerErrorMessage_whenUsernameEmpty() throws Exception {
+    @ParameterizedTest
+    @MethodSource("missingUserNameOrPasswordJson")
+    void createServerWithNewLocalCredentials_shouldTriggerErrorMessage_whenUsernameOrPasswordEmptyOrNull(String requestContent) throws Exception {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
         upsRepo.save(ups);
         mvc.perform(MockMvcRequestBuilders.post("/api/server/localcredentials")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(
-                                """
-                                 {
-                                     "name": "Test-server",
-                                     "address": "1.1.1.1",
-                                     "user": "",
-                                     "password": "password",
-                                     "upsId": "1",
-                                     "shutdownTime" : 180
-                                 }
-                                """
-                        ))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().json(
-                        """
-                                 {
-                                     "message": "Illegal argument",
-                                     "id": "Missing username and/or password"
-                                 }
-                                """
-                ));
-    }
-
-    @Test
-    void createServerWithNewLocalCredentials_shouldTriggerErrorMessage_whenUsernameNull() throws Exception {
-        Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
-        upsRepo.save(ups);
-        mvc.perform(MockMvcRequestBuilders.post("/api/server/localcredentials")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(
-                                """
-                                 {
-                                     "name": "Test-server",
-                                     "address": "1.1.1.1",
-                                     "user": null,
-                                     "password": "password",
-                                     "upsId": "1",
-                                     "shutdownTime" : 180
-                                 }
-                                """
-                        ))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().json(
-                        """
-                                 {
-                                     "message": "Illegal argument",
-                                     "id": "Missing username and/or password"
-                                 }
-                                """
-                ));
-    }
-
-    @Test
-    void createServerWithNewLocalCredentials_shouldTriggerErrorMessage_whenPasswordEmpty() throws Exception {
-        Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
-        upsRepo.save(ups);
-        mvc.perform(MockMvcRequestBuilders.post("/api/server/localcredentials")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(
-                                """
-                                 {
-                                     "name": "Test-server",
-                                     "address": "1.1.1.1",
-                                     "user": "user",
-                                     "password": "",
-                                     "upsId": "1",
-                                     "shutdownTime" : 180
-                                 }
-                                """
-                        ))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().json(
-                        """
-                                 {
-                                     "message": "Illegal argument",
-                                     "id": "Missing username and/or password"
-                                 }
-                                """
-                ));
-    }
-
-    @Test
-    void createServerWithNewLocalCredentials_shouldTriggerErrorMessage_whenPasswordNull() throws Exception {
-        Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
-        upsRepo.save(ups);
-        mvc.perform(MockMvcRequestBuilders.post("/api/server/localcredentials")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(
-                                """
-                                 {
-                                     "name": "Test-server",
-                                     "address": "1.1.1.1",
-                                     "user": "user",
-                                     "password": null,
-                                     "upsId": "1",
-                                     "shutdownTime" : 180
-                                 }
-                                """
-                        ))
+                        .content(requestContent))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.content().json(
                         """
@@ -561,25 +555,15 @@ class ServerControllerTest {
     }
 
 
-    @Test
-    void updateServerWithNewLocalCredentials_shouldTriggerErrorMessage_whenUsernameEmpty() throws Exception {
+    @ParameterizedTest
+    @MethodSource("missingUserNameOrPasswordJson")
+    void updateServerWithNewLocalCredentials_shouldTriggerErrorMessage_whenUsernameOrPasswordEmptyOrNull(String requestContent) throws Exception {
         Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
         upsRepo.save(ups);
         serverRepo.save(new Server("22", "unnamed", "", null, null, 180));
         mvc.perform(MockMvcRequestBuilders.put("/api/server/localcredentials/22")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(
-                                """
-                                 {
-                                     "name": "Test-server",
-                                     "address": "1.1.1.1",
-                                     "user": "",
-                                     "password": "password",
-                                     "upsId": "1",
-                                     "shutdownTime" : 180
-                                 }
-                                """
-                        ))
+                        .content(requestContent))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.content().json(
                         """
@@ -591,93 +575,4 @@ class ServerControllerTest {
                 ));
     }
 
-    @Test
-    void updateServerWithNewLocalCredentials_shouldTriggerErrorMessage_whenUsernameNull() throws Exception {
-        Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
-        upsRepo.save(ups);
-        serverRepo.save(new Server("22", "unnamed", "", null, null, 180));
-        mvc.perform(MockMvcRequestBuilders.put("/api/server/localcredentials/22")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(
-                                """
-                                 {
-                                     "name": "Test-server",
-                                     "address": "1.1.1.1",
-                                     "user": null,
-                                     "password": "password",
-                                     "upsId": "1",
-                                     "shutdownTime" : 180
-                                 }
-                                """
-                        ))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().json(
-                        """
-                                 {
-                                     "message": "Illegal argument",
-                                     "id": "Missing username and/or password"
-                                 }
-                                """
-                ));
-    }
-
-    @Test
-    void updateServerWithNewLocalCredentials_shouldTriggerErrorMessage_whenPasswordEmpty() throws Exception {
-        Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
-        upsRepo.save(ups);
-        serverRepo.save(new Server("22", "unnamed", "", null, null, 180));
-        mvc.perform(MockMvcRequestBuilders.put("/api/server/localcredentials/22")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(
-                                """
-                                 {
-                                     "name": "Test-server",
-                                     "address": "1.1.1.1",
-                                     "user": "user",
-                                     "password": "",
-                                     "upsId": "1",
-                                     "shutdownTime" : 180
-                                 }
-                                """
-                        ))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().json(
-                        """
-                                 {
-                                     "message": "Illegal argument",
-                                     "id": "Missing username and/or password"
-                                 }
-                                """
-                ));
-    }
-
-    @Test
-    void updateServerWithNewLocalCredentials_shouldTriggerErrorMessage_whenPasswordNull() throws Exception {
-        Ups ups = new Ups("1", "Test-UPS", "192.168.1.1", "");
-        upsRepo.save(ups);
-        serverRepo.save(new Server("22", "unnamed", "", null, null, 180));
-        mvc.perform(MockMvcRequestBuilders.put("/api/server/localcredentials/22")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(
-                                """
-                                 {
-                                     "name": "Test-server",
-                                     "address": "1.1.1.1",
-                                     "user": "user",
-                                     "password": null,
-                                     "upsId": "1",
-                                     "shutdownTime" : 180
-                                 }
-                                """
-                        ))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().json(
-                        """
-                                 {
-                                     "message": "Illegal argument",
-                                     "id": "Missing username and/or password"
-                                 }
-                                """
-                ));
-    }
 }
