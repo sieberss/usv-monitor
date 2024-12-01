@@ -7,6 +7,8 @@ import de.sieberss.backend.utils.EncryptionService;
 import de.sieberss.backend.utils.IdService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -65,34 +67,20 @@ class CredentialsServiceTest {
         verify(repo).findById("1");
     }
 
-    @Test
-    void createCredentials_shouldThrowIllegalArgumentException_whenUsernameEmpty() {
+    @ParameterizedTest
+    @CsvSource({
+            "'', ''    , ''    , true",
+            "'', ''    ,       , true",
+            "'', ''    , 'pass', true",
+            "'',       , ''    , true",
+            "'',       ,       , true",
+            "'',       , 'pass', true",
+            "'', 'user', ''    , true",
+            "'', 'user',       , true"
+    })
+    void createCredentials_shouldThrowIllegalArgumentException_whenUsernameOrPasswordEmptyOrNull(String id, String user, String password, boolean global) {
         when(idService.generateId()).thenReturn("1");
-        CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("", "", "pass", true);
-        // execute tested method
-        assertThrows(IllegalArgumentException.class, () -> service.createCredentials(submitted));
-    }
-
-    @Test
-    void createCredentials_shouldThrowIllegalArgumentException_whenUsernameNull() {
-        when(idService.generateId()).thenReturn("1");
-        CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("", null, "pass", true);
-        // execute tested method
-        assertThrows(IllegalArgumentException.class, () -> service.createCredentials(submitted));
-    }
-
-    @Test
-    void createCredentials_shouldThrowIllegalArgumentException_whenPasswordEmpty() {
-        when(idService.generateId()).thenReturn("1");
-        CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("", "user", "", true);
-        // execute tested method
-        assertThrows(IllegalArgumentException.class, () -> service.createCredentials(submitted));
-    }
-
-    @Test
-    void createCredentials_shouldThrowIllegalArgumentException_whenPasswordNull() {
-        when(idService.generateId()).thenReturn("1");
-        CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption("", "user", null, true);
+        CredentialsWithoutEncryption submitted = new CredentialsWithoutEncryption(id, user, password, global);
         // execute tested method
         assertThrows(IllegalArgumentException.class, () -> service.createCredentials(submitted));
     }
